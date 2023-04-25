@@ -6,6 +6,6 @@
 ## Using
 1. Add link to headers inside `include` folder to project
 2. Add link to shared library inside `lib`
-TODO:
+## TODO:
 - make a template CMake script
 - publish binaries
