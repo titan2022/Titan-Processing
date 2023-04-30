@@ -36,7 +36,8 @@ Vector3D Vector3D::getNormalized()
     return normalized;
 }
 
-Vector3D Vector3D::normalize() {
+Vector3D Vector3D::normalize()
+{
     Vector3D normalized = this->getNormalized();
     this->x = normalized.getX();
     this->y = normalized.getY();
@@ -65,19 +66,19 @@ double Vector3D::dotProduct(Vector3D v)
     return this->x * v.x + this->y * v.y + this->z * v.z;
 }
 
-Vector3D& Vector3D::operator+(Vector3D const &v)
+Vector3D &Vector3D::operator+(Vector3D const &v)
 {
     Vector3D result(x + v.x, y + v.y, z + v.z);
     return result;
 }
 
-Vector3D& Vector3D::operator-(Vector3D const &v)
+Vector3D &Vector3D::operator-(Vector3D const &v)
 {
     Vector3D result(x - v.x, y - v.y, z - v.z);
     return result;
 }
 
-Vector3D& Vector3D::operator+=(Vector3D const &v)
+Vector3D &Vector3D::operator+=(Vector3D const &v)
 {
     this->x += v.x;
     this->y += v.y;
@@ -85,7 +86,7 @@ Vector3D& Vector3D::operator+=(Vector3D const &v)
     return *this;
 }
 
-Vector3D& Vector3D::operator-=(Vector3D const &v)
+Vector3D &Vector3D::operator-=(Vector3D const &v)
 {
     this->x -= v.x;
     this->y -= v.y;
@@ -93,7 +94,8 @@ Vector3D& Vector3D::operator-=(Vector3D const &v)
     return *this;
 }
 
-double& Vector3D::operator[](int index) {
+double &Vector3D::operator[](int index)
+{
     switch (index)
     {
         case 0:

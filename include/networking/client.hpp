@@ -11,7 +11,7 @@ class NetworkingClient
 {
     public:
         NetworkingClient(std::string ip, uint16_t port);
-        double *send_data(std::string msg, bool withReply, Vector3D);
+        double *send_data(std::string msg, bool withReply, Vector3D &v);
 
     private:
         int sock;

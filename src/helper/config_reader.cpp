@@ -14,12 +14,12 @@ ConfigReader::ConfigReader()
     this->init("processing.cfg");
 }
 
-constexpr unsigned int hash(const char* s, int off = 0)
-{                        
-    return !s[off] ? 5381 : (hash(s, off + 1) * 33) ^ s[off];                           
+constexpr unsigned int hash(const char *s, int off = 0)
+{
+    return !s[off] ? 5381 : (hash(s, off + 1) * 33) ^ s[off];
 }
 
-constexpr inline unsigned int operator ""_(char const * p, size_t)
+constexpr inline unsigned int operator""_(char const *p, size_t)
 {
     return hash(p);
 }
@@ -27,11 +27,12 @@ constexpr inline unsigned int operator ""_(char const * p, size_t)
 void ConfigReader::init(std::string path)
 {
     std::ifstream in(path);
-    
+
     std::string line;
     while (std::getline(in, line))
     {
-        if (line.back() == '\r') {
+        if (line.back() == '\r')
+        {
             line.pop_back();
         }
 
@@ -39,7 +40,8 @@ void ConfigReader::init(std::string path)
         std::string key;
         std::string value;
 
-        if (key[0] == '#') {
+        if (key[0] == '#')
+        {
             continue;
         }
 

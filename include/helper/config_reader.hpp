@@ -14,7 +14,7 @@ class ConfigReader
         uint8_t hueShift;
         uint8_t satShift;
         uint8_t valShift;
-        
+
         ConfigReader(std::string path);
         ConfigReader();
 

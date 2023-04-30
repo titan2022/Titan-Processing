@@ -17,15 +17,15 @@ class Vector3D
         Vector3D scale(double scalar);
         std::string toString();
         rs2_vector toRS2();
-        
+
         double dotProduct(Vector3D v);
 
-        Vector3D& operator+(const Vector3D& v);
-        Vector3D& operator-(const Vector3D& v);
-        Vector3D& operator+=(const Vector3D& v);
-        Vector3D& operator-=(const Vector3D& v);
-        double& operator[](int index);
-        
+        Vector3D &operator+(const Vector3D &v);
+        Vector3D &operator-(const Vector3D &v);
+        Vector3D &operator+=(const Vector3D &v);
+        Vector3D &operator-=(const Vector3D &v);
+        double &operator[](int index);
+
     private:
         double x;
         double y;
