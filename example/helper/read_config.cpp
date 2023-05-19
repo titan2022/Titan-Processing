@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "../../include/helper/config_reader.hpp"
+#include "../../include/helper/ConfigReader.hpp"
 
 int main(int argc, char const *argv[])
 {
