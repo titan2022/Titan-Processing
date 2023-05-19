@@ -1,7 +1,7 @@
 #ifndef POSE
 #define POSE
 
-#include "../helper/vector.hpp"
+#include "../helper/Vector3D.hpp"
 
 class Pose3D
 {

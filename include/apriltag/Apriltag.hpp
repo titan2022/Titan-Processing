@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "../helper/pose.hpp"
-#include "../helper/vector.hpp"
+#include "../helper/Pose.hpp"
+#include "../helper/Vector3D.hpp"
 
 class Apriltag
 {

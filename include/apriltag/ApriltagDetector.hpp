@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "apriltag.hpp"
-#include "../helper/vector.hpp"
+#include "Apriltag.hpp"
+#include "../helper/Vector3D.hpp"
 
 class ApriltagDetector
 {

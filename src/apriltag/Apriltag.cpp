@@ -1,6 +1,6 @@
-#include "apriltag/apriltag.hpp"
-#include "helper/pose.hpp"
-#include "helper/vector.hpp"
+#include "apriltag/Apriltag.hpp"
+#include "helper/Pose.hpp"
+#include "helper/Vector3D.hpp"
 
 Apriltag::Apriltag(int id, Pose3D *pose)
 {

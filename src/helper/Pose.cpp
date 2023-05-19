@@ -1,5 +1,5 @@
-#include "helper/pose.hpp"
-#include "helper/vector.hpp"
+#include "helper/Pose.hpp"
+#include "helper/Vector3D.hpp"
 
 Pose3D::Pose3D(Vector3D *position, Vector3D *rotation)
 {
