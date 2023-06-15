@@ -8,18 +8,35 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # RealSense linking
-include_directories(include ${realsense_INCLUDE_DIR})
+if (NOT NoRealSense)
+    include_directories(include "${Realsense_DIR}\\include")
+endif()
 
 # OpenCV linking
 set(OpenCV_DIR "/usr/lib/opencv")
 option(OpenCV_STATIC OFF)
-find_package(OpenCV 4 REQUIRED core imgproc highgui)
+find_package(OpenCV 4 REQUIRED core imgproc highgui videoio)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-# Creating the library
-file(GLOB_RECURSE SRC src/*.cpp)
-add_library(${PROJECT_NAME} SHARED ${SRC})
-install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_NAME})
+# Apriltag linking
+set(Apriltag_DIR "/usr/local/include/apriltag")
+set(Apriltag_LIBS "${Apriltag_DIR}\\build\\Debug")
+include_directories(${Apriltag_DIR})
 
-#target_link_libraries(realsense realsense2)
-#target_link_libraries(realsense ${OpenCV_LIBS})
+# Creating the library
+file(GLOB SRC 
+    src/apriltag/*.cpp
+    src/helper/*.cpp
+    src/networking/*.cpp
+)
+if (NOT NoRealSense)
+    file(GLOB RS_SRC src/realsense/*.cpp)
+    add_library(TitanProcessingLib SHARED ${SRC} ${RS_SRC})
+else()
+    add_library(TitanProcessingLib SHARED ${SRC})
+endif()
+install(TARGETS TitanProcessingLib DESTINATION TitanProcessingLib)
+
+# Linking libraries
+target_link_libraries(TitanProcessingLib ${OpenCV_LIBS})
+target_link_libraries(TitanProcessingLib "${Apriltag_LIBS}\\apriltagd.dll")
