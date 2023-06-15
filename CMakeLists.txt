@@ -8,8 +8,8 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # RealSense linking
-if (NOT NoRealSense)
-    include_directories(include "${Realsense_DIR}\\include")
+if (NOT NO_REALSENSE)
+    include_directories(include ${Realsense_DIR}/include)
 endif()
 
 # OpenCV linking
@@ -29,7 +29,7 @@ file(GLOB SRC
     src/helper/*.cpp
     src/networking/*.cpp
 )
-if (NOT NoRealSense)
+if (NOT NO_REALSENSE)
     file(GLOB RS_SRC src/realsense/*.cpp)
     add_library(TitanProcessingLib SHARED ${SRC} ${RS_SRC})
 else()
