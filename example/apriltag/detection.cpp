@@ -11,7 +11,9 @@ void handleApriltag(const Apriltag &tag)
 
 int main(int argc, char const *argv[])
 {
-    ApriltagDetector detector(0, true);
+    ApriltagDetector detector(4, true);
+    detector.startStream();
+    detector.cap.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
     detector.detect(handleApriltag);
 
     return 0;
