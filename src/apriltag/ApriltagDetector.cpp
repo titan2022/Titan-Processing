@@ -21,27 +21,29 @@ ApriltagDetector::ApriltagDetector(int streamId, bool showWindow)
     this->showWindow = showWindow;
 }
 
-void ApriltagDetector::detect(void (*handle)(const Apriltag &))
-{
-    // todo: turn this function into a thread
-
-    cv::TickMeter meter;
-    meter.start();
-
+void ApriltagDetector::startStream(){
     cv::VideoCapture cap(this->streamId);
+    this->cap = cap;
     if (!cap.isOpened())
     {
         std::cerr << "Couldn't open video capture device" << std::endl;
         return;
     }
+}
 
-    // Capture filters (move somewhere else later)
-    cap.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+void ApriltagDetector::detect(void (*handle)(const Apriltag &))
+{
+    // TODO: fix grub bruh (irrelevant)
+    // TODO: turn this function into a thread
+
+    cv::TickMeter meter;
+    meter.start();
 
     apriltag_family_t *tf = tag16h5_create();
     apriltag_detector_t *td = apriltag_detector_create();
     apriltag_detector_add_family(td, tf);
 
+    // TODO: figure out
     td->quad_decimate = 4;
     td->quad_sigma = 2;
     td->nthreads = 2;
@@ -49,13 +51,12 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
     td->refine_edges = true;
 
     apriltag_detection_info_t info;
-    info.tagsize = 4 * Unit::INCH;
+    info.tagsize = 4 * Unit::INCH; // TODO: check??
     info.fx = this->focalX;
     info.fy = this->focalY;
 
     std::cout << "Detector 16h5 initialized in " << std::fixed << std::setprecision(3) << meter.getTimeSec() << " seconds" << std::endl;
     std::cout << "  " << cap.get(cv::CAP_PROP_FRAME_WIDTH) << "x" << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << " @" << cap.get(cv::CAP_PROP_FPS) << "FPS" << std::endl;
-
 
     float frame_counter = 0.0f;
     meter.stop();
@@ -136,10 +137,4 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
 
     apriltag_detector_destroy(td);
     tag16h5_destroy(tf);
-}
-
-void ApriltagDetector::setFocalLength(double x, double y)
-{
-    this->focalX = x;
-    this->focalY = y;
 }
