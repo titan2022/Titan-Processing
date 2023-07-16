@@ -10,7 +10,7 @@ using std::pair;
 //	std::pair<std::string, bool>("Position", true),
 //}
 
-void InputModule::registerProcessingModule(std::shared_ptr<ProcessingModule> process)
+void InputModule::linkProcessingModule(std::shared_ptr<ProcessingModule> process)
 {
 	if (checkModuleIsValid(process))
 		processModules.push_back(process);
@@ -20,9 +20,10 @@ void InputModule::registerProcessingModule(std::shared_ptr<ProcessingModule> pro
 
 bool InputModule::checkModuleIsValid(std::shared_ptr<ProcessingModule> module) const
 {
+	auto capacities = getCapacities();
 	for (auto requirement : module->getRequirements())
 	{
-		if (std::count(capacities.begin(), capacities.end(), requirement) < 1)
+		if (std::find(capacities.begin(), capacities.end(), requirement) == capacities.end())
 			return false;
 	}
 
@@ -35,8 +36,7 @@ void InputModule::pushData() const
 	{
 		for (auto requirement : modulePtr->getRequirements())
 		{
-			sourceMatrices[requirement].copyTo(modulePtr->matrices[requirement]);
+			sourceMatrices.at(requirement).copyTo(modulePtr->inputMatrices[requirement]);
 		}
 	}
 }
-

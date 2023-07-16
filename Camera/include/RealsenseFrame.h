@@ -3,7 +3,6 @@
 
 #include <opencv2/core/mat.hpp>
 #include "Frame.h"
-#include "RealsenseCamera.h"
 
 class RealsenseFrame : public Frame
 {

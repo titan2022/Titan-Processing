@@ -8,72 +8,66 @@
 #include <cmath>
 #include <iostream>
 
-ObjectDetection::ObjectDetection()
-{
+const std::vector<Requirements> ObjectDetection::requirements = { Requirements::COLOR, Requirements::POSITION };
+const std::vector<Outputs> ObjectDetection::outputs = { Outputs::GRAPHIC };
 
+ObjectDetection::ObjectDetection() { }
+
+void ObjectDetection::initialize()
+{
+	inputMatrices.insert(std::pair<Requirements, cv::Mat>(Requirements::COLOR, cv::Mat()));
+	inputMatrices.insert(std::pair<Requirements, cv::Mat>(Requirements::POSITION, cv::Mat()));
+	outputMatrices.insert(std::pair<Outputs, cv::Mat>(Outputs::GRAPHIC, cv::Mat()));
 }
 
-ObjectDetection::ObjectDetection(const CameraFrame& alignedFrame)
+void ObjectDetection::execute()
 {
-
+	//contourDetector.Process<T>(matrices["Color"]);
 }
 
-void ObjectDetection::load(const CameraFrame& alignedFrame)
-{
-	originalFrame = &alignedFrame;
-	reset();
-}
+//void ObjectDetection::printCenterRGB()
+//{
+//	cv::Mat hslMatrix; 
+//	cv::cvtColor(colorMatrix, hslMatrix, cv::COLOR_BGR2HLS);
+//	auto vec = hslMatrix.at<cv::Vec3b>(240, 424);
+//	std::cout << (int) vec[0] << ' ' << (int) vec[1] << ' ' << (int) vec[2] << ' ' << '\n';
+//}
 
-void ObjectDetection::reset()
-{
-	depthMatrix = originalFrame->getDepthMatrix();
-	colorMatrix = originalFrame->getColorMatrix();
-	positionMatrix = originalFrame->getPositionMatrix();
-}
-
-void ObjectDetection::printCenterRGB()
-{
-	cv::Mat hslMatrix; 
-	cv::cvtColor(colorMatrix, hslMatrix, cv::COLOR_BGR2HLS);
-	auto vec = hslMatrix.at<cv::Vec3b>(240, 424);
-	std::cout << (int) vec[0] << ' ' << (int) vec[1] << ' ' << (int) vec[2] << ' ' << '\n';
-}
-
-std::vector<Object*> ObjectDetection::searchForObjects()
-{
-	//Kludge, should figure out a better way to do this format
-	/*auto redRobots = searchFor<RedRobot>();
-	auto blueRobots = searchFor<BlueRobot>();*/
-	auto purpleCubes = searchFor<Cube>();
-	auto yellowCones = searchFor<Cone>();
-	std::vector<Object*> results(purpleCubes.size() + yellowCones.size());
-
-	/*for (auto redRobotPtr : redRobots)
-	{
-		results.push_back(redRobotPtr);
-	}
-	for (auto blueRobotPtr : blueRobots)
-	{
-		results.push_back(blueRobotPtr);
-	}*/
-	for (auto purpleCubePtr : purpleCubes)
-	{
-		results.push_back(purpleCubePtr);
-	}
-	for (auto yellowCubePtr : yellowCones)
-	{
-		results.push_back(yellowCubePtr);
-	}
-
-	// This is to remove the pointers from the vectors 
-	// so that when they are deleted, the object are not deleted
-	/*redRobots.clear();
-	blueRobots.clear();*/
-	purpleCubes.clear();
-	yellowCones.clear();
-
-	return results;
-}
+//std::vector<Object*> ObjectDetection::searchForObjects()
+//{
+//	//Kludge, should figure out a better way to do this format
+//	/*auto redRobots = searchFor<RedRobot>();
+//	auto blueRobots = searchFor<BlueRobot>();*/
+//	auto purpleCubes = searchFor<Cube>();
+//	auto yellowCones = searchFor<Cone>();
+//	std::vector<Object*> results(purpleCubes.size() + yellowCones.size());
+//
+//	/*for (auto redRobotPtr : redRobots)
+//	{
+//		results.push_back(redRobotPtr);
+//	}
+//	for (auto blueRobotPtr : blueRobots)
+//	{
+//		results.push_back(blueRobotPtr);
+//	}*/
+//	for (auto purpleCubePtr : purpleCubes)
+//	{
+//		results.push_back(purpleCubePtr);
+//	}
+//	for (auto yellowCubePtr : yellowCones)
+//	{
+//		results.push_back(yellowCubePtr);
+//	}
+//
+//	// This is to remove the pointers from the vectors 
+//	// so that when they are deleted, the object are not deleted
+//	/*redRobots.clear();
+//	blueRobots.clear();*/
+//	purpleCubes.clear();
+//	yellowCones.clear();
+//
+//	return results;
+//}
 
 //std::vector<Robot*> ObjectDetection::searchForRobots()
 //{
@@ -129,23 +123,23 @@ std::vector<Object*> ObjectDetection::searchForObjects()
 //	return results;
 //}
 
-
-void ObjectDetection::showColorFrame()
-{
-	cv::imshow("Color Frame", colorMatrix);
-	cv::waitKey(1);
-}
-
-void ObjectDetection::showContourFrame()
-{
-	Mat contourMatrix = colorMatrix;
-	cv::drawContours(contourMatrix, *contourDetector.GetFindContoursOutput(), -1, cv::Scalar(255, 0, 0));
-	std::vector<cv::Point2i>* coordinates = contourDetector.getContourCenters();
-	for (int i = 0; i < coordinates->size(); ++i)
-	{
-		circle(contourMatrix, cv::Point2i(coordinates->at(i).x, coordinates->at(i).y), 5, cv::Scalar(0, 255, 0), 2);
-	}
-	circle(contourMatrix, cv::Point2i(424, 240), 5, cv::Scalar(0, 255, 0), 2);
-	cv::imshow("Contours", contourMatrix);
-	cv::waitKey(1);
-}
+//
+//void ObjectDetection::showColorFrame()
+//{
+//	cv::imshow("Color Frame", colorMatrix);
+//	cv::waitKey(1);
+//}
+//
+//void ObjectDetection::showContourFrame()
+//{
+//	Mat contourMatrix = colorMatrix;
+//	cv::drawContours(contourMatrix, *contourDetector.GetFindContoursOutput(), -1, cv::Scalar(255, 0, 0));
+//	std::vector<cv::Point2i>* coordinates = contourDetector.getContourCenters();
+//	for (int i = 0; i < coordinates->size(); ++i)
+//	{
+//		circle(contourMatrix, cv::Point2i(coordinates->at(i).x, coordinates->at(i).y), 5, cv::Scalar(0, 255, 0), 2);
+//	}
+//	circle(contourMatrix, cv::Point2i(424, 240), 5, cv::Scalar(0, 255, 0), 2);
+//	cv::imshow("Contours", contourMatrix);
+//	cv::waitKey(1);
+//}

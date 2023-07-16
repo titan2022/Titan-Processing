@@ -12,7 +12,6 @@
 #include <opencv2/core/cuda.hpp>
 #include <cmath>
 #include "RealsenseCamera.h"
-#include "CameraFrame.h"
 #include "ContourTest.h"
 #include "Cone.h"
 #include "Cube.h"

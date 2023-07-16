@@ -2,6 +2,7 @@
 #define INPUT_MODULE_H
 
 #include <vector>
+#include "Constants.h"
 #include "ProcessingModule.h"
 
 /// <summary>
@@ -10,17 +11,18 @@
 class InputModule : public Module
 {
 protected:
-	std::vector<std::string> capacities;
-	std::unordered_map<std::string, cv::Mat> sourceMatrices;
+	std::unordered_map<Requirements, cv::Mat> sourceMatrices;
 	//Subscribers that the input module will push data to
 	std::vector<std::shared_ptr<ProcessingModule>> processModules;
 public:
 	bool checkModuleIsValid(std::shared_ptr<ProcessingModule> module) const;
 	void pushData() const;
-	inline const std::vector<std::string>& getCapacities() { return capacities; }
-	void registerProcessingModule(std::shared_ptr<ProcessingModule> process);
+	virtual const std::vector<Requirements>& getCapacities() const = 0;
+	void linkProcessingModule(std::shared_ptr<ProcessingModule> process);
 	//Checks if able to get frames properly
 	virtual bool isValid() const = 0;
+
+	inline const std::vector<std::shared_ptr<ProcessingModule>>& getProcessingModules() const { return processModules; }
 };
 
 #endif

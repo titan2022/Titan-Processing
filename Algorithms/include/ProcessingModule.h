@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-
 #include <opencv2/core/cuda.hpp>
 
+#include "Constants.h"
 #include "Module.h"
 
 /// <summary>
@@ -14,11 +14,13 @@
 /// </summary>
 class ProcessingModule : public Module
 {
-protected:
-	std::vector<std::string> requirements;
 public:
-	inline const std::vector<std::string>& getRequirements() const { return requirements; }
-	std::unordered_map<std::string, cv::Mat> matrices;
+	std::vector<Requirements> getRequirements() const;
+	std::vector<Outputs> getOutputTypes() const;
+
+
+	std::unordered_map<Requirements, cv::Mat> inputMatrices;
+	std::unordered_map<Outputs, cv::Mat> outputMatrices;
 };
 
 #endif

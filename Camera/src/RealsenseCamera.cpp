@@ -105,9 +105,9 @@ void RealsenseCamera::execute()
 	nextFrame();
 	auto frame = getFrame();
 
-	sourceMatrices["Depth"] = frame.getDepthMatrix();
-	sourceMatrices["Color"] = frame.getColorMatrix();
-	sourceMatrices["Position"] = frame.getPositionMatrix();
+	sourceMatrices[Requirements::DEPTH] = frame.getDepthMatrix();
+	sourceMatrices[Requirements::COLOR] = frame.getColorMatrix();
+	sourceMatrices[Requirements::POSITION] = frame.getPositionMatrix();
 
 	pushData();
 }

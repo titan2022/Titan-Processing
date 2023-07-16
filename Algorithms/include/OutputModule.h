@@ -12,9 +12,11 @@ class OutputModule : public Module
 protected:
 	std::shared_ptr<ProcessingModule> processModule;
 public:
-	virtual bool checkModuleIsValid(std::shared_ptr<ProcessingModule> processModule) const = 0;
+	bool checkModuleIsValid(std::shared_ptr<ProcessingModule> processModule) const;
 	bool linkProcessingModule(std::shared_ptr<ProcessingModule> processModule);
 	virtual void getOutput() const = 0;
+	virtual Outputs getOutputType() const = 0;
+	inline const std::shared_ptr<ProcessingModule>& getProcessingModule() const { return processModule; }
 };
 
 #endif
