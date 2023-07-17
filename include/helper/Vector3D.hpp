@@ -11,6 +11,7 @@ class Vector3D
         Vector3D(cv::Vec<float, 3> v);
         Vector3D(cv::Vec<double, 3> v);
         Vector3D(cv::Vec<int, 3> v);
+        Vector3D(double* v);
         Vector3D();
 
         double getX();
