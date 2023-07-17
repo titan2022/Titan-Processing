@@ -11,15 +11,15 @@
 class ApriltagDetector
 {
     public:
-        ApriltagDetector(int streamId, bool showWindow);
+        ApriltagDetector(int streamId, ConfigReader config, bool showWindow);
         void startStream();
         void detect(void (*handle)(const Apriltag &));
         cv::VideoCapture cap;
-        ConfigReader config;
 
     private:
         int streamId;
         bool showWindow;
+        ConfigReader config;
 };
 
 #endif
