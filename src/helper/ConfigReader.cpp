@@ -63,6 +63,30 @@ void ConfigReader::init(std::string path)
             case "port"_:
                 this->port = std::stoi(value);
                 break;
+            case "threads"_:
+                this->threads = std::stoi(value);
+                break;
+            case "width"_:
+                this->width = std::stoi(value);
+                break;
+            case "height"_:
+                this->height = std::stoi(value);
+                break;
+            case "fps"_:
+                this->fps = std::stoi(value);
+                break;
+            case "focal_x"_:
+                this->focalX = std::stod(value);
+                break;
+            case "focal_y"_:
+                this->focalY = std::stod(value);
+                break;
+            case "center_x"_:
+                this->centerX = std::stod(value);
+                break;
+            case "center_y"_:
+                this->centerY = std::stod(value);
+                break;
             case "hue_shift"_:
                 this->hueShift = std::stoi(value);
                 break;
@@ -71,6 +95,15 @@ void ConfigReader::init(std::string path)
                 break;
             case "val_shift"_:
                 this->valShift = std::stoi(value);
+                break;
+            case "quad_decimate"_:
+                this->quadDecimate = std::stoi(value);
+                break;
+            case "quad_sigma"_:
+                this->quadSigma = std::stoi(value);
+                break;
+            case "decode_sharpening"_:
+                this->decodeSharpening = std::stod(value);
                 break;
         }
     }

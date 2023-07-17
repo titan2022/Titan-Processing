@@ -1,6 +1,5 @@
 #include <cmath>
 #include <string>
-#include <librealsense2/rs.hpp>
 #include <opencv2/core.hpp>
 
 #include "helper/Vector3D.hpp"
@@ -33,11 +32,11 @@ Vector3D::Vector3D(cv::Vec<int, 3> v)
     z = v[2];
 }
 
-Vector3D::Vector3D(rs2_vector v)
+Vector3D::Vector3D(double* v)
 {
-    x = v.x;
-    y = v.y;
-    z = v.z;
+    x = v[0];
+    y = v[1];
+    z = v[2];
 }
 
 Vector3D::Vector3D()
@@ -102,11 +101,6 @@ std::string Vector3D::toString()
     s += std::to_string(z);
     s += ")";
     return s;
-}
-
-rs2_vector Vector3D::toRS2()
-{
-    return rs2_vector{(float)x, (float)y, (float)z};
 }
 
 cv::Vec<double, 3> Vector3D::toCV()

@@ -2,7 +2,6 @@
 #define VECTOR
 
 #include <string>
-#include <librealsense2/rs.hpp>
 #include <opencv2/core.hpp>
 
 class Vector3D
@@ -12,7 +11,7 @@ class Vector3D
         Vector3D(cv::Vec<float, 3> v);
         Vector3D(cv::Vec<double, 3> v);
         Vector3D(cv::Vec<int, 3> v);
-        Vector3D(rs2_vector v);
+        Vector3D(double* v);
         Vector3D();
 
         double getX();
@@ -25,7 +24,6 @@ class Vector3D
         double getMagnitude();
         Vector3D getNormalized();
         std::string toString();
-        rs2_vector toRS2();
         cv::Vec<double, 3> toCV();
 
         Vector3D normalize();

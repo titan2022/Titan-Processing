@@ -6,6 +6,8 @@
 ## Using
 1. Add link to headers inside `include` folder to project
 2. Add link to shared library inside `lib`
+## Other tools
+- [Camset](https://github.com/azeam/camset)
 ## TODO:
 - make a template CMake script
 - publish binaries
