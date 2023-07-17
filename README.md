@@ -8,6 +8,7 @@
 2. Add link to shared library inside `lib`
 ## Other tools
 - [Camset](https://github.com/azeam/camset)
+- [calibration.py](tools/calibration.md)
 ## TODO:
 - make a template CMake script
 - publish binaries
