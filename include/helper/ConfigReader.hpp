@@ -15,6 +15,16 @@ class ConfigReader
         uint8_t satShift;
         uint8_t valShift;
 
+        // Camera
+        double focalX;
+        double focalY;
+        double centerX;
+        double centerY;
+        uint8_t fps;
+
+        // Performance
+        uint8_t threads;
+
         ConfigReader(std::string path);
         ConfigReader();
 

@@ -72,6 +72,24 @@ void ConfigReader::init(std::string path)
             case "val_shift"_:
                 this->valShift = std::stoi(value);
                 break;
+            case "focal_x"_:
+                this->focalX = std::stod(value);
+                break;
+            case "focal_y"_:
+                this->focalY = std::stod(value);
+                break;
+            case "center_x"_:
+                this->centerX = std::stod(value);
+                break;
+            case "center_y"_:
+                this->centerY = std::stod(value);
+                break;
+            case "fps"_:
+                this->fps = std::stoi(value);
+                break;
+            case "threads"_:
+                this->threads = std::stoi(value);
+                break;
         }
     }
 }
