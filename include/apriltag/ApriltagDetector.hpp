@@ -4,20 +4,22 @@
 #include <string>
 
 #include "Apriltag.hpp"
+#include "opencv2/opencv.hpp"
+#include "../helper/ConfigReader.hpp"
 #include "../helper/Vector3D.hpp"
 
 class ApriltagDetector
 {
     public:
-        ApriltagDetector(int streamId, bool showWindow);
+        ApriltagDetector(int streamId, ConfigReader config, bool showWindow);
+        void startStream();
         void detect(void (*handle)(const Apriltag &));
-        void setFocalLength(double x, double y);
+        cv::VideoCapture cap;
 
     private:
         int streamId;
         bool showWindow;
-        double focalX = 50;
-        double focalY = 50;
+        ConfigReader config;
 };
 
 #endif

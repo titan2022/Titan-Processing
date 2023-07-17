@@ -13,11 +13,11 @@ class Apriltag
         Vector3D *rotation;
         Pose3D *pose;
         int id;
-        Apriltag(int id, Pose3D *pose);
-        Apriltag(int id, Vector3D *position, Vector3D *rotation);
+        Apriltag(int id, Pose3D &pose);
+        Apriltag(int id, Vector3D &position, Vector3D &rotation);
 
     private:
-        void init(int id, Vector3D *position, Vector3D *rotation);
+        void init(int id, Vector3D &position, Vector3D &rotation);
 };
 
 #endif
