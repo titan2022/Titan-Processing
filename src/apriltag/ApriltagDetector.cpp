@@ -29,6 +29,8 @@ void ApriltagDetector::startStream(){
         std::cerr << "Couldn't open video capture device" << std::endl;
         return;
     }
+
+    cap.set(cv::CAP_PROP_FPS, config.fps);
 }
 
 void ApriltagDetector::detect(void (*handle)(const Apriltag &))
@@ -43,22 +45,23 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
     apriltag_detector_t *td = apriltag_detector_create();
     apriltag_detector_add_family(td, tf);
 
-    // TODO: figure out
+    td->nthreads = this->config.threads;
     td->quad_decimate = 4;
     td->quad_sigma = 2;
-    td->nthreads = 2;
-    td->debug = false;
     td->refine_edges = true;
+    td->decode_sharpening = 0.25;
+    td->debug = false;
 
     apriltag_detection_info_t info;
-    info.tagsize = 4 * Unit::INCH; // TODO: check??
-    info.fx = this->focalX;
-    info.fy = this->focalY;
+    info.tagsize = 6 * Unit::INCH;
+    info.fx = config.focalX;
+    info.fy = config.focalY;
+    info.cx = config.centerX;
+    info.cy = config.centerY;
 
     std::cout << "Detector 16h5 initialized in " << std::fixed << std::setprecision(3) << meter.getTimeSec() << " seconds" << std::endl;
     std::cout << "  " << cap.get(cv::CAP_PROP_FRAME_WIDTH) << "x" << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << " @" << cap.get(cv::CAP_PROP_FPS) << "FPS" << std::endl;
 
-    float frame_counter = 0.0f;
     meter.stop();
     meter.reset();
 
@@ -67,7 +70,16 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
     {
         errno = 0;
         cap >> frame;
-        cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+
+        cv::Mat gray, ch2, ch3;
+
+        std::vector<cv::Mat> channels(3);
+
+        split(frame, channels);
+
+        gray = channels[0];
+        ch2 = channels[1];
+        ch3 = channels[2];
 
         image_u8_t im = {gray.cols, gray.rows, gray.cols, gray.data};
 
@@ -89,8 +101,6 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
             double* d = t->data;
             int l = sizeof(d);
 
-            std::cout << d[0] << ", " << d[1] << ", " << d[2] << ", " << d[3] << ", " << d[4] << ", " << d[5] << ", " << d[6] << ", " << d[7] << std::endl;
-
             Vector3D position(l, det->c[1], det->c[1]);
             Vector3D rotation(det->c[0], det->c[1], det->c[1]);
             Apriltag tag(det->id, &position, &rotation);
@@ -100,6 +110,8 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
             if (!this->showWindow) {
                 continue;
             }
+
+            std::cout << d[0] << ", " << d[1] << ", " << d[2] << ", " << d[3] << ", " << d[4] << ", " << d[5] << ", " << d[6] << ", " << d[7] << std::endl;
 
             line(frame, cv::Point(det->p[0][0], det->p[0][1]),
                  cv::Point(det->p[1][0], det->p[1][1]),
