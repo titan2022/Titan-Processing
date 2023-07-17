@@ -32,6 +32,13 @@ Vector3D::Vector3D(cv::Vec<int, 3> v)
     z = v[2];
 }
 
+Vector3D::Vector3D(double* v)
+{
+    x = v[0];
+    y = v[1];
+    z = v[2];
+}
+
 Vector3D::Vector3D()
 {
     x = 0;
