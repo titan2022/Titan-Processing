@@ -15,11 +15,11 @@ extern "C"
 #include "apriltag/ApriltagDetector.hpp"
 #include "helper/Unit.hpp"
 
-ApriltagDetector::ApriltagDetector(int streamId, ConfigReader config, bool showWindow)
+ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader config, NetworkingClient client) : client(client)
 {
     this->streamId = streamId;
-    this->config = config;
     this->showWindow = showWindow;
+    this->config = config;
 }
 
 void ApriltagDetector::startStream(){
@@ -36,7 +36,7 @@ void ApriltagDetector::startStream(){
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.height);
 }
 
-void ApriltagDetector::detect(void (*handle)(const Apriltag &))
+void ApriltagDetector::detect(void (*handle)(const Apriltag &, NetworkingClient &))
 {
     // TODO: turn this function into a thread
 
@@ -105,7 +105,7 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
                 continue;
             }
 
-            handle(tag);
+            handle(tag, client);
 
             if (!this->showWindow) {
                 continue;
