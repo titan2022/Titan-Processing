@@ -13,9 +13,8 @@ void handleApriltag(const Apriltag &tag)
 int main(int argc, char const *argv[])
 {
     ConfigReader config("example/processing.cfg");
-    ApriltagDetector detector(0, true);
+    ApriltagDetector detector(0, config, true);
 
-    detector.config = config;
     detector.startStream();
     detector.detect(handleApriltag);
 

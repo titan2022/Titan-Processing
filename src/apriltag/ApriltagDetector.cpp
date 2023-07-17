@@ -15,9 +15,10 @@ extern "C"
 #include "apriltag/ApriltagDetector.hpp"
 #include "helper/Unit.hpp"
 
-ApriltagDetector::ApriltagDetector(int streamId, bool showWindow)
+ApriltagDetector::ApriltagDetector(int streamId, ConfigReader config, bool showWindow)
 {
     this->streamId = streamId;
+    this->config = config;
     this->showWindow = showWindow;
 }
 
@@ -31,11 +32,12 @@ void ApriltagDetector::startStream(){
     }
 
     cap.set(cv::CAP_PROP_FPS, config.fps);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, config.width);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.height);
 }
 
 void ApriltagDetector::detect(void (*handle)(const Apriltag &))
 {
-    // TODO: fix grub bruh (irrelevant)
     // TODO: turn this function into a thread
 
     cv::TickMeter meter;
@@ -45,15 +47,15 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
     apriltag_detector_t *td = apriltag_detector_create();
     apriltag_detector_add_family(td, tf);
 
-    td->nthreads = this->config.threads;
-    td->quad_decimate = 4;
-    td->quad_sigma = 2;
+    td->nthreads = config.threads;
+    td->quad_decimate = config.quadDecimate; //1
+    td->quad_sigma = config.quadSigma; //2
     td->refine_edges = true;
-    td->decode_sharpening = 0.25;
+    td->decode_sharpening = config.decodeSharpening; //0.25
     td->debug = false;
 
     apriltag_detection_info_t info;
-    info.tagsize = 6 * Unit::INCH;
+    info.tagsize = 4 * Unit::INCH;
     info.fx = config.focalX;
     info.fy = config.focalY;
     info.cx = config.centerX;
@@ -71,18 +73,12 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
         errno = 0;
         cap >> frame;
 
-        cv::Mat gray, ch2, ch3;
-
+        // Split YUYV into channels to get the grayscale image without extra processing
         std::vector<cv::Mat> channels(3);
-
         split(frame, channels);
-
-        gray = channels[0];
-        ch2 = channels[1];
-        ch3 = channels[2];
+        cv::Mat gray = channels[0];
 
         image_u8_t im = {gray.cols, gray.rows, gray.cols, gray.data};
-
         zarray_t *detections = apriltag_detector_detect(td, &im);
 
         for (int i = 0; i < zarray_size(detections); i++)
@@ -97,22 +93,25 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
             apriltag_pose_t pose;
             double err = estimate_tag_pose(&info, &pose);
 
-            matd_t* t = pose.t;
-            double* d = t->data;
-            int l = sizeof(d);
+            double* t = pose.t->data;
+            double* R = pose.R->data;
 
-            Vector3D position(l, det->c[1], det->c[1]);
-            Vector3D rotation(det->c[0], det->c[1], det->c[1]);
-            Apriltag tag(det->id, &position, &rotation);
+            Vector3D position(t);
+            Vector3D rotation(R);
+            Apriltag tag(det->id, position, rotation);
 
-            //handle(tag);
+            // Ignore false positives with IDs outside range
+            if (det->id > 8) {
+                continue;
+            }
+
+            handle(tag);
 
             if (!this->showWindow) {
                 continue;
             }
 
-            std::cout << d[0] << ", " << d[1] << ", " << d[2] << ", " << d[3] << ", " << d[4] << ", " << d[5] << ", " << d[6] << ", " << d[7] << std::endl;
-
+            // Render lines and window for debugging
             line(frame, cv::Point(det->p[0][0], det->p[0][1]),
                  cv::Point(det->p[1][0], det->p[1][1]),
                  cv::Scalar(0, 0xff, 0), 2);
@@ -141,8 +140,8 @@ void ApriltagDetector::detect(void (*handle)(const Apriltag &))
         apriltag_detections_destroy(detections);
 
         if (this->showWindow) {
-           cv::imshow("Tag Detections", frame);
-            if (cv::waitKey(15) >= 0)
+            cv::imshow("Apriltag Debug Window", frame);
+            if (cv::waitKey(27) >= 0) // ESC key
                 break;
         }
     }
