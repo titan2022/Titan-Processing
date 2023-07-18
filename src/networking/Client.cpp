@@ -14,6 +14,17 @@
 #include "networking/Client.hpp"
 #include "helper/Vector3D.hpp"
 
+// Aligned on linux x86 GCC
+// TODO: test on ARM
+struct VectorData
+{
+    char type;   // 8 bytes (1 + 7)
+    double x;    // 8 bytes
+    double y;    // 8 bytes
+    double z;    // 8 bytes
+    const char* name;
+};
+
 NetworkingClient::NetworkingClient(std::string ip, uint16_t port)
 {
     sock = ::socket(AF_INET, SOCK_DGRAM, 0);
@@ -23,26 +34,18 @@ NetworkingClient::NetworkingClient(std::string ip, uint16_t port)
     destination.sin_addr.s_addr = inet_addr(ip.c_str());
 }
 
-double *NetworkingClient::send_data(std::string msg, bool withReply, Vector3D &v)
+double *NetworkingClient::send_vector(std::string msg, bool withReply, Vector3D &v)
 {
-    char vectorBuffer[24];
+    VectorData data;
 
-    for (uint8_t i = 0; i < 3; i++)
-    {
-        char *doubleBytes = double_to_bytes(v[i]);
-        memcpy(vectorBuffer + i * 8, doubleBytes, 8);
-    }
+    data.type = 'd';
+    data.x = v.getX();
+    data.y = v.getY();
+    data.z = v.getZ();
+    data.name = msg.c_str();
 
-    size_t msgSize = msg.length();
-    char nameBuffer[msgSize];
-    strcpy(nameBuffer, msg.c_str());
-
-    char dataBuffer[24 + msgSize];
-
-    memcpy(dataBuffer, vectorBuffer, 24);
-    memcpy(dataBuffer + 24, nameBuffer, msgSize);
-
-    ::sendto(sock, dataBuffer, 24 + msgSize, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+    const void* buffer = static_cast<void*>(&data);
+    ::sendto(sock, buffer, 32 + msg.length(), 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 
     if (withReply)
     {
@@ -62,13 +65,6 @@ double *NetworkingClient::send_data(std::string msg, bool withReply, Vector3D &v
     }
 
     return NULL;
-}
-
-char *NetworkingClient::double_to_bytes(double d)
-{
-    double reversed = this->change_endian(d);
-    char *bytes = (char *)&reversed;
-    return bytes;
 }
 
 double NetworkingClient::bytes_to_double(char *b)
