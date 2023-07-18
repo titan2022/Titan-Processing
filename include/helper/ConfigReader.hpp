@@ -2,6 +2,9 @@
 #define CONFIG_READER
 
 #include <string>
+#include <vector>
+
+#include "../apriltag/Apriltag.hpp"
 
 class ConfigReader
 {
@@ -32,12 +35,17 @@ class ConfigReader
         uint8_t quadSigma;
         double decodeSharpening;
 
+        // Tags from apriltags.json
+        std::vector<Apriltag> tags;
+
         ConfigReader(std::string path);
         ConfigReader();
 
     private:
         std::string configPath;
         void init(std::string path);
+        void readConfigFile(std:: string path);
+        void readTagsFile(std:: string path);
 };
 
 #endif

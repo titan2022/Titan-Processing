@@ -2,7 +2,11 @@
 #include <sstream>
 #include <string>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 #include "helper/ConfigReader.hpp"
+
 
 ConfigReader::ConfigReader(std::string path)
 {
@@ -14,6 +18,7 @@ ConfigReader::ConfigReader()
     this->init("processing.cfg");
 }
 
+// Hash and operator overloading for easy switch statements
 constexpr unsigned int hash(const char *s, int off = 0)
 {
     return !s[off] ? 5381 : (hash(s, off + 1) * 33) ^ s[off];
@@ -26,6 +31,12 @@ constexpr inline unsigned int operator""_(char const *p, size_t)
 
 void ConfigReader::init(std::string path)
 {
+    this->configPath = path;
+    readConfigFile(path + "/processing.cfg");
+    readTagsFile(path + "/apriltags.json");
+}
+
+void ConfigReader::readConfigFile(std::string path) {
     std::ifstream in(path);
 
     std::string line;
@@ -106,5 +117,22 @@ void ConfigReader::init(std::string path)
                 this->decodeSharpening = std::stod(value);
                 break;
         }
+    }
+}
+
+void ConfigReader::readTagsFile(std::string path) {
+    std::ifstream in(path);
+    json data = json::parse(in);
+
+    for (auto &tagObj : data) {
+        int id = tagObj["id"];
+        std::vector<double> posArr = tagObj["position"];
+        std::vector<double>  rotArr = tagObj["rotation"];
+
+        Vector3D pos(posArr);
+        Vector3D rot(rotArr);
+
+        Apriltag tag(id, pos, rot);
+        this->tags.push_back(tag);
     }
 }
