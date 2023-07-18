@@ -26,6 +26,9 @@ set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
 link_directories(${apriltag_LIBDIR})
 include_directories(include ${apriltag_INCLUDE_DIRS})
 
+# nlohmann/json linking
+find_package(nlohmann_json CONFIG REQUIRED)
+
 # Creating the library
 file(GLOB SRC 
     src/apriltag/*.cpp
@@ -36,12 +39,12 @@ if (NOT NO_REALSENSE)
     file(GLOB RS_SRC src/realsense/*.cpp)
     add_library(TitanProcessing SHARED ${SRC} ${RS_SRC})
 else()
-    add_library(TitanProcessing SHARED ${SRC})
+    add_library(TitanProcessing 3.2.0 ${SRC})
 endif()
 install(TARGETS TitanProcessing DESTINATION TitanProcessing)
 
 # Linking libraries
-target_link_libraries(TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
 
 # Building examples
 if (BUILD_EXAMPLES)
