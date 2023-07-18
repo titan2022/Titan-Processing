@@ -2,6 +2,8 @@
 #define VECTOR
 
 #include <string>
+#include <vector>
+
 #include <opencv2/core.hpp>
 
 class Vector3D
@@ -11,6 +13,7 @@ class Vector3D
         Vector3D(cv::Vec<float, 3> v);
         Vector3D(cv::Vec<double, 3> v);
         Vector3D(cv::Vec<int, 3> v);
+        Vector3D(std::vector<double> v);
         Vector3D(double* v);
         Vector3D();
 

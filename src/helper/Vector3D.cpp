@@ -1,5 +1,7 @@
 #include <cmath>
 #include <string>
+#include <vector>
+
 #include <opencv2/core.hpp>
 
 #include "helper/Vector3D.hpp"
@@ -26,6 +28,13 @@ Vector3D::Vector3D(cv::Vec<float, 3> v)
 }
 
 Vector3D::Vector3D(cv::Vec<int, 3> v)
+{
+    x = v[0];
+    y = v[1];
+    z = v[2];
+}
+
+Vector3D::Vector3D(std::vector<double> v)
 {
     x = v[0];
     y = v[1];
