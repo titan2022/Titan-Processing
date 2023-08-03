@@ -9,7 +9,8 @@
 ### Windows
 WIP
 ### Build options
-WIP
+* `-DBUILD_EXAMPLES`: builds example files (found in `example/` folder)
+* `-DNO_REALSENSE`: builds without RealSense code for compatiblity
 ## Using
 WIP
 ## Other tools
