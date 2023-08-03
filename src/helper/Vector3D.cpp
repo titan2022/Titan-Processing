@@ -13,21 +13,7 @@ Vector3D::Vector3D(double x, double y, double z)
     this->z = z;
 }
 
-Vector3D::Vector3D(cv::Vec<double, 3> v)
-{
-    x = v[0];
-    y = v[1];
-    z = v[2];
-}
-
-Vector3D::Vector3D(cv::Vec<float, 3> v)
-{
-    x = v[0];
-    y = v[1];
-    z = v[2];
-}
-
-Vector3D::Vector3D(cv::Vec<int, 3> v)
+Vector3D::Vector3D(cv::Vec3d v)
 {
     x = v[0];
     y = v[1];
@@ -41,7 +27,7 @@ Vector3D::Vector3D(std::vector<double> v)
     z = v[2];
 }
 
-Vector3D::Vector3D(double* v)
+Vector3D::Vector3D(double (&v)[])
 {
     x = v[0];
     y = v[1];
@@ -117,6 +103,40 @@ cv::Vec<double, 3> Vector3D::toCV()
     return cv::Vec<double, 3>{x, y, z};
 }
 
+Vector3D Vector3D::matToVec(double (&mat)[]) {
+    // Source: http://motion.pratt.duke.edu/RoboticSystems/3DRotations.html#Converting-from-a-rotation-matrix
+    // Temporarily copied from: https://github.com/titan2022/Jetson-Vision-2023/blob/apriltags/py/detector_client.py
+    // 3x3 matrices follow row-major order (index = row * 3 + col)
+    double theta = acos((mat[0] + mat[4] + mat[8] - 1) / 2);
+    Vector3D pre(0, 0, 0);
+    if (sin(theta) < 1e-3) {
+        return pre; // TODO: impliment special case of theta == pi
+    }
+
+    double rk = (2 * sin(theta));
+    pre.setX((mat[4] - mat[2]) / rk); // -5, -7
+    pre.setY((mat[8] - mat[6]) / rk); // -1, -3
+    pre.setZ((mat[3] - mat[1]) / rk); // 3, 1
+
+    Vector3D result(pre[0] * theta, pre[1] * theta, pre[2] * theta);
+    return result;
+}
+
+double Vector3D::setX(const double value) {
+    x = value;
+    return x;
+}
+
+double Vector3D::setY(const double value) {
+    y = value;
+    return y;
+}
+
+double Vector3D::setZ(const double value) {
+    z = value;
+    return z;
+}
+
 Vector3D Vector3D::normalize()
 {
     Vector3D normalized = getNormalized();
@@ -148,6 +168,13 @@ void Vector3D::rotate(double xAngle, double yAngle, double zAngle)
     rotateZ(zAngle);
 }
 
+void Vector3D::rotate(Vector3D &vec)
+{
+    rotateX(vec.getX());
+    rotateY(vec.getY());
+    rotateZ(vec.getZ());
+}
+
 const Vector3D Vector3D::operator+(const Vector3D &v)
 {
     return Vector3D(x + v.x, y + v.y, z + v.z);
@@ -174,12 +201,12 @@ Vector3D &Vector3D::operator-=(Vector3D const &v)
     return *this;
 }
 
-const Vector3D Vector3D::operator*(const double s)
+Vector3D Vector3D::operator*(const double s)
 {
     return Vector3D(x * s, y * s, z * s);
 }
 
-const Vector3D Vector3D::operator/(const double s)
+Vector3D Vector3D::operator/(const double s)
 {
     return Vector3D(x / s, y / s, z / s);
 }
