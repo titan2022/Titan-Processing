@@ -18,11 +18,11 @@
 // TODO: test on ARM
 struct VectorData
 {
-    char type;   // 8 bytes (1 + 7)
-    double x;    // 8 bytes
-    double y;    // 8 bytes
-    double z;    // 8 bytes
-    const char* name;
+    char type; // 8 bytes (1 + 7)
+    double x;  // 8 bytes
+    double y;  // 8 bytes
+    double z;  // 8 bytes
+    std::string name;
 };
 
 NetworkingClient::NetworkingClient(std::string ip, uint16_t port)
@@ -42,10 +42,10 @@ double *NetworkingClient::send_vector(std::string msg, bool withReply, Vector3D 
     data.x = v.getX();
     data.y = v.getY();
     data.z = v.getZ();
-    data.name = msg.c_str();
+    data.name = msg + '\n';
 
     const void* buffer = static_cast<void*>(&data);
-    ::sendto(sock, buffer, 32 + msg.length(), 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+    ::sendto(sock, buffer, sizeof(data), 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 
     if (withReply)
     {
