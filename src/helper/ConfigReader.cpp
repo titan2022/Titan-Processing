@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 
+#include <opencv2/core.hpp>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -37,9 +38,12 @@ void ConfigReader::init(std::string path)
 }
 
 void ConfigReader::readConfigFile(std::string path) {
-    std::ifstream in(path);
+    this->cameraMat = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
+    this->distCoeffs = cv::Mat(5, 1, CV_64FC1, cv::Scalar::all(0));
 
+    std::ifstream in(path);
     std::string line;
+
     while (std::getline(in, line))
     {
         if (line.back() == '\r')
@@ -98,6 +102,21 @@ void ConfigReader::readConfigFile(std::string path) {
             case "center_y"_:
                 this->centerY = std::stod(value);
                 break;
+            case "k_1"_:
+                this->distCoeffs.at<double>(0, 0) = std::stod(value);
+                break;
+            case "k_2"_:
+                this->distCoeffs.at<double>(0, 1) = std::stod(value);
+                break;
+            case "p_1"_:
+                this->distCoeffs.at<double>(0, 2) = std::stod(value);
+                break;
+            case "p_2"_:
+                this->distCoeffs.at<double>(0, 3) = std::stod(value);
+                break;
+            case "k_3"_:
+                this->distCoeffs.at<double>(0, 4) = std::stod(value);
+                break;
             case "hue_shift"_:
                 this->hueShift = std::stoi(value);
                 break;
@@ -118,14 +137,21 @@ void ConfigReader::readConfigFile(std::string path) {
                 break;
         }
     }
+
+    this->cameraMat.at<double>(0, 0) = this->focalX;
+    this->cameraMat.at<double>(1, 1) = this->focalY;
+    this->cameraMat.at<double>(2, 0) = this->centerX;
+    this->cameraMat.at<double>(2, 1) = this->centerY;
+    this->cameraMat.at<double>(2, 2) = 1;
 }
 
 void ConfigReader::readTagsFile(std::string path) {
     std::ifstream in(path);
     json data = json::parse(in);
 
+    int id = 0;
     for (auto &tagObj : data) {
-        int id = tagObj["id"];
+        id++;
         std::vector<double> posArr = tagObj["position"];
         std::vector<double>  rotArr = tagObj["rotation"];
 

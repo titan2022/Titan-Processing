@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <opencv2/core.hpp>
 
 #include "../apriltag/Apriltag.hpp"
 
@@ -24,6 +25,8 @@ class ConfigReader
         double focalY;
         double centerX;
         double centerY;
+        cv::Mat cameraMat;
+        cv::Mat distCoeffs;
 
         // RealSense
         uint8_t hueShift;
