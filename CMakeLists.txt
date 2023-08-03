@@ -4,7 +4,7 @@ project(TitanProcessing VERSION 0.0.0 LANGUAGES C CXX)
 
 # Directories
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
@@ -16,7 +16,7 @@ endif()
 # OpenCV linking
 set(OpenCV_DIR /usr/lib/opencv)
 option(OpenCV_STATIC OFF)
-find_package(OpenCV 4 REQUIRED core imgproc highgui videoio)
+find_package(OpenCV 4)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Apriltag linking

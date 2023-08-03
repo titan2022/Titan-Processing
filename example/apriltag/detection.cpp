@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <functional>
 
 #include "../../include/apriltag/Apriltag.hpp"
 #include "../../include/apriltag/ApriltagDetector.hpp"
@@ -10,7 +9,7 @@
 
 int main(int argc, char const *argv[])
 {
-    ConfigReader config("./example");
+    ConfigReader config("../example");
     NetworkingClient client(config.ip, config.port);
     
     Localizer localizer(config, client);
