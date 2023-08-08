@@ -4,7 +4,8 @@
 #include <librealsense2/hpp/rs_context.hpp>
 #include <librealsense2/hpp/rs_pipeline.hpp>
 #include "InputModule.h"
-#include "RealsenseFrame.h"
+
+class RealsenseFrame;
 
 class RealsenseCamera : public InputModule
 {
@@ -34,8 +35,14 @@ private:
 	rs2::frameset currentFrameSet;
 	rs2::colorizer colorMap;
 
+	std::vector<std::shared_ptr<ProcessingModule>> depthSubscribers;
+	std::vector<std::shared_ptr<ProcessingModule>> colorSubscribers;
+	std::vector<std::shared_ptr<ProcessingModule>> positionSubscribers;
+protected:
+	void addProcessingModule(const std::shared_ptr<ProcessingModule>& processingModule) override;
+
 public:
-	RealsenseCamera(int depthIndex, int colorIndex);
+	RealsenseCamera(const std::string& name, int depthIndex, int colorIndex);
 	
 	static const size_t xResolution, yResolution;
 	static const int frameRate;

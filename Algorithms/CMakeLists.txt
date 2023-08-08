@@ -5,7 +5,7 @@ find_package(OpenCV REQUIRED)
 
 file(GLOB SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
-add_library(algorithms STATIC ${SOURCES})
+add_library(algorithms STATIC ${SOURCES} )
 
 target_include_directories(algorithms PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_include_directories(algorithms PRIVATE ${ALGORITHMS_INCLUDE})

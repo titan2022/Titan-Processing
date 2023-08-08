@@ -1,20 +1,11 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-enum Requirements
+enum InputType
 {
 	DEPTH,
 	COLOR,
 	POSITION
-};
-
-enum Outputs
-{
-	GRAPHIC,
-	OBJECT,
-	DOUBLE,
-	POSITION,
-	LIST
 };
 
 #endif

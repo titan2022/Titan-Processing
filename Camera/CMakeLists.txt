@@ -11,7 +11,7 @@ file(GLOB SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 add_library(camera STATIC ${SOURCES})
 
-target_include_directories(camera PRIVATE ${REALSENSE_INCLUDE})
+target_include_directories(camera PUBLIC ${REALSENSE_INCLUDE})
 target_include_directories(camera PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_include_directories(camera PRIVATE ${CAMERA_INCLUDE})
 target_include_directories(camera PRIVATE ${ALGORITHMS_INCLUDE})

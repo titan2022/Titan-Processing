@@ -15,12 +15,16 @@
 class ProcessingModule : public Module
 {
 public:
-	std::vector<Requirements> getRequirements() const;
-	std::vector<Outputs> getOutputTypes() const;
+	std::unordered_map<InputType, bool> inputMatricesLinked;
+	std::unordered_map<InputType, cv::Mat> inputMatrices;
 
+	/// <summary>
+	/// Checks if all the inputMatrices are properly linked
+	/// </summary>
+	virtual void initialize() override;
 
-	std::unordered_map<Requirements, cv::Mat> inputMatrices;
-	std::unordered_map<Outputs, cv::Mat> outputMatrices;
+	//WARNING: Load constructor after initialization of inputMatrices to properly create inputMatricesLinked variable!
+	ProcessingModule(const std::string& name, const std::unordered_map<InputType, cv::Mat>& inputList);
 };
 
 #endif

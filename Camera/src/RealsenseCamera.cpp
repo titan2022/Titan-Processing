@@ -1,8 +1,9 @@
+#include "RealsenseCamera.h"
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
-#include "RealsenseCamera.h"
+#include "RealsenseFrame.h"
 
 const double RealsenseCamera::exposure = 100;
 const double RealsenseCamera::gain = 64;
@@ -22,7 +23,8 @@ const double RealsenseCamera::timeOut = 1000;
 const rs2::align RealsenseCamera::frameAligner(RS2_STREAM_DEPTH);
 const int RealsenseCamera::alignmentType = RS2_STREAM_DEPTH;
 
-RealsenseCamera::RealsenseCamera(int depthIndex, int colorIndex) :
+RealsenseCamera::RealsenseCamera(const std::string& name, int depthIndex, int colorIndex) :
+	InputModule(name),
 	depthSensor(context.query_all_sensors()[depthIndex]),
 	colorSensor(context.query_all_sensors()[colorIndex])
 {
@@ -33,7 +35,6 @@ void RealsenseCamera::initialize()
 {
 	config();
 	pipeline.start();
-
 }
 
 void RealsenseCamera::config()
@@ -90,7 +91,7 @@ RealsenseFrame RealsenseCamera::getFrame()
 bool RealsenseCamera::isValid() const
 {
 	rs2::context checkerContext;
-	if (checkerContext.query_devices().size() >  0)
+	if (checkerContext.query_devices().size() > 0)
 	{
 		return true;
 	}
@@ -105,9 +106,46 @@ void RealsenseCamera::execute()
 	nextFrame();
 	auto frame = getFrame();
 
-	sourceMatrices[Requirements::DEPTH] = frame.getDepthMatrix();
-	sourceMatrices[Requirements::COLOR] = frame.getColorMatrix();
-	sourceMatrices[Requirements::POSITION] = frame.getPositionMatrix();
+	sourceMatrices[InputType::DEPTH] = frame.getDepthMatrix();
+	sourceMatrices[InputType::COLOR] = frame.getColorMatrix();
+	sourceMatrices[InputType::POSITION] = frame.getPositionMatrix();
 
-	pushData();
+	for (auto depth : depthSubscribers)
+	{
+		sourceMatrices[InputType::DEPTH].copyTo(depth->inputMatrices[InputType::DEPTH]);
+	}
+
+	for (auto color : colorSubscribers)
+	{
+		sourceMatrices[InputType::COLOR].copyTo(color->inputMatrices[InputType::COLOR]);
+		processingModules[0]->inputMatrices[InputType::COLOR];
+	}
+
+	for (auto position : positionSubscribers)
+	{
+		sourceMatrices[InputType::POSITION].copyTo(position->inputMatrices[InputType::POSITION]);
+	}
+}
+
+void RealsenseCamera::addProcessingModule(const std::shared_ptr<ProcessingModule>& processingModule)
+{
+	InputModule::addProcessingModule(processingModule);
+	for (auto pair : processingModule->inputMatrices)
+	{
+		if (pair.first == InputType::DEPTH)
+		{
+			depthSubscribers.push_back(processingModule);
+			processingModule->inputMatricesLinked[InputType::DEPTH] = true;
+		} 
+		else if (pair.first == InputType::COLOR)
+		{
+			colorSubscribers.push_back(processingModule);
+			processingModule->inputMatricesLinked[InputType::COLOR] = true;
+		} 
+		else if (pair.first == InputType::POSITION)
+		{
+			positionSubscribers.push_back(processingModule);
+			processingModule->inputMatricesLinked[InputType::POSITION] = true;
+		}
+	}
 }

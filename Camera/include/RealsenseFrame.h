@@ -4,6 +4,9 @@
 #include <opencv2/core/mat.hpp>
 #include "Frame.h"
 
+
+class RealsenseCamera;
+
 class RealsenseFrame : public Frame
 {
 private:
@@ -22,8 +25,8 @@ public:
 	inline bool hasColor() const override { return true; }
 	inline bool hasPosition() const override { return true; }
 
-	inline size_t getXResolution() const override { return RealsenseCamera::xResolution; }
-	inline size_t getYResolution() const override { return RealsenseCamera::yResolution; }
+	size_t getXResolution() const override;
+	size_t getYResolution() const override;
 };
 
 #endif

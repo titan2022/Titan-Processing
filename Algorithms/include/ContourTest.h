@@ -98,9 +98,7 @@ public:
 	inline void Process(cv::Mat& inputMatrix) {
 		//Step Blur0:
 		//input
-		cv::Mat blurInput;
-		inputMatrix.copyTo(blurInput);
-		blur(blurInput, blurType, blurRadius, this->blurOutput);
+		blur(inputMatrix, blurType, blurRadius, this->blurOutput);
 		//Step HSL_Threshold0:
 		
 		hslThreshold(this->blurOutput, ObjectType::properHSL, this->hslThresholdOutput);

@@ -1,24 +1,23 @@
 
 #include "ProcessingModule.h"
 
-std::vector<Requirements> ProcessingModule::getRequirements() const
+ProcessingModule::ProcessingModule(const std::string& name, const std::unordered_map<InputType, cv::Mat>& inputList) : 
+	Module(name),
+	inputMatrices(inputList)
 {
-	std::vector<Requirements> requirements(inputMatrices.size());
 	for (auto pair : inputMatrices)
 	{
-		requirements.push_back(pair.first);
+		inputMatricesLinked.insert(std::pair<InputType, bool>(pair.first, false));
 	}
-
-	return requirements;
 }
 
-std::vector<Outputs> ProcessingModule::getOutputTypes() const
+void ProcessingModule::initialize()
 {
-	std::vector<Requirements> outputsTypes(outputMatrices.size());
-	for (auto pair : outputMatrices)
+	for (auto pair : inputMatricesLinked)
 	{
-		requirements.push_back(pair.first);
+		if (pair.second == false)
+		{
+			throw std::logic_error(name + " has not linked to all necessary InputModules!");
+		}
 	}
-
-	return outputsTypes;
 }

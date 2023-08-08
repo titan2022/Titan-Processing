@@ -10,17 +10,13 @@
 class Module
 {
 protected:
+	Module(const std::string& i_name);
 	std::string name;
 public:
-	inline std::string getName() { return name; }
+	inline const std::string& getName() { return name; }
 	inline virtual void initialize() { }
 	inline virtual void execute() { }
-	inline virtual void finalize() { }
+	//inline virtual void finalize() { }
 };
-
-std::ostream& operator<< (std::ostream& prev, Module mod)
-{
-	return prev << mod.getName();
-}
 
 #endif

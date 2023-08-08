@@ -9,14 +9,20 @@
 /// </summary>
 class OutputModule : public Module
 {
-protected:
-	std::shared_ptr<ProcessingModule> processModule;
 public:
-	bool checkModuleIsValid(std::shared_ptr<ProcessingModule> processModule) const;
-	bool linkProcessingModule(std::shared_ptr<ProcessingModule> processModule);
-	virtual void getOutput() const = 0;
-	virtual Outputs getOutputType() const = 0;
-	inline const std::shared_ptr<ProcessingModule>& getProcessingModule() const { return processModule; }
+	OutputModule(const std::string& name);
+	/// <summary>
+	/// To store the processing module casted to the OutputType interface for ease of executing code
+	/// </summary>
+	/// <param name="processingMod"></param>
+	virtual bool setProcessingModule(const std::shared_ptr<ProcessingModule>& processingMod) = 0;
+
+protected:
+	std::shared_ptr<ProcessingModule> actualProcessingModule;
+	/// <summary>
+	/// Points to the processingModule as a module to perform regular methods while the other points to it as an OutputType getData
+	/// </summary>
+	
 };
 
 #endif

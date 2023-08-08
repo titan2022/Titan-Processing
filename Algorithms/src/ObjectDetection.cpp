@@ -8,21 +8,20 @@
 #include <cmath>
 #include <iostream>
 
-const std::vector<Requirements> ObjectDetection::requirements = { Requirements::COLOR, Requirements::POSITION };
-const std::vector<Outputs> ObjectDetection::outputs = { Outputs::GRAPHIC };
+ObjectDetection::ObjectDetection(const std::string& name) : ProcessingModule(name, { {InputType::COLOR, cv::Mat()}, {InputType::POSITION, cv::Mat()} })
+{ 
 
-ObjectDetection::ObjectDetection() { }
-
-void ObjectDetection::initialize()
-{
-	inputMatrices.insert(std::pair<Requirements, cv::Mat>(Requirements::COLOR, cv::Mat()));
-	inputMatrices.insert(std::pair<Requirements, cv::Mat>(Requirements::POSITION, cv::Mat()));
-	outputMatrices.insert(std::pair<Outputs, cv::Mat>(Outputs::GRAPHIC, cv::Mat()));
 }
 
 void ObjectDetection::execute()
 {
-	//contourDetector.Process<T>(matrices["Color"]);
+	//contourDetector.Process<Cone>(inputMatrices[InputType::COLOR]);
+
+}
+
+cv::Mat ObjectDetection::getData()
+{
+	return inputMatrices[InputType::COLOR];
 }
 
 //void ObjectDetection::printCenterRGB()

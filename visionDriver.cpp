@@ -12,18 +12,29 @@
 #include <opencv2/core/cuda.hpp>
 #include <cmath>
 #include "RealsenseCamera.h"
-#include "ContourTest.h"
-#include "Cone.h"
-#include "Cube.h"
 #include "ObjectDetection.h"
-#include "RedRobot.h"
-#include "BlueRobot.h"
 #include "CoordinateTransformations.h"
+#include "GraphicOutputModule.h"
+#include "VisionProcessor.h"
 //#include "NetworkingClient.hpp"
 
 
 int main(int argc, char* argv[])
 {
+	std::shared_ptr<InputModule> inputModule = std::make_shared<RealsenseCamera>("RealsenseCamera", 0, 1);
+	std::shared_ptr<ProcessingModule> processModule = std::make_shared<ObjectDetection>("Cone Search");
+	std::shared_ptr<OutputModule> outputModule = std::make_shared<GraphicOutputModule>("Direct Graphic Output");
+
+	VisionProcessor analyzer;
+
+	inputModule->addProcessingModule(processModule);
+	outputModule->setProcessingModule(processModule);
+
+	analyzer.addInputModule(inputModule);
+	analyzer.addProcessingModule(processModule);
+	analyzer.addOutputModule(outputModule);
+
+	analyzer.run();
 //	int streamOffset = 0;
 //	bool cameraDisconnected = false;
 //	RealsenseCamera camera(0, 1);
