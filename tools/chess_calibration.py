@@ -6,6 +6,7 @@ import numpy as np
 config_path = sys.argv[1]
 config = configobj.ConfigObj(config_path)
 
+# Download checkboard pattern from OpenCV docs
 CHECKERBOARD = (6, 9)
 
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -24,7 +25,7 @@ while cap.isOpened():
     status, image = cap.read()
     key = cv2.waitKey(1)
 
-    if key == 32:
+    if key == 32: # Space key
         print("Image added")
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         ret, corners = cv2.findChessboardCorners(
