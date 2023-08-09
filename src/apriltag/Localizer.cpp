@@ -31,6 +31,15 @@ Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec)
     return newTag;
 }
 
+// Get global pose
+Apriltag calculatePose(Apriltag &relative, Apriltag &global) {
+    Vector3D newPos = global.position - relative.position;
+    Vector3D newRot = global.rotation - relative.rotation;
+
+    Apriltag result(relative.id, newPos, newRot);
+    return result;
+}
+
 Localizer::Localizer(ConfigReader &config, NetworkingClient &client) : config(config), client(client)
 {
     
@@ -51,12 +60,4 @@ void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec)
         client.send_vector("pos", false, this->position);
         client.send_vector("rot", false, this->rotation);
     }
-}
-
-Apriltag Localizer::calculatePose(Apriltag &relative, Apriltag &global) {
-    Vector3D newPos = global.position - relative.position;
-    Vector3D newRot = global.rotation - relative.rotation;
-
-    Apriltag result(relative.id, newPos, newRot);
-    return result;
 }

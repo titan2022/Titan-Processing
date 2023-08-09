@@ -20,8 +20,6 @@ class Localizer
     private:
         ConfigReader &config;
         NetworkingClient &client;
-
-        Apriltag calculatePose(Apriltag &relative, Apriltag &global);
 };
 
 #endif
