@@ -140,8 +140,8 @@ void ConfigReader::readConfigFile(std::string path) {
 
     this->cameraMat.at<double>(0, 0) = this->focalX;
     this->cameraMat.at<double>(1, 1) = this->focalY;
-    this->cameraMat.at<double>(2, 0) = this->centerX;
-    this->cameraMat.at<double>(2, 1) = this->centerY;
+    this->cameraMat.at<double>(0, 2) = this->centerX;
+    this->cameraMat.at<double>(1, 2) = this->centerY;
     this->cameraMat.at<double>(2, 2) = 1;
 }
 
