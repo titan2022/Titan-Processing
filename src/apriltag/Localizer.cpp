@@ -26,7 +26,7 @@ Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec)
     Vector3D rot(rotVec);
     rot *= Unit::DEG;
 
-    Apriltag newTag(id, pos, rot);
+    Apriltag newTag(id - 1, pos, rot);
 
     return newTag;
 }
@@ -40,24 +40,42 @@ Apriltag calculatePose(Apriltag &relative, Apriltag &global) {
     return result;
 }
 
-Localizer::Localizer(ConfigReader &config, NetworkingClient &client) : config(config), client(client)
+Localizer::Localizer(ConfigReader &config, NetworkingClient &client, PoseFilter &filter) :
+config(config), client(client), filter(filter)
 {
     
 }
 
-void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec)
+void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double dt)
 {
     // TODO: Apriltag camPose = calculatePose(tag, this->config.tags[tag.id - 1]);
 
     // TODO: add to relative tag hash map
     // TODO: add to absolute tag hash map
 
-    if (id == 5) {
-        Apriltag invTag = correctPerspective(id, tvec, rvec);
-        this->position = invTag.position;
-        this->rotation = invTag.rotation;
-
-        client.send_vector("pos", false, this->position);
-        client.send_vector("rot", false, this->rotation);
+    if (id != 5) {
+        return;
     }
+
+    Apriltag invTag = correctPerspective(id, tvec, rvec);
+    filter.updateTag(invTag, dt);
+
+    // if (id == 5) {
+    //     Apriltag invTag = correctPerspective(id, tvec, rvec);
+    //     this->position = invTag.position;
+    //     this->rotation = invTag.rotation;
+
+    //     client.send_vector("pos", false, this->position);
+    //     client.send_vector("rot", false, this->rotation);
+    // }
+}
+
+void Localizer::step(double dt) {
+    client.send_vector("pos", false, filter.position);
+    client.send_vector("rot", false, filter.rotation);
+
+    Vector3D test(filter.test1, filter.test2, 0);
+    client.send_vector("test", false, test);
+
+    filter.predict(dt);
 }
