@@ -76,13 +76,14 @@ void ApriltagDetector::detect()
                 cv::Vec3d rVec = rVecs[i];
                 cv::Vec3d tVec = tVecs[i];
 
-                localizer.addApriltag(ids[i], tVec, rVec);
+                localizer.addApriltag(ids[i], tVec, rVec, 30.0 / 1000.0);
 
                 cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
             }
         }
 
         if (this->showWindow) {
+            localizer.step(30.0 / 1000.0);
             cv::imshow("Apriltag Debug Window", out);
             if (cv::waitKey(1) == 27) { // ESC key
                 break;
