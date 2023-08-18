@@ -34,6 +34,7 @@ file(GLOB SRC
     src/apriltag/*.cpp
     src/helper/*.cpp
     src/networking/*.cpp
+    src/physics/*.cpp
 )
 if (NOT NO_REALSENSE)
     file(GLOB RS_SRC src/realsense/*.cpp)
