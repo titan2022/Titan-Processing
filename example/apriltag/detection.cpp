@@ -6,13 +6,15 @@
 #include "../../include/apriltag/Localizer.hpp"
 #include "../../include/helper/ConfigReader.hpp"
 #include "../../include/networking/Client.hpp"
+#include "../../include/physics/PoseFilter.hpp"
 
 int main(int argc, char const *argv[])
 {
     ConfigReader config("../example");
     NetworkingClient client(config.ip, config.port);
     
-    Localizer localizer(config, client);
+    PoseFilter filter(config);
+    Localizer localizer(config, client, filter);
     ApriltagDetector detector(0, true, config, localizer);
 
     detector.startStream();
