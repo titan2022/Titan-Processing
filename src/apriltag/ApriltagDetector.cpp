@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>
@@ -28,6 +29,7 @@ void ApriltagDetector::startStream()
     cap.set(cv::CAP_PROP_FPS, config.fps);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, config.width);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.height);
+    cap.set(cv::CAP_PROP_EXPOSURE, config.exposure);
 }
 
 void ApriltagDetector::detect()
@@ -46,8 +48,18 @@ void ApriltagDetector::detect()
     objPoints.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(markerLength/2.f, -markerLength/2.f, 0);
     objPoints.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-markerLength/2.f, -markerLength/2.f, 0);
 
+    auto prevTS = std::chrono::steady_clock::now();
+    auto postTS = prevTS;
+    double dt = 1.0 / config.fps;
+
     while (true)
     {
+        // Measure delta time
+        postTS = std::chrono::steady_clock::now();
+        dt = std::chrono::duration_cast<std::chrono::milliseconds>(postTS - prevTS).count() / 1000.0;
+        prevTS = postTS;
+        std::cout << dt << std::endl;
+
         cv::Mat frame, gray, out;
         cap >> frame;
 
@@ -76,14 +88,14 @@ void ApriltagDetector::detect()
                 cv::Vec3d rVec = rVecs[i];
                 cv::Vec3d tVec = tVecs[i];
 
-                localizer.addApriltag(ids[i], tVec, rVec, 30.0 / 1000.0);
+                localizer.addApriltag(ids[i], tVec, rVec, dt);
 
                 cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
             }
         }
 
         if (this->showWindow) {
-            localizer.step(30.0 / 1000.0);
+            localizer.step(dt);
             cv::imshow("Apriltag Debug Window", out);
             if (cv::waitKey(1) == 27) { // ESC key
                 break;
