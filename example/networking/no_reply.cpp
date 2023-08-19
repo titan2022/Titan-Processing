@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     Vector3D v(0, 1, 2);
 
     NetworkingClient client(ip, port);
-    client.send_vector("test", false, v);
+    client.send_vector("test", v, false);
     
     std::cout << "Vector " << v.toString() << " sent to " << ip << ":" << port << std::endl;
 

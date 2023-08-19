@@ -71,11 +71,11 @@ void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double dt)
 }
 
 void Localizer::step(double dt) {
-    client.send_vector("pos", false, filter.position);
-    client.send_vector("rot", false, filter.rotation);
+    client.send_vector("pos", filter.position, false);
+    client.send_vector("rot", filter.rotation, false);
 
     Vector3D test(filter.test1, filter.test2, 0);
-    client.send_vector("test", false, test);
+    client.send_vector("test", test, false);
 
     filter.predict(dt);
 }
