@@ -34,7 +34,7 @@ NetworkingClient::NetworkingClient(std::string ip, uint16_t port)
     destination.sin_addr.s_addr = inet_addr(ip.c_str());
 }
 
-double *NetworkingClient::send_vector(std::string msg, bool withReply, Vector3D &v)
+Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withReply)
 {
     VectorData data;
 
@@ -49,22 +49,14 @@ double *NetworkingClient::send_vector(std::string msg, bool withReply, Vector3D 
 
     if (withReply)
     {
-        char replyBuffer[1024];
-        ::recvfrom(sock, replyBuffer, 1024, 0, reinterpret_cast<sockaddr *>(&destination), (socklen_t *)sizeof(destination));
-
-        double replyVector[3];
-
-        for (uint8_t i = 0; i < 3; i++)
-        {
-            char vectorBuffer[8];
-            memcpy(vectorBuffer + i * 8, replyBuffer, 8); // TODO: transition away from C style memory functions...
-            replyVector[i] = bytes_to_double(vectorBuffer);
-        }
-
+        // Untested code
+        char* replyBuffer;
+        ::recvfrom(sock, replyBuffer, 24, 0, reinterpret_cast<sockaddr *>(&destination), (socklen_t *)sizeof(destination));
+        Vector3D replyVector(replyBuffer);
         return replyVector;
     }
 
-    return NULL;
+    return;
 }
 
 double NetworkingClient::bytes_to_double(char *b)
