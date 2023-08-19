@@ -56,7 +56,7 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
         return replyVector;
     }
 
-    return;
+    return Vector3D();
 }
 
 double NetworkingClient::bytes_to_double(char *b)
