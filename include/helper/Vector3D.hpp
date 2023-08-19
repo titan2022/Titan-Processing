@@ -13,6 +13,7 @@ class Vector3D
         Vector3D(cv::Vec3d v);
         Vector3D(std::vector<double> v);
         Vector3D(double (&v)[]);
+        Vector3D(char* d);
         Vector3D();
 
         double getX();

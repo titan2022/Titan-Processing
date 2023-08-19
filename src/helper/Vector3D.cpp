@@ -34,6 +34,20 @@ Vector3D::Vector3D(double (&v)[])
     z = v[2];
 }
 
+struct StructVector3D
+{
+    double x;
+    double y;
+    double z;
+};
+Vector3D::Vector3D(char* d)
+{
+    StructVector3D* structVec = reinterpret_cast<StructVector3D *>(d);
+    x = structVec->x;
+    y = structVec->y;
+    z = structVec->z;
+}
+
 Vector3D::Vector3D()
 {
     x = 0;
