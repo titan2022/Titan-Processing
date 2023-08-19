@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include "../../include/apriltag/Apriltag.hpp"
 #include "../../include/apriltag/ApriltagDetector.hpp"
@@ -15,10 +16,13 @@ int main(int argc, char const *argv[])
     
     PoseFilter filter(config);
     Localizer localizer(config, client, filter);
-    ApriltagDetector detector(0, true, config, localizer);
 
+    ApriltagDetector detector(0, true, config, localizer);
     detector.startStream();
-    detector.detect();
+
+    // Multithread streams
+    std::thread detectorThread(&ApriltagDetector::detect, &detector);
+    detectorThread.join();
     
     return 0;
 }
