@@ -45,9 +45,17 @@ config(config), position(), rotation()
         P[i] = cv::Mat::eye(12, 12, CV_64FC1);
     }
 
-    // Initialize ____ matrices
-    R = cv::Mat::eye(12, 12, CV_64FC1);
+    // Initialize process noise matrix
     Q = cv::Mat::eye(12, 12, CV_64FC1);
+    for (int i = 0; i < 12; i++) {
+        Q.at<double>(i, i) = 1;
+    }
+
+    // Initialize system noise offset matrix
+    R = cv::Mat::eye(6, 6, CV_64FC1);
+    for (int i = 0; i < 6; i++) {
+        R.at<double>(i, i) = 0.25;
+    }
 
     // Initialize control input at default (zero == unknown)
     u = cv::Mat::eye(1, 1, CV_64FC1);
@@ -78,11 +86,10 @@ void PoseFilter::predict(double dt)
         }
     }
 
-    //std::cout << dt << std::endl;
-
-    test1 = x.at<double>(2, 0);
     // Predicting means
+
     x = F * x;// + B * u;
+
     test2 = x.at<double>(2, 0);
 
     position.setX(x.at<double>(0, 0));
@@ -134,8 +141,13 @@ void PoseFilter::updateTag(Apriltag &tag, double dt)
     z.at<double>(4, 0) = yRot;
     z.at<double>(5, 0) = zRot;
 
+    // Increase uncertainty based on distance
+    for (int i = 0; i < 3; i++) {
+        R.at<double>(i, i) = abs(z.at<double>(2, 0)) * 10;
+    }
+
     // System uncertenty
-    cv::Mat S = H * P[tag.id] * H.t();// + R;
+    cv::Mat S = H * P[tag.id] * H.t() + R;
 
     // Kalman gain
     cv::Mat K = P[tag.id] * H.t() * S.inv();
@@ -152,6 +164,8 @@ void PoseFilter::updateTag(Apriltag &tag, double dt)
     rotation.setX(x.at<double>(3, 0));
     rotation.setY(x.at<double>(4, 0));
     rotation.setZ(x.at<double>(5, 0));
+
+    test1 = zPos;
 
     // Updating covariance
     P[tag.id] = (I - K * H) * P[tag.id];
