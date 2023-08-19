@@ -90,6 +90,9 @@ void ConfigReader::readConfigFile(std::string path) {
             case "fps"_:
                 this->fps = std::stoi(value);
                 break;
+            case "exposure"_:
+                this->exposure = std::stoi(value);
+                break;
             case "focal_x"_:
                 this->focalX = std::stod(value);
                 break;

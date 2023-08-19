@@ -21,6 +21,7 @@ class ConfigReader
         uint16_t width;
         uint16_t height;
         uint8_t fps;
+        uint16_t exposure;
         double focalX;
         double focalY;
         double centerX;
