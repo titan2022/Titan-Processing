@@ -1,5 +1,5 @@
-#ifndef OBJECT_DETECTION_HH
-#define OBJECT_DETECTION_HH
+#ifndef OBJECT_DETECTION_MODULE_HH
+#define OBJECT_DETECTION_MODULE_HH
 
 #include <opencv2/core/mat.hpp>
 #include "Cone.h"
@@ -12,7 +12,7 @@
 
 
 // Takes the aligned frame data and performs detection algorithms on the data to search for objects
-class ObjectDetection : public ProcessingModule, public IGraphicOutputType
+class ObjectDetectionModule : public ProcessingModule, public IGraphicOutputType
 {
 private:
 	ContourTest contourDetector;
@@ -24,13 +24,13 @@ private:
 
 	//void reset();
 public:
-	ObjectDetection(const std::string& name);
+	ObjectDetectionModule(const std::string& name);
 
 	void execute() override;
 
 	cv::Mat getData() override;
 
-	//ObjectDetection(const CameraFrame& alignedFrame);
+	//ObjectDetectionModule(const CameraFrame& alignedFrame);
 	////For processes that must be done for all objects
 	//void load(const CameraFrame& alignedFrame);
 	//resets the current matrices to the original CameraFrame matrices

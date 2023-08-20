@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "../include/ObjectDetection.h"
+#include "../include/ObjectDetectionModule.h"
 #include "../include/Vector.h"
 #include "../include/RedRobot.h"
 #include "../include/BlueRobot.h"
@@ -8,23 +8,23 @@
 #include <cmath>
 #include <iostream>
 
-ObjectDetection::ObjectDetection(const std::string& name) : ProcessingModule(name, { {InputType::COLOR, cv::Mat()}, {InputType::POSITION, cv::Mat()} })
+ObjectDetectionModule::ObjectDetectionModule(const std::string& name) : ProcessingModule(name, { {InputType::COLOR, cv::Mat()}, {InputType::POSITION, cv::Mat()} })
 { 
 
 }
 
-void ObjectDetection::execute()
+void ObjectDetectionModule::execute()
 {
 	//contourDetector.Process<Cone>(inputMatrices[InputType::COLOR]);
 
 }
 
-cv::Mat ObjectDetection::getData()
+cv::Mat ObjectDetectionModule::getData()
 {
 	return inputMatrices[InputType::COLOR];
 }
 
-//void ObjectDetection::printCenterRGB()
+//void ObjectDetectionModule::printCenterRGB()
 //{
 //	cv::Mat hslMatrix; 
 //	cv::cvtColor(colorMatrix, hslMatrix, cv::COLOR_BGR2HLS);
@@ -32,7 +32,7 @@ cv::Mat ObjectDetection::getData()
 //	std::cout << (int) vec[0] << ' ' << (int) vec[1] << ' ' << (int) vec[2] << ' ' << '\n';
 //}
 
-//std::vector<Object*> ObjectDetection::searchForObjects()
+//std::vector<Object*> ObjectDetectionModule::searchForObjects()
 //{
 //	//Kludge, should figure out a better way to do this format
 //	/*auto redRobots = searchFor<RedRobot>();
@@ -68,7 +68,7 @@ cv::Mat ObjectDetection::getData()
 //	return results;
 //}
 
-//std::vector<Robot*> ObjectDetection::searchForRobots()
+//std::vector<Robot*> ObjectDetectionModule::searchForRobots()
 //{
 //	std::vector<Robot*> results;
 //	contourDetector.Process<RedRobot>(colorMatrix);
@@ -94,7 +94,7 @@ cv::Mat ObjectDetection::getData()
 //	return results;
 //}
 //
-//std::vector<Cone> ObjectDetection::searchForCones()
+//std::vector<Cone> ObjectDetectionModule::searchForCones()
 //{
 //	contourDetector.Process<Cone>(colorMatrix);
 //	std::vector<cv::Point2i>* coordinates = contourDetector.getContourCenters();
@@ -108,7 +108,7 @@ cv::Mat ObjectDetection::getData()
 //	return results;
 //}
 //
-//std::vector<Cube> ObjectDetection::searchForCubes()
+//std::vector<Cube> ObjectDetectionModule::searchForCubes()
 //{
 //	contourDetector.Process<Cube>(colorMatrix);
 //	std::vector<cv::Point2i>* coordinates = contourDetector.getContourCenters();
@@ -123,13 +123,13 @@ cv::Mat ObjectDetection::getData()
 //}
 
 //
-//void ObjectDetection::showColorFrame()
+//void ObjectDetectionModule::showColorFrame()
 //{
 //	cv::imshow("Color Frame", colorMatrix);
 //	cv::waitKey(1);
 //}
 //
-//void ObjectDetection::showContourFrame()
+//void ObjectDetectionModule::showContourFrame()
 //{
 //	Mat contourMatrix = colorMatrix;
 //	cv::drawContours(contourMatrix, *contourDetector.GetFindContoursOutput(), -1, cv::Scalar(255, 0, 0));

@@ -12,7 +12,7 @@
 #include <opencv2/core/cuda.hpp>
 #include <cmath>
 #include "RealsenseCamera.h"
-#include "ObjectDetection.h"
+#include "ObjectDetectionModule.h"
 #include "CoordinateTransformations.h"
 #include "GraphicOutputModule.h"
 #include "VisionProcessor.h"
@@ -22,7 +22,7 @@
 int main(int argc, char* argv[])
 {
 	std::shared_ptr<InputModule> inputModule = std::make_shared<RealsenseCamera>("RealsenseCamera", 0, 1);
-	std::shared_ptr<ProcessingModule> processModule = std::make_shared<ObjectDetection>("Cone Search");
+	std::shared_ptr<ProcessingModule> processModule = std::make_shared<ObjectDetectionModule>("Cone Search");
 	std::shared_ptr<OutputModule> outputModule = std::make_shared<GraphicOutputModule>("Direct Graphic Output");
 
 	VisionProcessor analyzer;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 //	int streamOffset = 0;
 //	bool cameraDisconnected = false;
 //	RealsenseCamera camera(0, 1);
-//	ObjectDetection analysis;
+//	ObjectDetectionModule analysis;
 //	NetworkingClient output("10.20.22.2", 5800);
 //	camera.start();
 //	while (true)
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 //	}
 
 	//RealsenseCamera camera;
-	//ObjectDetection analysis;
+	//ObjectDetectionModule analysis;
 	////NetworkingClient output("127.0.0.1", 5800);
 	//camera.start();
 	//std::cout << "Detected Camera\n";
