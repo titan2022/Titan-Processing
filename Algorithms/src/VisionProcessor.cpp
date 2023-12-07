@@ -52,23 +52,23 @@ void VisionProcessor::execute()
 	}
 }
 
-//void VisionProcessor::finalize()
-//{
-//	for (auto pair : inputs)
-//	{
-//		pair.second->finalize();
-//	}
-//
-//	for (auto pair : processes)
-//	{
-//		pair.second->finalize();
-//	}
-//
-//	for (auto pair : outputs)
-//	{
-//		pair.second->finalize();
-//	}
-//}
+void VisionProcessor::finalize()
+{
+	for (auto pair : inputs)
+	{
+		pair.second->finalize();
+	}
+
+	for (auto pair : processes)
+	{
+		pair.second->finalize();
+	}
+
+	for (auto pair : outputs)
+	{
+		pair.second->finalize();
+	}
+}
 
 void VisionProcessor::run()
 {
@@ -76,6 +76,7 @@ void VisionProcessor::run()
 	while (true)
 	{
 		execute();
+		finalize();
 	}
 }
 

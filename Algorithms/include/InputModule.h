@@ -10,18 +10,21 @@
 /// </summary>
 class InputModule : public Module
 {
-protected:
-	std::vector<std::shared_ptr<ProcessingModule>> processingModules;
-	std::unordered_map<InputType, cv::Mat> sourceMatrices;
-	////Subscribers that the input module will push data to
-	//std::vector<std::shared_ptr<ProcessingModule>> processModules;
 public:
 	InputModule(const std::string& name);
-	virtual void addProcessingModule(const std::shared_ptr<ProcessingModule>& process);
+	virtual void addProcessingModule(std::shared_ptr<ProcessingModule>& process);
 	//Checks if able to get frames properly
 	virtual bool isValid() const = 0;
 
+	virtual void execute() override;
 	//inline const std::vector<std::shared_ptr<ProcessingModule>>& getProcessingModules() const { return processModules; }
+protected:
+	std::vector<std::shared_ptr<ProcessingModule>> processingModules;
+	std::vector<std::vector<cv::Mat*>> matrixSubscribers;
+	std::vector<std::pair<InputType, cv::Mat>> sourceMatrices;
+	////Subscribers that the input module will push data to
+	void createMatrixSubscribers();
+
 };
 
 #endif

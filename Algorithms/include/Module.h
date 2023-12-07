@@ -16,6 +16,7 @@ public:
 	inline const std::string& getName() { return name; }
 	inline virtual void initialize() { }
 	inline virtual void execute() { }
+	inline virtual void finalize() { }
 	//inline virtual void finalize() { }
 };
 

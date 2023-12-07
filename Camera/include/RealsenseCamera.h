@@ -35,11 +35,11 @@ private:
 	rs2::frameset currentFrameSet;
 	rs2::colorizer colorMap;
 
-	std::vector<std::shared_ptr<ProcessingModule>> depthSubscribers;
-	std::vector<std::shared_ptr<ProcessingModule>> colorSubscribers;
-	std::vector<std::shared_ptr<ProcessingModule>> positionSubscribers;
+	//std::vector<std::shared_ptr<ProcessingModule>> depthSubscribers;
+	//std::vector<std::shared_ptr<ProcessingModule>> colorSubscribers;
+	//std::vector<std::shared_ptr<ProcessingModule>> positionSubscribers;
 protected:
-	void addProcessingModule(const std::shared_ptr<ProcessingModule>& processingModule) override;
+	//void addProcessingModule(const std::shared_ptr<ProcessingModule>& processingModule) override;
 
 public:
 	RealsenseCamera(const std::string& name, int depthIndex, int colorIndex);

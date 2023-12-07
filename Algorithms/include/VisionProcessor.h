@@ -12,7 +12,7 @@ private:
 
 	//For each run loop of the Vision Processor
 	void execute();
-	//void finalize();
+	void finalize();
 
 public:
 	std::unordered_map<std::string, std::shared_ptr<InputModule>> inputs;

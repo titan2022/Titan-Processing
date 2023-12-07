@@ -6,13 +6,12 @@
 #include "Cube.h"
 #include "Constants.h"
 #include "ContourTest.h"
-#include "IGraphicOutputType.h"
 #include "ProcessingModule.h"
 #include "Robot.h"
 
 
 // Takes the aligned frame data and performs detection algorithms on the data to search for objects
-class ObjectDetectionModule : public ProcessingModule, public IGraphicOutputType
+class ObjectDetectionModule : public ProcessingModule
 {
 private:
 	ContourTest contourDetector;
@@ -27,8 +26,9 @@ public:
 	ObjectDetectionModule(const std::string& name);
 
 	void execute() override;
+	//void finalize() override;
 
-	cv::Mat getData() override;
+	//cv::Mat getData() override;
 
 	//ObjectDetectionModule(const CameraFrame& alignedFrame);
 	////For processes that must be done for all objects

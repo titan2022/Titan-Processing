@@ -1,28 +1,57 @@
 #define _USE_MATH_DEFINES
 
-#include "../include/ObjectDetectionModule.h"
-#include "../include/Vector.h"
-#include "../include/RedRobot.h"
-#include "../include/BlueRobot.h"
+#include "ObjectDetectionModule.h"
+#include "Vector.h"
+#include "RedRobot.h"
+#include "BlueRobot.h"
+#include "VisionFunctions.h"
 #include <opencv2/highgui.hpp>
 #include <cmath>
 #include <iostream>
 
-ObjectDetectionModule::ObjectDetectionModule(const std::string& name) : ProcessingModule(name, { {InputType::COLOR, cv::Mat()}, {InputType::POSITION, cv::Mat()} })
+ObjectDetectionModule::ObjectDetectionModule(const std::string& name) : ProcessingModule(name)
 { 
+	inputMatrices = 
+	{
+		std::pair<InputType, cv::Mat>(InputType::DEPTH, cv::Mat()),
+		std::pair<InputType, cv::Mat>(InputType::COLOR, cv::Mat()),
+		std::pair<InputType, cv::Mat>(InputType::POSITION, cv::Mat())
+	};
 
+	outputModules = 
+	{
+		std::pair<bool, std::shared_ptr<OutputModule>>(true, std::make_shared<GraphicOutputModule>(GraphicOutputModule("Test graphic")))
+	};
 }
 
 void ObjectDetectionModule::execute()
-{
-	//contourDetector.Process<Cone>(inputMatrices[InputType::COLOR]);
+{	
+	std::cout << "Execute in ObjectDetectionModule\n";
+	/*auto blurKernel = cv::Size(7, 7);
+	cv::GaussianBlur(inputMatrices[1].second, inputMatrices[1].second, blurKernel, 3);*/
+
+	auto graphicOutput = std::dynamic_pointer_cast<GraphicOutputModule>(outputModules[0].second);
+
+	cv::Mat thresholdMask;
+	std::vector<double> hslThresholdParams = { 15, 35, 45, 210, 80, 255 };
+
+	VisionFunctions::hslThreshold(inputMatrices[1].second, hslThresholdParams, thresholdMask);
+	auto contours = VisionFunctions::findContours(thresholdMask);
+	//Error here in vector subscript
+	//auto greatestContourCenter = VisionFunctions::getMomentBasedContourCenter(contours[0]);
+
+	cv::drawContours(inputMatrices[1].second, contours, -1, cv::Scalar(255, 0, 0));
+	/*cv::circle(inputMatrices[1].second, greatestContourCenter, 5, cv::Scalar(0, 255, 0), 2);*/
+
+	inputMatrices[1].second.copyTo(graphicOutput->graphicOutput);
 
 }
 
+/*
 cv::Mat ObjectDetectionModule::getData()
 {
 	return inputMatrices[InputType::COLOR];
-}
+}*/
 
 //void ObjectDetectionModule::printCenterRGB()
 //{

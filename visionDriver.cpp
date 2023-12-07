@@ -22,17 +22,20 @@
 int main(int argc, char* argv[])
 {
 	std::shared_ptr<InputModule> inputModule = std::make_shared<RealsenseCamera>("RealsenseCamera", 0, 1);
+	std::cout << "Camera connected\n";
 	std::shared_ptr<ProcessingModule> processModule = std::make_shared<ObjectDetectionModule>("Cone Search");
-	std::shared_ptr<OutputModule> outputModule = std::make_shared<GraphicOutputModule>("Direct Graphic Output");
+	
+	inputModule->addProcessingModule(processModule);
+	
+	processModule->activateOutputModule(0);
 
 	VisionProcessor analyzer;
 
-	inputModule->addProcessingModule(processModule);
-	outputModule->setProcessingModule(processModule);
-
 	analyzer.addInputModule(inputModule);
 	analyzer.addProcessingModule(processModule);
-	analyzer.addOutputModule(outputModule);
+	analyzer.addOutputModule(processModule->getOutputModule(0));
+
+	std::cout << "Setup complete\n";
 
 	analyzer.run();
 //	int streamOffset = 0;

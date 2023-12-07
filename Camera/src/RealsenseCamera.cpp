@@ -28,6 +28,14 @@ RealsenseCamera::RealsenseCamera(const std::string& name, int depthIndex, int co
 	depthSensor(context.query_all_sensors()[depthIndex]),
 	colorSensor(context.query_all_sensors()[colorIndex])
 {
+	sourceMatrices = 
+	{
+		std::pair<InputType, cv::Mat>(InputType::DEPTH, cv::Mat()),
+		std::pair<InputType, cv::Mat>(InputType::COLOR, cv::Mat()),
+		std::pair<InputType, cv::Mat>(InputType::POSITION, cv::Mat())
+	};
+
+	createMatrixSubscribers();
 }
 
 
@@ -103,49 +111,52 @@ bool RealsenseCamera::isValid() const
 
 void RealsenseCamera::execute()
 {
+	std::cout << "Execute in RealsenseCameraModule\n";
 	nextFrame();
 	auto frame = getFrame();
 
-	sourceMatrices[InputType::DEPTH] = frame.getDepthMatrix();
-	sourceMatrices[InputType::COLOR] = frame.getColorMatrix();
-	sourceMatrices[InputType::POSITION] = frame.getPositionMatrix();
+	sourceMatrices[0].second = frame.getDepthMatrix();
+	sourceMatrices[1].second = frame.getColorMatrix();
+	sourceMatrices[2].second = frame.getPositionMatrix();
 
-	for (auto depth : depthSubscribers)
-	{
-		sourceMatrices[InputType::DEPTH].copyTo(depth->inputMatrices[InputType::DEPTH]);
-	}
+	InputModule::execute();
 
-	for (auto color : colorSubscribers)
-	{
-		sourceMatrices[InputType::COLOR].copyTo(color->inputMatrices[InputType::COLOR]);
-		processingModules[0]->inputMatrices[InputType::COLOR];
-	}
+	//for (auto depth : depthSubscribers)
+	//{
+	//	sourceMatrices[InputType::DEPTH].copyTo(depth->inputMatrices[InputType::DEPTH]);
+	//}
 
-	for (auto position : positionSubscribers)
-	{
-		sourceMatrices[InputType::POSITION].copyTo(position->inputMatrices[InputType::POSITION]);
-	}
+	//for (auto color : colorSubscribers)
+	//{
+	//	sourceMatrices[InputType::COLOR].copyTo(color->inputMatrices[InputType::COLOR]);
+	//	processingModules[0]->inputMatrices[InputType::COLOR];
+	//}
+
+	//for (auto position : positionSubscribers)
+	//{
+	//	sourceMatrices[InputType::POSITION].copyTo(position->inputMatrices[InputType::POSITION]);
+	//}
 }
-
-void RealsenseCamera::addProcessingModule(const std::shared_ptr<ProcessingModule>& processingModule)
-{
-	InputModule::addProcessingModule(processingModule);
-	for (auto pair : processingModule->inputMatrices)
-	{
-		if (pair.first == InputType::DEPTH)
-		{
-			depthSubscribers.push_back(processingModule);
-			processingModule->inputMatricesLinked[InputType::DEPTH] = true;
-		} 
-		else if (pair.first == InputType::COLOR)
-		{
-			colorSubscribers.push_back(processingModule);
-			processingModule->inputMatricesLinked[InputType::COLOR] = true;
-		} 
-		else if (pair.first == InputType::POSITION)
-		{
-			positionSubscribers.push_back(processingModule);
-			processingModule->inputMatricesLinked[InputType::POSITION] = true;
-		}
-	}
-}
+//
+//void RealsenseCamera::addProcessingModule(const std::shared_ptr<ProcessingModule>& processingModule)
+//{
+//	InputModule::addProcessingModule(processingModule);
+//	for (auto pair : processingModule->inputMatrices)
+//	{
+//		if (pair.first == InputType::DEPTH)
+//		{
+//			depthSubscribers.push_back(processingModule);
+//			processingModule->inputMatricesLinked[InputType::DEPTH] = true;
+//		} 
+//		else if (pair.first == InputType::COLOR)
+//		{
+//			colorSubscribers.push_back(processingModule);
+//			processingModule->inputMatricesLinked[InputType::COLOR] = true;
+//		} 
+//		else if (pair.first == InputType::POSITION)
+//		{
+//			positionSubscribers.push_back(processingModule);
+//			processingModule->inputMatricesLinked[InputType::POSITION] = true;
+//		}
+//	}
+//}
