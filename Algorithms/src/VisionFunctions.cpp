@@ -38,6 +38,28 @@ void VisionFunctions::hslThreshold(cv::Mat& input, std::vector<double> hslThresh
 	}
 }
 
+void VisionFunctions::erodeMask(cv::Mat& input, cv::Mat& output)
+{
+	auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+	cv::Point matrixCenter(-1, -1);
+	int iterations = 5;
+	cv::erode(input, output, kernel, matrixCenter, iterations);
+}
+
+void VisionFunctions::dilateMask(cv::Mat& input, cv::Mat& output)
+{
+	auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5));
+	cv::Point matrixCenter(-1, -1);
+	int iterations = 3;
+	cv::dilate(input, output, kernel, matrixCenter, iterations);
+}
+
+void VisionFunctions::mergeMask(cv::Mat& input, cv::Mat& output)
+{
+	dilateMask(input, input);
+	erodeMask(output, output);
+}
+
 void VisionFunctions::andMask(cv::Mat& input, cv::Mat& mask, cv::Mat& output) 
 {
 	mask.convertTo(mask, CV_8UC1);

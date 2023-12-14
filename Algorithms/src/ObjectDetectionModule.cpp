@@ -26,7 +26,6 @@ ObjectDetectionModule::ObjectDetectionModule(const std::string& name) : Processi
 
 void ObjectDetectionModule::execute()
 {	
-	std::cout << "Execute in ObjectDetectionModule\n";
 	/*auto blurKernel = cv::Size(7, 7);
 	cv::GaussianBlur(inputMatrices[1].second, inputMatrices[1].second, blurKernel, 3);*/
 
@@ -36,6 +35,7 @@ void ObjectDetectionModule::execute()
 	std::vector<double> hslThresholdParams = { 15, 35, 45, 210, 80, 255 };
 
 	VisionFunctions::hslThreshold(inputMatrices[1].second, hslThresholdParams, thresholdMask);
+	VisionFunctions::mergeMask(thresholdMask, thresholdMask);
 	auto contours = VisionFunctions::findContours(thresholdMask);
 	//Error here in vector subscript
 	//auto greatestContourCenter = VisionFunctions::getMomentBasedContourCenter(contours[0]);
@@ -44,7 +44,6 @@ void ObjectDetectionModule::execute()
 	/*cv::circle(inputMatrices[1].second, greatestContourCenter, 5, cv::Scalar(0, 255, 0), 2);*/
 
 	inputMatrices[1].second.copyTo(graphicOutput->graphicOutput);
-
 }
 
 /*

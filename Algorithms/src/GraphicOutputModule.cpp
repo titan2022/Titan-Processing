@@ -23,7 +23,6 @@ GraphicOutputModule::GraphicOutputModule(const std::string& name) : OutputModule
 
 void GraphicOutputModule::execute()
 {
-	std::cout << "Execute in GraphicOutputModule\n";
 	cv::imshow(name + "'s graphic output", graphicOutput);
 	cv::waitKey(1);
 }

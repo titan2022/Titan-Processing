@@ -111,7 +111,6 @@ bool RealsenseCamera::isValid() const
 
 void RealsenseCamera::execute()
 {
-	std::cout << "Execute in RealsenseCameraModule\n";
 	nextFrame();
 	auto frame = getFrame();
 

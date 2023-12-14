@@ -206,7 +206,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "Algorithms/src/ObjectDetection.cpp",
+			"path" : "Algorithms/src/ObjectDetectionModule.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

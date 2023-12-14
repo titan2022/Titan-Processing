@@ -1,6 +1,6 @@
 #include "../include/RedRobot.h"
 
-std::vector<double> RedRobot::properHSL = {-1, 10, 40, 80, 160, 250 };
+std::vector<double> RedRobot::properHSL = {-1, 15, 40, 90, 150, 250 };
 
 RedRobot::RedRobot(Pixel pixel, const cv::Mat& positionMatrix) :
 	Robot(pixel, positionMatrix)
