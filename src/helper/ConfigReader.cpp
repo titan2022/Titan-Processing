@@ -1,12 +1,15 @@
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 
 #include <opencv2/core.hpp>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 #include "helper/ConfigReader.hpp"
+#include "helper/Unit.hpp"
 
 
 ConfigReader::ConfigReader(std::string path)
@@ -152,16 +155,17 @@ void ConfigReader::readTagsFile(std::string path) {
     std::ifstream in(path);
     json data = json::parse(in);
 
-    int id = 0;
     for (auto &tagObj : data) {
-        id++;
         std::vector<double> posArr = tagObj["position"];
-        std::vector<double>  rotArr = tagObj["rotation"];
+        std::vector<double> rotArr = tagObj["rotation"];
+        double size = tagObj["size"];
+        int id = tagObj["id"];
 
         Vector3D pos(posArr);
         Vector3D rot(rotArr);
+        rot *= Unit::DEG;
 
-        Apriltag tag(id, pos, rot);
-        this->tags.push_back(tag);
+        Apriltag* tag = new Apriltag(id, pos, rot, size);
+        this->tags.insert({id, tag});
     }
 }

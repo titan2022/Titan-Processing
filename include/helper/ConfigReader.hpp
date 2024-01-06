@@ -2,6 +2,7 @@
 #define CONFIG_READER
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <opencv2/core.hpp>
 
@@ -40,7 +41,7 @@ class ConfigReader
         double decodeSharpening;
 
         // Tags from apriltags.json
-        std::vector<Apriltag> tags;
+        std::unordered_map<int, Apriltag*> tags;
 
         ConfigReader(std::string path);
         ConfigReader();

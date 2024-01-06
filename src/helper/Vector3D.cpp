@@ -1,6 +1,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <opencv2/core.hpp>
 
@@ -87,7 +88,7 @@ Vector3D Vector3D::getRotatedZ(double angle)
 
 Vector3D Vector3D::getRotated(double xAngle, double yAngle, double zAngle)
 {
-    return getRotatedX(xAngle).getRotatedY(yAngle).getRotatedZ(zAngle);
+    return getRotatedZ(zAngle).getRotatedY(yAngle).getRotatedX(xAngle);
 }
 
 double Vector3D::getMagnitude()
@@ -105,9 +106,13 @@ Vector3D Vector3D::getNormalized()
 std::string Vector3D::toString()
 {
     std::string s = "(";
-    s += std::to_string(x) + ", ";
-    s += std::to_string(y) + ", ";
-    s += std::to_string(z);
+    std::string xStr = std::to_string(getX());
+    std::string yStr = std::to_string(getY());
+    std::string zStr = std::to_string(getZ());
+    s +=  + ", ";
+    s += xStr + ", ";
+    s += yStr + ", ";
+    s += zStr;
     s += ")";
     return s;
 }
@@ -187,6 +192,14 @@ void Vector3D::rotate(Vector3D &vec)
     rotateX(vec.getX());
     rotateY(vec.getY());
     rotateZ(vec.getZ());
+}
+
+Vector3D &Vector3D::operator=(const Vector3D &v)
+{
+    setX(v.x);
+    setY(v.y);
+    setZ(v.z);
+    return *this;
 }
 
 const Vector3D Vector3D::operator+(const Vector3D &v)

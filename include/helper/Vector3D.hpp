@@ -39,6 +39,7 @@ class Vector3D
 	    void rotate(double xAngle, double yAngle, double zAngle);
 	    void rotate(Vector3D &vec);
 
+        Vector3D &operator=(const Vector3D &v);
         const Vector3D operator+(const Vector3D &v);
         const Vector3D operator-(const Vector3D &v);
         Vector3D &operator+=(const Vector3D &v);

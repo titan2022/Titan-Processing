@@ -10,6 +10,8 @@
 #include "helper/Vector3D.hpp"
 #include "helper/Unit.hpp"
 
+// Source: https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
+
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n = 6)
 {
@@ -41,8 +43,8 @@ PoseFilter::PoseFilter(ConfigReader &config) :
 config(config), position(), rotation()
 {
     // Initialize covariance matrices
-    for (int i = 0; i < 8; i++) {
-        P[i] = cv::Mat::eye(12, 12, CV_64FC1);
+    for (auto &tag : config.tags) {
+        P[tag.second->id] = cv::Mat::eye(12, 12, CV_64FC1);
     }
 
     // Initialize process noise matrix
@@ -99,9 +101,9 @@ void PoseFilter::predict(double dt)
     rotation.setY(x.at<double>(4, 0));
     rotation.setZ(x.at<double>(5, 0));
 
-    for (int i = 0; i < 8; i++) {
+    for (auto &tag : config.tags) {
         // Predicting covariance
-        P[i] = F * P[i] * F.t() + Q;
+        P[tag.second->id] = F * P[tag.second->id] * F.t() + Q;
     }
 }
 
