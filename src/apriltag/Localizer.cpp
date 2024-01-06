@@ -9,7 +9,7 @@
 #include "helper/Unit.hpp"
 
 // Translates position origin from camera to tag
-Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec)
+Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size)
 {
     cv::Mat R(3, 3, CV_64FC1);
     cv::Rodrigues(rvec, R);
@@ -26,18 +26,26 @@ Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec)
     Vector3D rot(rotVec);
     rot *= Unit::DEG;
 
-    Apriltag newTag(id - 1, pos, rot);
+    Apriltag newTag(id, pos, rot, size);
 
     return newTag;
 }
 
-// Get global pose
-Apriltag calculatePose(Apriltag &relative, Apriltag &global) {
+Apriltag toGlobalPose(Apriltag &relative, Apriltag &global) {
     Vector3D newPos = global.position - relative.position;
     Vector3D newRot = global.rotation - relative.rotation;
 
-    Apriltag result(relative.id, newPos, newRot);
+    Apriltag result(relative.id, newPos, newRot, relative.size);
     return result;
+}
+
+Apriltag* Localizer::getGlobalTag(int id) {
+    for (auto tagPair : this->config.tags) {
+        if (tagPair.second->id == id) {
+            return tagPair.second;
+        }
+    }
+    return nullptr;
 }
 
 Localizer::Localizer(ConfigReader &config, NetworkingClient &client, PoseFilter &filter) :
@@ -46,28 +54,24 @@ config(config), client(client), filter(filter)
     
 }
 
-void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double dt)
+void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
 {
-    // TODO: Apriltag camPose = calculatePose(tag, this->config.tags[tag.id - 1]);
-
     // TODO: add to relative tag hash map
     // TODO: add to absolute tag hash map
 
-    if (id != 5) {
-        return;
-    }
+    Apriltag invTag = correctPerspective(id, tvec, rvec, size);
+    
+    auto globTag = getGlobalTag(id);
+    std::cout << globTag->id  << ": " << globTag->size  << ", " << globTag->position.toString() << std::endl;
 
-    Apriltag invTag = correctPerspective(id, tvec, rvec);
+    invTag.position *= -1;
+    invTag.position.setZ(-invTag.position.getZ());
+    invTag.rotation.setY(-invTag.rotation.getY());
+
+    invTag.position += globTag->position;
+    invTag.rotation += globTag->rotation;
+
     filter.updateTag(invTag, dt);
-
-    // if (id == 5) {
-    //     Apriltag invTag = correctPerspective(id, tvec, rvec);
-    //     this->position = invTag.position;
-    //     this->rotation = invTag.rotation;
-
-    //     client.send_vector("pos", false, this->position);
-    //     client.send_vector("rot", false, this->rotation);
-    // }
 }
 
 void Localizer::step(double dt) {

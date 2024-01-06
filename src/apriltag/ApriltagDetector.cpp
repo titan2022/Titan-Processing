@@ -35,10 +35,10 @@ void ApriltagDetector::startStream()
 void ApriltagDetector::detect()
 {
     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_16h5);
+    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
-    double markerLength = 6 * Unit::INCH;
+    double markerLength = 0.16;
     cv::Mat cameraMatrix = config.cameraMat;
     cv::Mat distCoeffs = config.distCoeffs;
 
@@ -58,7 +58,6 @@ void ApriltagDetector::detect()
         postTS = std::chrono::steady_clock::now();
         dt = std::chrono::duration_cast<std::chrono::milliseconds>(postTS - prevTS).count() / 1000.0;
         prevTS = postTS;
-        std::cout << dt << std::endl;
 
         cv::Mat frame, gray, out;
         cap >> frame;
@@ -88,9 +87,11 @@ void ApriltagDetector::detect()
                 cv::Vec3d rVec = rVecs[i];
                 cv::Vec3d tVec = tVecs[i];
 
-                localizer.addApriltag(ids[i], tVec, rVec, dt);
+                localizer.addApriltag(ids[i], tVec, rVec, markerLength, dt);
 
-                cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
+                if (this->showWindow) {
+                    cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
+                }
             }
         }
 
