@@ -114,15 +114,7 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 
 build cmake_object_order_depends_target_algorithms: phony || Algorithms\CMakeFiles\algorithms.dir
 
-build Algorithms\CMakeFiles\algorithms.dir\src\BlueRobot.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\BlueRobot.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\Cone.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\Cone.cpp || cmake_object_order_depends_target_algorithms
+build Algorithms\CMakeFiles\algorithms.dir\src\BlackScreenFilterModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\BlackScreenFilterModule.cpp || cmake_object_order_depends_target_algorithms
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
   INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
   OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
@@ -146,14 +138,6 @@ build Algorithms\CMakeFiles\algorithms.dir\src\CoordinateTransformations.cpp.obj
   TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
   TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
 
-build Algorithms\CMakeFiles\algorithms.dir\src\Cube.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\Cube.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
 build Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\GraphicOutputModule.cpp || cmake_object_order_depends_target_algorithms
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
   INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
@@ -162,7 +146,31 @@ build Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj: CXX_
   TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
   TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
 
-build Algorithms\CMakeFiles\algorithms.dir\src\InputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\InputModule.cpp || cmake_object_order_depends_target_algorithms
+build Algorithms\CMakeFiles\algorithms.dir\src\HSLFilterModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\HSLFilterModule.cpp || cmake_object_order_depends_target_algorithms
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
+  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
+  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
+  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
+  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
+  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
+
+build Algorithms\CMakeFiles\algorithms.dir\src\HSLOutputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\HSLOutputModule.cpp || cmake_object_order_depends_target_algorithms
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
+  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
+  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
+  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
+  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
+  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
+
+build Algorithms\CMakeFiles\algorithms.dir\src\HistProjectionModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\HistProjectionModule.cpp || cmake_object_order_depends_target_algorithms
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
+  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
+  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
+  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
+  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
+  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
+
+build Algorithms\CMakeFiles\algorithms.dir\src\HistogramOutputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\HistogramOutputModule.cpp || cmake_object_order_depends_target_algorithms
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
   INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
   OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
@@ -179,54 +187,6 @@ build Algorithms\CMakeFiles\algorithms.dir\src\Module.cpp.obj: CXX_COMPILER__alg
   TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
 
 build Algorithms\CMakeFiles\algorithms.dir\src\Object.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\Object.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\ObjectDetectionModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\ObjectDetectionModule.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\OutputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\OutputModule.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\Pixel.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\Pixel.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\ProcessingModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\ProcessingModule.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\RedRobot.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\RedRobot.cpp || cmake_object_order_depends_target_algorithms
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
-  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
-  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
-
-build Algorithms\CMakeFiles\algorithms.dir\src\Robot.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\Robot.cpp || cmake_object_order_depends_target_algorithms
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
   INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
   OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
@@ -266,7 +226,7 @@ build Algorithms\CMakeFiles\algorithms.dir\src\VisionProcessor.cpp.obj: CXX_COMP
 #############################################
 # Link the static library C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.lib
 
-build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.lib: CXX_STATIC_LIBRARY_LINKER__algorithms_Debug Algorithms\CMakeFiles\algorithms.dir\src\BlueRobot.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Cone.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\ContourTest.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\CoordinateTransformations.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Cube.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\InputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Module.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Object.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\ObjectDetectionModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\OutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Pixel.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\ProcessingModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\RedRobot.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Robot.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Vector.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionFunctions.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionProcessor.cpp.obj
+build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.lib: CXX_STATIC_LIBRARY_LINKER__algorithms_Debug Algorithms\CMakeFiles\algorithms.dir\src\BlackScreenFilterModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\ContourTest.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\CoordinateTransformations.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HSLFilterModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HSLOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HistProjectionModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HistogramOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Module.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Object.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Vector.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionFunctions.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionProcessor.cpp.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -MDd -ZI
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
@@ -313,7 +273,7 @@ build Algorithms\rebuild_cache: phony Algorithms\CMakeFiles\rebuild_cache.util
 
 build cmake_object_order_depends_target_camera: phony || Camera\CMakeFiles\camera.dir
 
-build Camera\CMakeFiles\camera.dir\src\RealsenseCamera.cpp.obj: CXX_COMPILER__camera_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Camera\src\RealsenseCamera.cpp || cmake_object_order_depends_target_camera
+build Camera\CMakeFiles\camera.dir\src\RealsenseCameraModule.cpp.obj: CXX_COMPILER__camera_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Camera\src\RealsenseCameraModule.cpp || cmake_object_order_depends_target_camera
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
   INCLUDES = -I"C:\Program Files\Intel RealSense SDK 2.0\include" -IC:\Users\noone\Desktop\Code\Titan-Processing\Camera\include -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
   OBJECT_DIR = Camera\CMakeFiles\camera.dir
@@ -337,7 +297,7 @@ build Camera\CMakeFiles\camera.dir\src\RealsenseFrame.cpp.obj: CXX_COMPILER__cam
 #############################################
 # Link the static library C:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.lib
 
-build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.lib: CXX_STATIC_LIBRARY_LINKER__camera_Debug Camera\CMakeFiles\camera.dir\src\RealsenseCamera.cpp.obj Camera\CMakeFiles\camera.dir\src\RealsenseFrame.cpp.obj
+build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.lib: CXX_STATIC_LIBRARY_LINKER__camera_Debug Camera\CMakeFiles\camera.dir\src\RealsenseCameraModule.cpp.obj Camera\CMakeFiles\camera.dir\src\RealsenseFrame.cpp.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -MDd -ZI
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = Camera\CMakeFiles\camera.dir

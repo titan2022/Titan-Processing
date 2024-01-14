@@ -2,7 +2,6 @@
 #define OBJECT_H
 
 #include "Vector.h"
-#include "Pixel.h"
 #include <vector>
 
 class Object

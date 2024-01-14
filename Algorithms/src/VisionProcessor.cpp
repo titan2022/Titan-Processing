@@ -5,30 +5,30 @@ VisionProcessor::VisionProcessor() {}
 
 void VisionProcessor::initialize()
 {
-	for (auto pair : inputs)
+	for (auto inputMod : inputs)
 	{
-		if (!pair.second->isValid())
+		if (!inputMod->isValid())
 		{
-			throw std::logic_error(pair.second->getName() + " device is not loaded properly!");
+			throw std::logic_error(inputMod->getName() + " device is not loaded properly!");
 		}
 		else
 		{
 			std::cout << "All input devices are properly loaded\n";
 		}
 	}
-	for (auto pair : inputs)
+	for (auto mod : inputs)
 	{
-		pair.second->initialize();
+		mod->initialize();
 	}
 
-	for (auto pair : processes)
+	for (auto mod : processes)
 	{
-		pair.second->initialize();
+		mod->initialize();
 	}
 
-	for (auto pair : outputs)
+	for (auto mod : outputs)
 	{
-		pair.second->initialize();
+		mod->initialize();
 	}
 
 	std::cout << "Modules successfully initialized\n";
@@ -36,37 +36,37 @@ void VisionProcessor::initialize()
 
 void VisionProcessor::execute()
 {
-	for (auto pair : inputs)
+	for (auto mod : inputs)
 	{
-		pair.second->execute();
+		mod->execute();
 	}
 
-	for (auto pair : processes)
+	for (auto mod : processes)
 	{
-		pair.second->execute();
+		mod->execute();
 	}
 
-	for (auto pair : outputs)
+	for (auto mod : outputs)
 	{
-		pair.second->execute();
+		mod->execute();
 	}
 }
 
 void VisionProcessor::finalize()
 {
-	for (auto pair : inputs)
+	for (auto mod : inputs)
 	{
-		pair.second->finalize();
+		mod->finalize();
 	}
 
-	for (auto pair : processes)
+	for (auto mod : processes)
 	{
-		pair.second->finalize();
+		mod->finalize();
 	}
 
-	for (auto pair : outputs)
+	for (auto mod : outputs)
 	{
-		pair.second->finalize();
+		mod->finalize();
 	}
 }
 
@@ -76,37 +76,24 @@ void VisionProcessor::run()
 	while (true)
 	{
 		execute();
-		finalize();
 	}
+	finalize();
 }
 
 
-bool VisionProcessor::addInputModule(std::shared_ptr<InputModule> inputModule)
+void VisionProcessor::addInputModule(InputModule* inputModule)
 {
-	if (inputModule->isValid())
-	{
-		totalModules.insert(std::pair<std::string, std::shared_ptr<Module>>(inputModule->getName(), inputModule));
-		inputs.insert(std::pair<std::string, std::shared_ptr<InputModule>>(inputModule->getName(), inputModule));
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	inputs.push_back(inputModule);
 }
 
-bool VisionProcessor::addOutputModule(std::shared_ptr<OutputModule> outputModule)
+void VisionProcessor::addOutputModule(OutputModule* outputModule)
 {
-	totalModules.insert(std::pair<std::string, std::shared_ptr<Module>>(outputModule->getName(), outputModule));
-	outputs.insert(std::pair<std::string, std::shared_ptr<OutputModule>>(outputModule->getName(), outputModule));
-	return true;
+	outputs.push_back(outputModule);
 }
 
-bool VisionProcessor::addProcessingModule(std::shared_ptr<ProcessingModule> processModule)
+void VisionProcessor::addProcessingModule(ProcessingModule* processModule)
 {
-	totalModules.insert(std::pair<std::string, std::shared_ptr<Module>>(processModule->getName(), processModule));
-	processes.insert(std::pair<std::string, std::shared_ptr<ProcessingModule>>(processModule->getName(), processModule));
-	return true;
+	processes.push_back(processModule);
 }
 
 //bool VisionProcessor::checkInputModuleDependencies(std::shared_ptr<InputModule> input)

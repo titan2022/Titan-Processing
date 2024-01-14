@@ -5,7 +5,7 @@
 #include "Frame.h"
 
 
-class RealsenseCamera;
+class RealsenseCameraModule;
 
 class RealsenseFrame : public Frame
 {

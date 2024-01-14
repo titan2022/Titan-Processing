@@ -11,37 +11,84 @@
 #include <opencv2/core/types.hpp>
 #include <opencv2/core/cuda.hpp>
 #include <cmath>
-#include "RealsenseCamera.h"
-#include "ObjectDetectionModule.h"
+#include <ctime>
+#include "BlackScreenFilterModule.h"
+#include "RealsenseCameraModule.h"
+#include "HSLFilterModule.h"
 #include "CoordinateTransformations.h"
 #include "GraphicOutputModule.h"
+#include "HistogramOutputModule.h"
+#include "HistProjectionModule.h"
 #include "VisionProcessor.h"
 //#include "NetworkingClient.hpp"
 
 
 int main(int argc, char* argv[])
 {
-	std::shared_ptr<InputModule> inputModule = std::make_shared<RealsenseCamera>("RealsenseCamera", 0, 1);
-	std::cout << "Camera connected\n";
-	std::shared_ptr<ProcessingModule> processModule = std::make_shared<ObjectDetectionModule>("Cone Search");
-	
-	inputModule->addProcessingModule(processModule);
-	
-	processModule->activateOutputModule(0);
+	//vector<pair<int, Mat>> test1 = { pair<int, Mat>(1, Mat(5, 5, 1)) };
+	//vector<pair<int, Mat&>> test2 = { pair<int, Mat&>(2, Mat(3, 3, 1)) };
 
+	//pair<int, Mat> test3(1, Mat(7, 7, 1));
+	//pair<int, Mat*> test4(1, &(test3.second));
+	//
+	//Mat a(10, 10, 1);
+	//a.copyTo(test3.second);
+
+	//test4.second = test3.second;
+	//
+	//test2[0].second = test1[0].second;
+
+	//Mat a(9, 9, 1);
+	//a.copyTo(test3.second);
+	//a.copyTo(test1[0].second);
 	VisionProcessor analyzer;
 
+	RealsenseCameraModule* inputModule = new RealsenseCameraModule("RealsenseCameraModule", 0, 1);
+	std::cout << "Camera connected\n";
+	BlackScreenFilterModule* processModule = new BlackScreenFilterModule();
+	GraphicOutputModule* videoOutput = new GraphicOutputModule("Post Hist Image");
+	HistogramOutputModule* createHistMod = new HistogramOutputModule("Note_Histogram", {0, 2}, {10, 10}, {0, 180, 0, 256}, "Note_Histogram.json");
+	HistProjectionModule* projectionMod = new HistProjectionModule("Note_Histogram", { 0, 2 }, { 0, 180, 0, 256 }, 0, "Note_Histogram.json");
+
+	inputModule->addSubscriber(projectionMod);
+
+	projectionMod->addSubscriber(videoOutput);
+
 	analyzer.addInputModule(inputModule);
-	analyzer.addProcessingModule(processModule);
-	analyzer.addOutputModule(processModule->getOutputModule(0));
+	analyzer.addProcessingModule(projectionMod);
+	analyzer.addOutputModule(videoOutput);
+
+	//
+	//inputModule->addSubscriber(processModule);
+
+	//processModule->addSubscriber(videoOutput);
+	//processModule->addSubscriber(createHistMod);
+	//
+
+	//analyzer.addInputModule(inputModule);
+	//analyzer.addProcessingModule(processModule);
+	//analyzer.addOutputModule(videoOutput);
+	//analyzer.addOutputModule(createHistMod);
 
 	std::cout << "Setup complete\n";
 
-	analyzer.run();
+	time_t duration = 10;
+	time_t endTime = std::time(NULL) + duration;
+
+	analyzer.initialize();
+
+	int i = 0;
+
+	while (i < 60)
+	{
+		analyzer.execute();
+		//++i;
+	}
+	analyzer.finalize();
 //	int streamOffset = 0;
 //	bool cameraDisconnected = false;
-//	RealsenseCamera camera(0, 1);
-//	ObjectDetectionModule analysis;
+//	RealsenseCameraModule camera(0, 1);
+//	HSLFilterModule analysis;
 //	NetworkingClient output("10.20.22.2", 5800);
 //	camera.start();
 //	while (true)
@@ -52,7 +99,7 @@ int main(int argc, char* argv[])
 //			double status[1] = { -1 };
 //			std::cout << "Camera reconnected\n";
 //			output.sendData("disc", false, status);
-//			camera = RealsenseCamera(streamOffset, streamOffset + 1);
+//			camera = RealsenseCameraModule(streamOffset, streamOffset + 1);
 //			camera.start();
 //		}
 //		else if (camera.checkCameraIsConnected())
@@ -102,8 +149,8 @@ int main(int argc, char* argv[])
 //		}
 //	}
 
-	//RealsenseCamera camera;
-	//ObjectDetectionModule analysis;
+	//RealsenseCameraModule camera;
+	//HSLFilterModule analysis;
 	////NetworkingClient output("127.0.0.1", 5800);
 	//camera.start();
 	//std::cout << "Detected Camera\n";

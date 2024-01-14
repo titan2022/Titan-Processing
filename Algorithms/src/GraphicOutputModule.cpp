@@ -3,7 +3,10 @@
 #include <opencv2/highgui.hpp>
 #include "GraphicOutputModule.h"
 
-GraphicOutputModule::GraphicOutputModule(const std::string& name) : OutputModule(name), graphicOutput(cv::Mat()) {}
+const vector<ImageType> GraphicOutputModule::graphicType = { ImageType::COLOR };
+
+GraphicOutputModule::GraphicOutputModule(const std::string& name) 
+	: OutputModule(name, graphicType) {}
 
 //bool GraphicOutputModule::setProcessingModule(const std::shared_ptr<ProcessingModule>& processModule)
 //{
@@ -23,6 +26,6 @@ GraphicOutputModule::GraphicOutputModule(const std::string& name) : OutputModule
 
 void GraphicOutputModule::execute()
 {
-	cv::imshow(name + "'s graphic output", graphicOutput);
+	cv::imshow(name + " GraphicOutputModule Output", *(inputMatrices[0].second));
 	cv::waitKey(1);
 }

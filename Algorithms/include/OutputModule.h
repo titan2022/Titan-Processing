@@ -1,27 +1,22 @@
 #ifndef OUTPUT_MODULE_H
 #define OUTPUT_MODULE_H
 
+#include <vector>
+#include <opencv2/core/mat.hpp>
+#include "Constants.h"
+#include "Input.h"
 #include "Module.h"
 
 /// <summary>
 /// Abstract class for output modules which will specify how to output
 /// processing module information
 /// </summary>
-class OutputModule : public Module
+class OutputModule : public Module, public Input
 {
 public:
-	OutputModule(const std::string& name);
-	/// <summary>
-	/// To store the processing module casted to the OutputType interface for ease of executing code
-	/// </summary>
-	/// <param name="processingMod"></param>
-	//virtual bool setProcessingModule(const std::shared_ptr<ProcessingModule>& processingMod) = 0;
-	//void activate();
-	//std::shared_ptr<ProcessingModule> actualProcessingModule;
-	/// <summary>
-	/// Points to the processingModule as a module to perform regular methods while the other points to it as an OutputType getData
-	/// </summary>
-	//bool activated = false;
+	//std::vector<cv::Mat> inputMatrices;
+	inline OutputModule(const std::string& name, const vector<ImageType>& matrixList) 
+		: Module(name), Input(matrixList) {}
 	
 };
 

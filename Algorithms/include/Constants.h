@@ -1,11 +1,12 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-enum InputType
+enum ImageType
 {
 	DEPTH,
 	COLOR,
-	POSITION
+	POSITION,
+	MASK
 };
 
 #endif

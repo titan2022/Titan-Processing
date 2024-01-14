@@ -48,3 +48,7 @@ _deps
 # IDE
 .vscode
 .vs
+
+# Build
+
+/out/

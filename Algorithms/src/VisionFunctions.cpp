@@ -2,6 +2,11 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
+void VisionFunctions::rgbThreshold(const Mat& input, vector<double> rgbThreshold, Mat& out)
+{
+	cv::inRange(input, cv::Scalar(rgbThreshold[4], rgbThreshold[2], rgbThreshold[0]), cv::Scalar(rgbThreshold[5], rgbThreshold[3], rgbThreshold[1]), out);
+}
+
 void VisionFunctions::hslThreshold(cv::Mat& input, std::vector<double> hslThreshold, cv::Mat& out) 
 {
 	cv::cvtColor(input, out, cv::COLOR_BGR2HLS);
@@ -23,8 +28,8 @@ void VisionFunctions::hslThreshold(cv::Mat& input, std::vector<double> hslThresh
 		upperHSL[1] = 180;
 		cv::Mat lowerMask;
 		cv::Mat upperMask;
-		cv::inRange(out, cv::Scalar(lowerHSL[0], lowerHSL[2], lowerHSL[4]), cv::Scalar(lowerHSL[1], lowerHSL[3], lowerHSL[5]), lowerMask);
-		cv::inRange(out, cv::Scalar(upperHSL[0], upperHSL[2], upperHSL[4]), cv::Scalar(upperHSL[1], upperHSL[3], upperHSL[5]), upperMask);
+		cv::inRange(out, cv::Scalar(lowerHSL[0], lowerHSL[4], lowerHSL[2]), cv::Scalar(lowerHSL[1], lowerHSL[5], lowerHSL[3]), lowerMask);
+		cv::inRange(out, cv::Scalar(upperHSL[0], upperHSL[4], upperHSL[2]), cv::Scalar(upperHSL[1], upperHSL[5], upperHSL[3]), upperMask);
 		// Combines masks because if a matrix values are:
 		// 1 OR 1 = 1
 		// 1 OR 0 = 1
@@ -34,23 +39,21 @@ void VisionFunctions::hslThreshold(cv::Mat& input, std::vector<double> hslThresh
 	}
 	else
 	{
-		cv::inRange(out, cv::Scalar(hslThreshold[0], hslThreshold[2], hslThreshold[4]), cv::Scalar(hslThreshold[1], hslThreshold[3], hslThreshold[5]), out);
+		cv::inRange(out, cv::Scalar(hslThreshold[0], hslThreshold[4], hslThreshold[2]), cv::Scalar(hslThreshold[1], hslThreshold[5], hslThreshold[3]), out);
 	}
 }
 
-void VisionFunctions::erodeMask(cv::Mat& input, cv::Mat& output)
+void VisionFunctions::erodeMask(cv::Mat& input, cv::Mat& output, int iterations)
 {
 	auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
 	cv::Point matrixCenter(-1, -1);
-	int iterations = 5;
 	cv::erode(input, output, kernel, matrixCenter, iterations);
 }
 
-void VisionFunctions::dilateMask(cv::Mat& input, cv::Mat& output)
+void VisionFunctions::dilateMask(cv::Mat& input, cv::Mat& output, int iterations)
 {
 	auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5));
 	cv::Point matrixCenter(-1, -1);
-	int iterations = 3;
 	cv::dilate(input, output, kernel, matrixCenter, iterations);
 }
 
