@@ -26,10 +26,10 @@ void ApriltagDetector::startStream()
         return;
     }
 
-    cap.set(cv::CAP_PROP_FPS, config.fps);
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, config.width);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.height);
-    cap.set(cv::CAP_PROP_EXPOSURE, config.exposure);
+    cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
+    cap.set(cv::CAP_PROP_EXPOSURE, config.cameras[this->streamId].exposure);
 }
 
 void ApriltagDetector::detect()
@@ -39,8 +39,8 @@ void ApriltagDetector::detect()
     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
     double markerLength = 0.16;
-    cv::Mat cameraMatrix = config.cameraMat;
-    cv::Mat distCoeffs = config.distCoeffs;
+    cv::Mat cameraMatrix = config.cameras[this->streamId].cameraMat;
+    cv::Mat distCoeffs = config.cameras[this->streamId].distCoeffs;
 
     cv::Mat objPoints(4, 1, CV_32FC3);
     objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength/2.f, markerLength/2.f, 0);
@@ -50,7 +50,7 @@ void ApriltagDetector::detect()
 
     auto prevTS = std::chrono::steady_clock::now();
     auto postTS = prevTS;
-    double dt = 1.0 / config.fps;
+    double dt = 1.0 / config.cameras[this->streamId].fps;
 
     while (true)
     {
