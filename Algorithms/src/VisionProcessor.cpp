@@ -1,6 +1,8 @@
 
 #include "VisionProcessor.h"	
 
+bool VisionProcessor::toRun = true;
+
 VisionProcessor::VisionProcessor() {}
 
 void VisionProcessor::initialize()
@@ -73,7 +75,7 @@ void VisionProcessor::finalize()
 void VisionProcessor::run()
 {
 	initialize();
-	while (true)
+	while (toRun)
 	{
 		execute();
 	}

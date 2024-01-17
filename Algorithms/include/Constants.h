@@ -6,7 +6,8 @@ enum ImageType
 	DEPTH,
 	COLOR,
 	POSITION,
-	MASK
+	MASK,
+	ALIGNED_COLOR
 };
 
 #endif

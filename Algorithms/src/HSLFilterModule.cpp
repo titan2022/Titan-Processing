@@ -10,7 +10,7 @@
 #define _USE_MATH_DEFINES
 
 const vector<ImageType> HSLFilterModule::inputList = { ImageType::COLOR };
-const vector<ImageType> HSLFilterModule::outputList = { ImageType::COLOR };
+const vector<ImageType> HSLFilterModule::outputList = { ImageType::COLOR, ImageType::MASK };
 
 HSLFilterModule::HSLFilterModule(const std::string& name, const std::vector<double>& hslThresholdParams) 
 	: ProcessingModule(name, inputList, outputList), hslThresholdParameters(hslThresholdParams) {}
@@ -30,15 +30,19 @@ void HSLFilterModule::execute()
 	cv::GaussianBlur(inputMatrices[1].second, inputMatrices[1].second, blurKernel, 3);*/
 	cv::Mat thresholdMask;
 	//std::vector<double> hslThresholdParams = { 15, 35, 45, 210, 80, 255 };
-
 	VisionFunctions::hslThreshold(*(inputMatrices[0].second), hslThresholdParameters, thresholdMask);
-	VisionFunctions::mergeMask(thresholdMask, thresholdMask);
-	auto contours = VisionFunctions::findContours(thresholdMask);
+	//VisionFunctions::erodeMask(thresholdMask, thresholdMask, 1);
+	//VisionFunctions::mergeMask(thresholdMask, thresholdMask);
+	/*auto contours = VisionFunctions::findContours(thresholdMask);*/
 	//Error here in vector subscript
 	//auto greatestContourCenter = VisionFunctions::getMomentBasedContourCenter(contours[0]);
 	inputMatrices[0].second->copyTo(outputMatrices[0].second);
+	outputMatrices[1].second = thresholdMask;
+
+	cv::imshow("HSL Threshold Mask", thresholdMask);
+	cv::waitKey(1);
 	//inputMatrices[0].second->copyTo(outputMatrices[0].second);
-	cv::drawContours(outputMatrices[0].second, contours, -1, cv::Scalar(255, 0, 0), 3);
+	//cv::drawContours(outputMatrices[0].second, contours, -1, cv::Scalar(255, 0, 0), 3);
 	/*cv::circle(inputMatrices[1].second, greatestContourCenter, 5, cv::Scalar(0, 255, 0), 2);*/
 }
 

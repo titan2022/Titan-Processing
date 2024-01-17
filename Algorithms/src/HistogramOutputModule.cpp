@@ -5,8 +5,8 @@
 
 const vector<ImageType> HistogramOutputModule::imageTypes = { ImageType::COLOR, ImageType::MASK };
 
-HistogramOutputModule::HistogramOutputModule(const std::string& name, std::vector<int> channels, std::vector<int> numOfBins, std::vector<float> rangeBounds, const std::string& fileName)
-	: OutputModule(name, imageTypes), dim(channels.size()), channels(channels), numOfBins(numOfBins), fileName(fileName)
+HistogramOutputModule::HistogramOutputModule(const std::string& name, std::vector<int> channels, std::vector<int> numOfBins, std::vector<float> rangeBounds, bool loadFile, const std::string& fileName)
+	: OutputModule(name, imageTypes), dim(channels.size()), channels(channels), numOfBins(numOfBins), fileName(fileName), loadFile(loadFile) 
 {
 	//auto histOutput = std::make_shared<HistogramOutputModule>(name, name);
 
@@ -26,9 +26,25 @@ HistogramOutputModule::HistogramOutputModule(const std::string& name, std::vecto
 		rangeLimits[i / 2] = parameterBound;
 	}
 
-	histogram = Mat(dim, numOfBins.data(), CV_32F, cv::Scalar(0));
 	//std::cout << rangeLimits[0][0] << ' ' << rangeLimits[0][1] << '\n';
 	//std::cout << rangeLimits[1][0] << ' ' << rangeLimits[1][1] << '\n';
+}
+
+void HistogramOutputModule::initialize()
+{
+	if (loadFile)
+	{
+		cv::FileStorage file(fileName, cv::FileStorage::READ);
+		histogram = file[name].mat();
+
+		file.release();
+
+		histogram *= 0.5;
+	}
+	else
+	{
+		histogram = Mat(dim, numOfBins.data(), CV_32F, cv::Scalar(0));
+	}
 }
 
 void HistogramOutputModule::execute()
@@ -36,18 +52,19 @@ void HistogramOutputModule::execute()
 	//float test1[2] = { 1, 2 };
 	//const float* test[]	
 	//std::cout << inputMatrices[0]->type() << '\n';
-	Mat subMatrix = (*(inputMatrices[0].second))(cv::Range(200, 440), cv::Range(120, 360));
-	Mat subMask = (*(inputMatrices[1].second))(cv::Range(200, 440), cv::Range(120, 360));
-	cv::imshow("submatrix", subMatrix);
-	cv::imshow("submask", subMask);
-	cv::waitKey(1);
-	cv::cvtColor(subMatrix, subMatrix, cv::COLOR_BGR2HLS);
-	cv::calcHist(&subMatrix, 1, channels.data(), subMask, histogram, dim, numOfBins.data(), (const float**)rangeLimits, true, true);
+	//Mat subMatrix = (*(inputMatrices[0].second))(cv::Range(200, 440), cv::Range(120, 360));
+	//Mat subMask = (*(inputMatrices[1].second))(cv::Range(200, 440), cv::Range(120, 360));
+	//cv::imshow("submatrix", subMatrix);
+	//cv::imshow("submask", subMask);
+	//cv::threshold(subMask, subMask, 128, 255, cv::THRESH_BINARY);
+	//cv::waitKey(1);
+	Mat img;
+	cv::cvtColor(*(inputMatrices[0].second), img, cv::COLOR_BGR2HLS);
+	cv::calcHist(&img, 1, channels.data(), *(inputMatrices[1].second), histogram, dim, numOfBins.data(), (const float**)rangeLimits, true, true);
 }
 
 void HistogramOutputModule::finalize()
 {
-	cv::normalize(histogram, histogram, 0, 1, cv::NORM_MINMAX, -1, Mat());
 	cv::FileStorage file(fileName, cv::FileStorage::WRITE);
 	file << name << histogram;
 	file.release();

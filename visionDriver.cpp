@@ -19,6 +19,7 @@
 #include "GraphicOutputModule.h"
 #include "HistogramOutputModule.h"
 #include "HistProjectionModule.h"
+#include "FileInputModule.h"
 #include "VisionProcessor.h"
 //#include "NetworkingClient.hpp"
 
@@ -45,46 +46,36 @@ int main(int argc, char* argv[])
 
 	RealsenseCameraModule* inputModule = new RealsenseCameraModule("RealsenseCameraModule", 0, 1);
 	std::cout << "Camera connected\n";
-	BlackScreenFilterModule* processModule = new BlackScreenFilterModule();
+	HSLFilterModule* hslFilterOutputModule = new HSLFilterModule("Note Filter", { 0, 40, 60, 256, 30, 230 });
+	//BlackScreenFilterModule* processModule = new BlackScreenFilterModule();
 	GraphicOutputModule* videoOutput = new GraphicOutputModule("Post Hist Image");
-	HistogramOutputModule* createHistMod = new HistogramOutputModule("Note_Histogram", {0, 2}, {10, 10}, {0, 180, 0, 256}, "Note_Histogram.json");
-	HistProjectionModule* projectionMod = new HistProjectionModule("Note_Histogram", { 0, 2 }, { 0, 180, 0, 256 }, 0, "Note_Histogram.json");
+	HistogramOutputModule* createHistMod = new HistogramOutputModule("Note_Histogram", {0, 2}, {90, 128}, {0, 180, 0, 256}, true, "Note_Histogram_2.json");
+	HistProjectionModule* projectionMod = new HistProjectionModule("Note_Histogram", { 0, 2}, { 0, 180, 0, 256 }, 5, "Note_Histogram_2.json");
+	FileInputModule* fileInputMod = new FileInputModule("FileInput", "C:/Users/noone/Desktop/Code/Titan-Processing/out/build/x64-debug/note_images");
 
-	inputModule->addSubscriber(projectionMod);
-
-	projectionMod->addSubscriber(videoOutput);
-
-	analyzer.addInputModule(inputModule);
-	analyzer.addProcessingModule(projectionMod);
-	analyzer.addOutputModule(videoOutput);
-
-	//
-	//inputModule->addSubscriber(processModule);
-
-	//processModule->addSubscriber(videoOutput);
-	//processModule->addSubscriber(createHistMod);
-	//
+	//inputModule->addSubscriber(projectionMod);
+	//projectionMod->addSubscriber(videoOutput);
 
 	//analyzer.addInputModule(inputModule);
-	//analyzer.addProcessingModule(processModule);
+	//analyzer.addProcessingModule(projectionMod);
 	//analyzer.addOutputModule(videoOutput);
-	//analyzer.addOutputModule(createHistMod);
+
+
+	fileInputMod->addSubscriber(hslFilterOutputModule);
+	hslFilterOutputModule->addSubscriber(videoOutput);
+	hslFilterOutputModule->addSubscriber(createHistMod);
+
+	analyzer.addInputModule(fileInputMod);
+	analyzer.addProcessingModule(hslFilterOutputModule);
+	analyzer.addOutputModule(videoOutput);
+	analyzer.addOutputModule(createHistMod);
 
 	std::cout << "Setup complete\n";
 
 	time_t duration = 10;
 	time_t endTime = std::time(NULL) + duration;
 
-	analyzer.initialize();
-
-	int i = 0;
-
-	while (i < 60)
-	{
-		analyzer.execute();
-		//++i;
-	}
-	analyzer.finalize();
+	analyzer.run();
 //	int streamOffset = 0;
 //	bool cameraDisconnected = false;
 //	RealsenseCameraModule camera(0, 1);

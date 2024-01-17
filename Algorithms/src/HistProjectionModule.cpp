@@ -24,13 +24,18 @@ void HistProjectionModule::initialize()
 {
 	cv::FileStorage file(fileName, cv::FileStorage::READ);
 	histogram = file[name].mat();
+	cv::normalize(histogram, histogram, 0, 100, cv::NORM_MINMAX, -1, Mat());
 }
 
 void HistProjectionModule::execute()
 {
 	Mat histOutput;
 	Mat hsl;
+	cv::imshow("Test color", *inputMatrices[0].second);
+	cv::waitKey(1);
 	cv::cvtColor(*inputMatrices[0].second, hsl, cv::COLOR_BGR2HLS);
+	//cv::imshow("hsl mat", hsl);
+	//cv::waitKey(1);
 	cv::calcBackProject(&hsl, 1, channels.data(), histogram, histOutput, (const float**) rangeLimits);
 	//std::cout << histOutput;
 	//histOutput *= 255;

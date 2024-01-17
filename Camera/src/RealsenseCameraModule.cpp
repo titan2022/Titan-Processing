@@ -3,7 +3,6 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
-#include "RealsenseFrame.h"
 
 const double RealsenseCameraModule::exposure = 156;
 const double RealsenseCameraModule::gain = 55;
@@ -21,7 +20,7 @@ const int RealsenseCameraModule::frameRate = 15;
 const double RealsenseCameraModule::timeOut = 1000;
 const rs2::align RealsenseCameraModule::frameAligner(RS2_STREAM_DEPTH);
 const int RealsenseCameraModule::alignmentType = RS2_STREAM_DEPTH;
-const vector<ImageType> RealsenseCameraModule::types = { ImageType::DEPTH, ImageType::COLOR, ImageType::POSITION };
+const vector<ImageType> RealsenseCameraModule::types = { ImageType::DEPTH, ImageType::COLOR, ImageType::POSITION, ImageType::ALIGNED_COLOR };
 
 RealsenseCameraModule::RealsenseCameraModule(const std::string& name, int depthIndex, int colorIndex) 
 	: InputModule(name, types), depthSensor(context.query_all_sensors()[depthIndex]), colorSensor(context.query_all_sensors()[colorIndex]) {}
@@ -55,34 +54,34 @@ void RealsenseCameraModule::config()
 	//depthSensor.set_option(RS2_OPTION_MAX_DISTANCE, maximumDistance);
 }
 
-void RealsenseCameraModule::nextFrame()
-{
-	currentFrameSet = pipeline.wait_for_frames(timeOut);
-}
-
-RealsenseFrame RealsenseCameraModule::getFrame()
-{	
-	//Aligns the depth and video frame together
-	rs2::frameset alignedFrame = frameAligner.process(currentFrameSet);
-
-	//Gets the aligned data and stores it in the OpenCV Matrices
-	rs2::video_frame videoFrame = alignedFrame.get_color_frame();
-	rs2::depth_frame depthFrame = alignedFrame.get_depth_frame();
-	rs2::pointcloud pointCloudCalculator;
-	rs2::points points = pointCloudCalculator.calculate(depthFrame);
-
-	auto depthMatrix = cv::Mat(cv::Size(xResolution, yResolution), CV_16UC1, (void*) depthFrame.get_data());
-	depthMatrix.convertTo(depthMatrix, CV_64FC1);
-	depthMatrix = depthMatrix * depthFrame.get_units();
-	auto colorMatrix = cv::Mat(cv::Size(xResolution, yResolution), CV_8UC3, (void*) videoFrame.get_data());
-	cv::cvtColor(colorMatrix, colorMatrix, cv::COLOR_RGB2BGR);
-	cv::Mat positionMatrix;
-	cv::Mat(cv::Size(xResolution, yResolution), CV_32FC3, (void*) points.get_data()).copyTo(positionMatrix);
-	/*cv::imshow("Position", *publicPositionMatrix);
-	cv::waitKey(1);*/
-
-	return RealsenseFrame(depthMatrix, colorMatrix, positionMatrix);
-}
+//void RealsenseCameraModule::nextFrame()
+//{
+//	currentFrameSet = pipeline.wait_for_frames(timeOut);
+//}
+//
+//RealsenseFrame RealsenseCameraModule::getFrame()
+//{	
+//	//Aligns the depth and video frame together
+//	rs2::frameset alignedFrame = frameAligner.process(currentFrameSet);
+//
+//	//Gets the aligned data and stores it in the OpenCV Matrices
+//	rs2::video_frame videoFrame = alignedFrame.get_color_frame();
+//	rs2::depth_frame depthFrame = alignedFrame.get_depth_frame();
+//	rs2::pointcloud pointCloudCalculator;
+//	rs2::points points = pointCloudCalculator.calculate(depthFrame);
+//
+//	auto depthMatrix = cv::Mat(cv::Size(xResolution, yResolution), CV_16UC1, (void*) depthFrame.get_data());
+//	depthMatrix.convertTo(depthMatrix, CV_64FC1);
+//	depthMatrix = depthMatrix * depthFrame.get_units();
+//	auto colorMatrix = cv::Mat(cv::Size(xResolution, yResolution), CV_8UC3, (void*) videoFrame.get_data());
+//	cv::cvtColor(colorMatrix, colorMatrix, cv::COLOR_RGB2BGR);
+//	cv::Mat positionMatrix;
+//	cv::Mat(cv::Size(xResolution, yResolution), CV_32FC3, (void*) points.get_data()).copyTo(positionMatrix);
+//	/*cv::imshow("Position", *publicPositionMatrix);
+//	cv::waitKey(1);*/
+//
+//	return RealsenseFrame(depthMatrix, colorMatrix, positionMatrix);
+//}
 
 bool RealsenseCameraModule::isValid() const
 {
@@ -99,12 +98,36 @@ bool RealsenseCameraModule::isValid() const
 
 void RealsenseCameraModule::execute()
 {
-	nextFrame();
-	auto frame = getFrame();
+	currentFrameSet = pipeline.wait_for_frames(timeOut);
+	//Aligns the depth and video frame together
+	auto colorFrame = currentFrameSet.get_color_frame();
 
-	outputMatrices[0].second = frame.getDepthMatrix();
-	outputMatrices[1].second = frame.getColorMatrix();
-	outputMatrices[2].second = frame.getPositionMatrix();
+	Mat tempColorMat(cv::Size(xResolution, yResolution), CV_8UC3, (void*)colorFrame.get_data());
+	cv::cvtColor(tempColorMat, outputMatrices[1].second, cv::COLOR_RGB2BGR);
+
+	currentFrameSet = frameAligner.process(currentFrameSet);
+
+	//Gets the aligned data and stores it in the OpenCV Matrices
+	rs2::video_frame videoFrame = currentFrameSet.get_color_frame();
+	rs2::depth_frame depthFrame = currentFrameSet.get_depth_frame();
+	rs2::pointcloud pointCloudCalculator;
+	rs2::points points = pointCloudCalculator.calculate(depthFrame);
+
+	Mat depthMatrix(cv::Size(xResolution, yResolution), CV_16UC1, (void*)depthFrame.get_data());
+	depthMatrix.convertTo(depthMatrix, CV_64FC1);
+	depthMatrix = depthMatrix * depthFrame.get_units();
+	Mat colorMatrix = cv::Mat(cv::Size(xResolution, yResolution), CV_8UC3, (void*)videoFrame.get_data());
+	cv::cvtColor(colorMatrix, colorMatrix, cv::COLOR_RGB2BGR);
+	Mat tempPositionMat(cv::Size(xResolution, yResolution), CV_32FC3, (void*)points.get_data());
+	/*cv::imshow("Position", *publicPositionMatrix);
+	cv::waitKey(1);*/
+
+	tempPositionMat.copyTo(outputMatrices[2].second);
+	outputMatrices[0].second = depthMatrix;
+	outputMatrices[3].second = colorMatrix;
+
+	//cv::imshow("Color Image", outputMatrices[1].second);
+	//cv::waitKey(1);
 	//for (auto depth : depthSubscribers)
 	//{
 	//	outputMatrices[ImageType::DEPTH].copyTo(depth->inputMatrices[ImageType::DEPTH]);

@@ -138,6 +138,14 @@ build Algorithms\CMakeFiles\algorithms.dir\src\CoordinateTransformations.cpp.obj
   TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
   TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
 
+build Algorithms\CMakeFiles\algorithms.dir\src\FileInputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\FileInputModule.cpp || cmake_object_order_depends_target_algorithms
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
+  INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
+  OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
+  OBJECT_FILE_DIR = Algorithms\CMakeFiles\algorithms.dir\src
+  TARGET_COMPILE_PDB = Algorithms\CMakeFiles\algorithms.dir\algorithms.pdb
+  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.pdb
+
 build Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj: CXX_COMPILER__algorithms_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\src\GraphicOutputModule.cpp || cmake_object_order_depends_target_algorithms
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
   INCLUDES = -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
@@ -226,7 +234,7 @@ build Algorithms\CMakeFiles\algorithms.dir\src\VisionProcessor.cpp.obj: CXX_COMP
 #############################################
 # Link the static library C:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.lib
 
-build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.lib: CXX_STATIC_LIBRARY_LINKER__algorithms_Debug Algorithms\CMakeFiles\algorithms.dir\src\BlackScreenFilterModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\ContourTest.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\CoordinateTransformations.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HSLFilterModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HSLOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HistProjectionModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HistogramOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Module.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Object.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Vector.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionFunctions.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionProcessor.cpp.obj
+build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\algorithms.lib: CXX_STATIC_LIBRARY_LINKER__algorithms_Debug Algorithms\CMakeFiles\algorithms.dir\src\BlackScreenFilterModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\ContourTest.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\CoordinateTransformations.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\FileInputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\GraphicOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HSLFilterModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HSLOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HistProjectionModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\HistogramOutputModule.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Module.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Object.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\Vector.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionFunctions.cpp.obj Algorithms\CMakeFiles\algorithms.dir\src\VisionProcessor.cpp.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -MDd -ZI
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = Algorithms\CMakeFiles\algorithms.dir
@@ -281,14 +289,6 @@ build Camera\CMakeFiles\camera.dir\src\RealsenseCameraModule.cpp.obj: CXX_COMPIL
   TARGET_COMPILE_PDB = Camera\CMakeFiles\camera.dir\camera.pdb
   TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.pdb
 
-build Camera\CMakeFiles\camera.dir\src\RealsenseFrame.cpp.obj: CXX_COMPILER__camera_unscanned_Debug C$:\Users\noone\Desktop\Code\Titan-Processing\Camera\src\RealsenseFrame.cpp || cmake_object_order_depends_target_camera
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -ZI
-  INCLUDES = -I"C:\Program Files\Intel RealSense SDK 2.0\include" -IC:\Users\noone\Desktop\Code\Titan-Processing\Camera\include -IC:\Users\noone\Desktop\Code\Titan-Processing\Algorithms\include -external:I"C:\Program Files\opencv\build\include" -external:W0
-  OBJECT_DIR = Camera\CMakeFiles\camera.dir
-  OBJECT_FILE_DIR = Camera\CMakeFiles\camera.dir\src
-  TARGET_COMPILE_PDB = Camera\CMakeFiles\camera.dir\camera.pdb
-  TARGET_PDB = C:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.pdb
-
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target camera
@@ -297,7 +297,7 @@ build Camera\CMakeFiles\camera.dir\src\RealsenseFrame.cpp.obj: CXX_COMPILER__cam
 #############################################
 # Link the static library C:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.lib
 
-build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.lib: CXX_STATIC_LIBRARY_LINKER__camera_Debug Camera\CMakeFiles\camera.dir\src\RealsenseCameraModule.cpp.obj Camera\CMakeFiles\camera.dir\src\RealsenseFrame.cpp.obj
+build C$:\Users\noone\Desktop\Code\Titan-Processing\lib\camera.lib: CXX_STATIC_LIBRARY_LINKER__camera_Debug Camera\CMakeFiles\camera.dir\src\RealsenseCameraModule.cpp.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -MDd -ZI
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = Camera\CMakeFiles\camera.dir

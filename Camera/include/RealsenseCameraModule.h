@@ -5,21 +5,17 @@
 #include <librealsense2/hpp/rs_pipeline.hpp>
 #include "InputModule.h"
 
-class RealsenseFrame;
-
 class RealsenseCameraModule : public InputModule
 {
 public:
 	RealsenseCameraModule(const std::string& name, int depthIndex, int colorIndex);
-	
+
 	static const size_t xResolution, yResolution;
 	static const int frameRate;
 
 	//Iteration
 	void initialize() override;
 	void config();
-	void nextFrame();
-	RealsenseFrame getFrame();
 	void execute() override;
 	bool isValid() const override;
 protected:

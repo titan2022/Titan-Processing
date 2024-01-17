@@ -90,3 +90,8 @@ cv::Point VisionFunctions::getMomentBasedContourCenter(const std::vector<cv::Poi
 
 	return center;
 }
+
+void VisionFunctions::blackFilterMask(Mat& input, Mat& output)
+{
+	VisionFunctions::hslThreshold(input, { 0, 0, 0, 0, 0, 0 }, output);
+}

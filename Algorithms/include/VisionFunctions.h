@@ -15,6 +15,7 @@ namespace VisionFunctions
 	void mergeMask(cv::Mat& input, cv::Mat& output);
 	void erodeMask(cv::Mat& input, cv::Mat& output, int iterations = 5);
 	void dilateMask(cv::Mat& input, cv::Mat& output, int iterations = 3);
+	void blackFilterMask(cv::Mat& input, cv::Mat& output);
 
 	std::vector<std::vector<cv::Point>> findContours(cv::Mat& input);
 

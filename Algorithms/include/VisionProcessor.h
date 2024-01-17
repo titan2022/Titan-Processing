@@ -34,6 +34,7 @@ public:
 	void addOutputModule(OutputModule* outputModule);
 	void addProcessingModule(ProcessingModule* processingModule);
 
+	static bool toRun;
 };
 
 #endif
