@@ -38,14 +38,17 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
 {
     VectorData data;
 
-    data.type = 'd';
+    data.type = 'v';
     data.x = v.getX();
     data.y = v.getY();
     data.z = v.getZ();
     data.name = msg + '\n';
 
+    size_t dataLength = sizeof(data);
+    std::cout << dataLength << std::endl;
+
     const void* buffer = static_cast<void*>(&data);
-    ::sendto(sock, buffer, sizeof(data), 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+    ::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 
     if (withReply)
     {

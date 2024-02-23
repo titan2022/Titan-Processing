@@ -1,5 +1,5 @@
 #include "helper/Camera.hpp"
 
-Camera::Camera() {
+// Camera::Camera() {
     
-}
+// }

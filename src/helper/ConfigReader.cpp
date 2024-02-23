@@ -40,7 +40,7 @@ void ConfigReader::readJSONFile(std::string path) {
     this->decodeSharpening = data["decodeSharpening"];
 
     for (auto &tagObj : data["cameras"]) {
-        Camera cam();
+        Camera cam;
 
         cam.id = tagObj["id"];
         cam.width = tagObj["width"];

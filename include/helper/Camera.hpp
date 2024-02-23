@@ -6,7 +6,7 @@
 class Camera
 {
     public:
-        Camera();
+        // Camera();
 
         int id;
         int width;
