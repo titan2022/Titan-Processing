@@ -6,7 +6,7 @@
 #include "../../include/apriltag/ApriltagDetector.hpp"
 #include "../../include/apriltag/Localizer.hpp"
 #include "../../include/helper/ConfigReader.hpp"
-#include "../../include/networking/Client.hpp"
+#include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
 constexpr int CAM_NUM = 2; // Number of available cameras
