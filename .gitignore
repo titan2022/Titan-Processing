@@ -53,3 +53,7 @@ build
 
 # Output
 out
+
+# clangd
+**/compile_commands.json
+**/.cache
