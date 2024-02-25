@@ -1,21 +1,19 @@
 #include "apriltag/Apriltag.hpp"
-#include "helper/Pose.hpp"
 #include "helper/Vector3D.hpp"
 
-Apriltag::Apriltag(int id, Pose3D &pose)
+Apriltag::Apriltag(int id, Vector3D &position, Vector3D &rotation, double size) : id(id), position(position), rotation(rotation), size(size)
 {
-    init(id, *pose.position, *pose.rotation);
+    size = -1;
 }
 
-Apriltag::Apriltag(int id, Vector3D &position, Vector3D &rotation)
+Apriltag& Apriltag::operator=(const Apriltag& other)
 {
-    init(id, position, rotation);
-}
+    if (this != &other) {
+        id = other.id;
+        position = other.position;
+        position = other.rotation;
+        size = other.size;
+    }
 
-void Apriltag::init(int id, Vector3D &position, Vector3D &rotation)
-{
-    this->id = id;
-    this->position = &position;
-    this->rotation = &rotation;
-    this->pose = new Pose3D(&position, &rotation);
+    return *this;
 }

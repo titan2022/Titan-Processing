@@ -1,8 +1,16 @@
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unordered_map>
+
+#include <opencv2/core.hpp>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 #include "helper/ConfigReader.hpp"
+#include "helper/Unit.hpp"
+
 
 ConfigReader::ConfigReader(std::string path)
 {
@@ -14,97 +22,64 @@ ConfigReader::ConfigReader()
     this->init("processing.cfg");
 }
 
-constexpr unsigned int hash(const char *s, int off = 0)
-{
-    return !s[off] ? 5381 : (hash(s, off + 1) * 33) ^ s[off];
-}
-
-constexpr inline unsigned int operator""_(char const *p, size_t)
-{
-    return hash(p);
-}
-
 void ConfigReader::init(std::string path)
 {
+    this->configPath = path;
+    readJSONFile(path + "/config.json");
+}
+
+void ConfigReader::readJSONFile(std::string path) {
     std::ifstream in(path);
+    json data = json::parse(in);
 
-    std::string line;
-    while (std::getline(in, line))
-    {
-        if (line.back() == '\r')
-        {
-            line.pop_back();
-        }
+    this->ip = data["ip"];
+    this->port = data["port"];
+    this->threads = data["threads"];
+    this->quadDecimate = data["quadDecimate"];
+    this->quadSigma = data["quadSigma"];
+    this->decodeSharpening = data["decodeSharpening"];
 
-        std::istringstream is_line(line);
-        std::string key;
-        std::string value;
+    for (auto &tagObj : data["cameras"]) {
+        Camera cam;
 
-        if (key[0] == '#')
-        {
-            continue;
-        }
+        cam.id = tagObj["id"];
+        cam.width = tagObj["width"];
+        cam.height = tagObj["height"];
+        cam.fps = tagObj["fps"];
+        cam.exposure = tagObj["exposure"];
+        cam.focalX = tagObj["focalX"];
+        cam.focalY = tagObj["focalY"];
+        cam.centerX = tagObj["centerX"];
+        cam.centerY = tagObj["centerY"];
+        
+        cam.cameraMat = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
+        cam.cameraMat.at<double>(0, 0) = cam.focalX;
+        cam.cameraMat.at<double>(1, 1) = cam.focalY;
+        cam.cameraMat.at<double>(0, 2) = cam.centerX;
+        cam.cameraMat.at<double>(1, 2) = cam.centerY;
+        cam.cameraMat.at<double>(2, 2) = 1;
 
-        if (!std::getline(is_line, key, '='))
-        {
-            continue;
-        }
+        cam.distCoeffs = cv::Mat(5, 1, CV_64FC1, cv::Scalar::all(0));
+        cam.distCoeffs.at<double>(0, 0) = tagObj["k_1"];
+        cam.distCoeffs.at<double>(0, 1) = tagObj["k_2"];
+        cam.distCoeffs.at<double>(0, 2) = tagObj["p_1"];
+        cam.distCoeffs.at<double>(0, 3) = tagObj["p_2"];
+        cam.distCoeffs.at<double>(0, 4) = tagObj["k_3"];
 
-        if (!std::getline(is_line, value))
-        {
-            continue;
-        }
+        this->cameras.push_back(cam);
+    }
 
-        switch (hash(key.c_str(), 0))
-        {
-            case "ip"_:
-                this->ip = value;
-                break;
-            case "port"_:
-                this->port = std::stoi(value);
-                break;
-            case "threads"_:
-                this->threads = std::stoi(value);
-                break;
-            case "width"_:
-                this->width = std::stoi(value);
-                break;
-            case "height"_:
-                this->height = std::stoi(value);
-                break;
-            case "fps"_:
-                this->fps = std::stoi(value);
-                break;
-            case "focal_x"_:
-                this->focalX = std::stod(value);
-                break;
-            case "focal_y"_:
-                this->focalY = std::stod(value);
-                break;
-            case "center_x"_:
-                this->centerX = std::stod(value);
-                break;
-            case "center_y"_:
-                this->centerY = std::stod(value);
-                break;
-            case "hue_shift"_:
-                this->hueShift = std::stoi(value);
-                break;
-            case "sat_shift"_:
-                this->satShift = std::stoi(value);
-                break;
-            case "val_shift"_:
-                this->valShift = std::stoi(value);
-                break;
-            case "quad_decimate"_:
-                this->quadDecimate = std::stoi(value);
-                break;
-            case "quad_sigma"_:
-                this->quadSigma = std::stoi(value);
-                break;
-            case "decode_sharpening"_:
-                this->decodeSharpening = std::stod(value);
-                break;
-        }
+    for (auto &tagObj : data["apriltags"]) {
+        std::vector<double> posArr = tagObj["position"];
+        std::vector<double> rotArr = tagObj["rotation"];
+        double size = tagObj["size"];
+        int id = tagObj["id"];
+
+        Vector3D pos(posArr);
+        Vector3D rot(rotArr);
+        rot *= Unit::DEG;
+
+        Apriltag* tag = new Apriltag(id, pos, rot, size);
+        this->tags.insert({id, tag});
     }
 }

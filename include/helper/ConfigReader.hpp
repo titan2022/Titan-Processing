@@ -2,35 +2,31 @@
 #define CONFIG_READER
 
 #include <string>
+#include <unordered_map>
+#include <vector>
+#include <opencv2/core.hpp>
+
+#include "../apriltag/Apriltag.hpp"
+#include "Camera.hpp"
 
 class ConfigReader
 {
     public:
         // Networking
         std::string ip;
-        uint16_t port;
+        int port;
 
         // Performance
-        uint8_t threads;
-
-        // Camera
-        uint16_t width;
-        uint16_t height;
-        uint8_t fps;
-        double focalX;
-        double focalY;
-        double centerX;
-        double centerY;
-
-        // RealSense
-        uint8_t hueShift;
-        uint8_t satShift;
-        uint8_t valShift;
+        int threads;
 
         // Apriltag
-        uint8_t quadDecimate;
-        uint8_t quadSigma;
+        int quadDecimate;
+        int quadSigma;
         double decodeSharpening;
+
+        // Stuff from config.json
+        std::unordered_map<int, Apriltag*> tags;
+        std::vector<Camera> cameras;
 
         ConfigReader(std::string path);
         ConfigReader();
@@ -38,6 +34,7 @@ class ConfigReader
     private:
         std::string configPath;
         void init(std::string path);
+        void readJSONFile(std:: string path);
 };
 
 #endif
