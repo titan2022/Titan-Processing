@@ -6,7 +6,7 @@
 #include "../../include/apriltag/ApriltagDetector.hpp"
 #include "../../include/apriltag/Localizer.hpp"
 #include "../../include/helper/ConfigReader.hpp"
-#include "../../include/networking/Client.hpp"
+#include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
 int main(int argc, char const *argv[])
