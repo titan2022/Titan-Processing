@@ -50,3 +50,6 @@ _deps
 # Executables
 bin
 build
+
+# Output
+out

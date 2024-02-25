@@ -6,6 +6,7 @@ import numpy as np
 config_path = sys.argv[1]
 config = configobj.ConfigObj(config_path)
 
+# Download checkboard pattern from OpenCV docs
 CHECKERBOARD = (6, 9)
 
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -22,23 +23,25 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(config.get("height")))
   
 while cap.isOpened():
     status, image = cap.read()
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-  
-    ret, corners = cv2.findChessboardCorners(
-        gray,
-        CHECKERBOARD,
-        cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE
-    )
-    
-    if ret == True:
-        obj_points.append(obj)
-        corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
-        img_points.append(corners2)
-        image = cv2.drawChessboardCorners(image, CHECKERBOARD, corners2, ret)
+    key = cv2.waitKey(1)
+
+    if key == 32: # Space key
+        print("Image added")
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        ret, corners = cv2.findChessboardCorners(
+            gray,
+            CHECKERBOARD,
+            cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE
+        )
+        if ret == True:
+            obj_points.append(obj)
+            corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+            img_points.append(corners2)
+            image = cv2.drawChessboardCorners(image, CHECKERBOARD, corners2, ret)
+    elif key == 27: # ESC key
+        break
   
     cv2.imshow("Camera Calibration", image)
-    if cv2.waitKey(1) == 27: # ESC key
-        break
 
 ret, matrix, distortion, r_vecs, t_vecs = cv2.calibrateCamera(obj_points, img_points, gray.shape[::-1], None, None)
 
@@ -46,6 +49,12 @@ config["focal_x"] = matrix[0][0]
 config["focal_y"] = matrix[1][1]
 config["center_x"] = matrix[0][2]
 config["center_y"] = matrix[1][2]
+
+config["k_1"] = distortion[0][0]
+config["k_2"] = distortion[0][1]
+config["p_1"] = distortion[0][2]
+config["p_2"] = distortion[0][3]
+config["k_3"] = distortion[0][4]
 
 config.write()
 fin = open(config_path, "r").read()

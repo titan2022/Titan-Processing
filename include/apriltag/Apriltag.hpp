@@ -3,21 +3,17 @@
 
 #include <string>
 
-#include "../helper/Pose.hpp"
 #include "../helper/Vector3D.hpp"
 
 class Apriltag
 {
     public:
-        Vector3D *position;
-        Vector3D *rotation;
-        Pose3D *pose;
+        Apriltag(int id, Vector3D &position, Vector3D &rotation, double size);
+        Apriltag& operator=(const Apriltag& other);
+        Vector3D position;
+        Vector3D rotation;
+        double size;
         int id;
-        Apriltag(int id, Pose3D &pose);
-        Apriltag(int id, Vector3D &position, Vector3D &rotation);
-
-    private:
-        void init(int id, Vector3D &position, Vector3D &rotation);
 };
 
 #endif
