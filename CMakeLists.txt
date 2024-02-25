@@ -20,11 +20,11 @@ find_package(OpenCV 4)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Apriltag linking
-find_package(PkgConfig)
-pkg_search_module(apriltag REQUIRED apriltag)
-set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
-link_directories(${apriltag_LIBDIR})
-include_directories(include ${apriltag_INCLUDE_DIRS})
+# find_package(PkgConfig)
+# pkg_search_module(apriltag REQUIRED apriltag)
+# set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
+# link_directories(${apriltag_LIBDIR})
+# include_directories(include ${apriltag_INCLUDE_DIRS})
 
 # nlohmann/json linking
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -40,7 +40,7 @@ if (NOT NO_REALSENSE)
     file(GLOB RS_SRC src/realsense/*.cpp)
     add_library(TitanProcessing SHARED ${SRC} ${RS_SRC})
 else()
-    add_library(TitanProcessing 3.2.0 ${SRC})
+    add_library(TitanProcessing ${SRC})
 endif()
 install(TARGETS TitanProcessing DESTINATION TitanProcessing)
 
