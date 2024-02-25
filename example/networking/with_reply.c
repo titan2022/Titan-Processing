@@ -11,9 +11,9 @@ int main(int argc, char const *argv[])
     TRBVector3D v = (TRBVector3D){0, 1, 2};
 
     TRBNetworkingClientRef client = TRBNetworkingClientCreate(ip, port);
-    TRBNetworkingClientSendVector(client, "test", v, YES);
+    TRBVector3D reply = TRBNetworkingClientSendVector(client, "test", v, YES);
     
-    printf("Vector <%f, %f, %f> sent to %s:%d\n", v.x, v.y, v.z, ip, port);
+    printf("Vector <%f, %f, %f> sent to %s:%d, reply is <%f, %f, %f>\n", v.x, v.y, v.z, ip, port, reply.x, reply.y, reply.z);
 
     return 0;
 }
