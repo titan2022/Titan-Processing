@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "networking/Client.hpp"
+#include "networking/Client.h"
 #include "helper/Vector3D.hpp"
 
 // Aligned on linux x86 GCC
@@ -60,6 +60,47 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
     }
 
     return Vector3D();
+}
+
+TRBVector3D TRBVector3DMake(double x, double y, double z) {
+    return (TRBVector3D){
+        .x = x,
+        .y = y,
+        .z = z,
+    };
+}
+
+TRBNetworkingClientRef TRBNetworkingClientCreate(char* ip, uint16_t port) {
+    return new NetworkingClient(ip, port);
+}
+TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char* msg, TRBVector3D v, bool withReply) {
+    return self->send_vector_c(msg, v, withReply);
+}
+TRBVector3D NetworkingClient::send_vector_c(char *msg, TRBVector3D v, bool withReply) {
+    VectorData data;
+
+    data.type = 'v';
+    data.x = v.x;
+    data.y = v.y;
+    data.z = v.z;
+    data.name = std::string(msg) + '\n';
+
+    size_t dataLength = sizeof(data);
+    std::cout << dataLength << std::endl;
+
+    const void* buffer = static_cast<void*>(&data);
+    ::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+
+    if (withReply)
+    {
+        // Untested code
+        char* replyBuffer;
+        ::recvfrom(sock, replyBuffer, 24, 0, reinterpret_cast<sockaddr *>(&destination), (socklen_t *)sizeof(destination));
+        TRBVector3D* structVec = reinterpret_cast<TRBVector3D *>(replyBuffer);
+        return *structVec;
+    }
+
+    return (TRBVector3D){0, 0, 0};
 }
 
 double NetworkingClient::bytes_to_double(char *b)
