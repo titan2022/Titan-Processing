@@ -60,11 +60,11 @@ void ConfigReader::readJSONFile(std::string path) {
         cam.cameraMat.at<double>(2, 2) = 1;
 
         cam.distCoeffs = cv::Mat(5, 1, CV_64FC1, cv::Scalar::all(0));
-        cam.distCoeffs.at<double>(0, 0) = tagObj["k_1"];
-        cam.distCoeffs.at<double>(0, 1) = tagObj["k_2"];
-        cam.distCoeffs.at<double>(0, 2) = tagObj["p_1"];
-        cam.distCoeffs.at<double>(0, 3) = tagObj["p_2"];
-        cam.distCoeffs.at<double>(0, 4) = tagObj["k_3"];
+        cam.distCoeffs.at<double>(0, 0) = tagObj["k1"];
+        cam.distCoeffs.at<double>(0, 1) = tagObj["k2"];
+        cam.distCoeffs.at<double>(0, 2) = tagObj["p1"];
+        cam.distCoeffs.at<double>(0, 3) = tagObj["p2"];
+        cam.distCoeffs.at<double>(0, 4) = tagObj["k3"];
 
         this->cameras.push_back(cam);
     }
