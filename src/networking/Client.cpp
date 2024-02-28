@@ -61,19 +61,3 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
 
     return Vector3D();
 }
-
-double NetworkingClient::bytes_to_double(char *b)
-{
-    double d;
-    memcpy(&d, b, sizeof(double));
-    return this->change_endian(d);
-}
-
-template <class T>
-T NetworkingClient::change_endian(T in)
-{
-    char *const p = reinterpret_cast<char *>(&in);
-    for (size_t i = 0; i < sizeof(T) / 2; ++i)
-        std::swap(p[i], p[sizeof(T) - i - 1]);
-    return in;
-}
