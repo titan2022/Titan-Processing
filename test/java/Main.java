@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         NetworkingServer server = new NetworkingServer(PORT);
         System.out.println("Started server at port: " + PORT);
-        server.subscribe("pos", (NetworkingCall<Translation3d>)(Translation3d position) -> {
+        server.subscribe("position", (NetworkingCall<Translation3d>)(Translation3d position) -> {
             System.out.println(position.toString());
         });
     }

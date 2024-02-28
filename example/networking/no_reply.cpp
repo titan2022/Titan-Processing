@@ -8,10 +8,10 @@ int main(int argc, char const *argv[])
 {
     std::string ip = "127.0.0.1";
     int port = 5800;
-    Vector3D v(0, 1, 2);
+    Vector3D v(0, 1, -2);
 
     NetworkingClient client(ip, port);
-    client.send_vector("pos", v, false);
+    client.send_vector("position", v, false);
     
     std::cout << "Vector " << v.toString() << " sent to " << ip << ":" << port << std::endl;
 
