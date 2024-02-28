@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20.0)
 set(CMAKE_CXX_STANDARD 17)
-project(TitanProcessing VERSION 0.0.0 LANGUAGES C CXX)
+project(TitanProcessing VERSION 1.0.0 LANGUAGES C CXX)
 
 # Directories
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
@@ -18,13 +18,6 @@ set(OpenCV_DIR /usr/lib/opencv)
 option(OpenCV_STATIC OFF)
 find_package(OpenCV 4)
 include_directories(${OpenCV_INCLUDE_DIRS})
-
-# Apriltag linking
-# find_package(PkgConfig)
-# pkg_search_module(apriltag REQUIRED apriltag)
-# set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
-# link_directories(${apriltag_LIBDIR})
-# include_directories(include ${apriltag_INCLUDE_DIRS})
 
 # nlohmann/json linking
 find_package(nlohmann_json CONFIG REQUIRED)
