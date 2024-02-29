@@ -173,7 +173,7 @@ void NetworkingClient::send_pose_c(char* msg, TRBVector3D pos, TRBVector3D rot)
     data.type = 'p';
     strcpy(data.name, msg);
     data.pos = trbVectorToArray(pos);
-    data.pos = trbVectorToArray(rot);
+    data.rot = trbVectorToArray(rot);
 
     size_t dataLength = sizeof(data);
 
@@ -192,7 +192,7 @@ void NetworkingClient::send_tag_c(char* msg, int id, TRBVector3D pos, TRBVector3
     data.type = 't';
     strcpy(data.name, msg);
     data.pos = trbVectorToArray(pos);
-    data.pos = trbVectorToArray(rot);
+    data.rot = trbVectorToArray(rot);
     data.id = id;
 
     size_t dataLength = sizeof(data);

@@ -42,10 +42,11 @@ target_link_libraries(TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS} nlohm
 
 # Building examples
 if (BUILD_EXAMPLES)
-    file(GLOB_RECURSE EXAMPLE_SRC RELATIVE ${CMAKE_SOURCE_DIR}/example ${CMAKE_SOURCE_DIR}/example/*/*.cpp)
+    file(GLOB_RECURSE EXAMPLE_SRC RELATIVE ${CMAKE_SOURCE_DIR}/example ${CMAKE_SOURCE_DIR}/example/*/*.cpp ${CMAKE_SOURCE_DIR}/example/*/*.c)
     foreach(example ${EXAMPLE_SRC})
         string(REPLACE ".cpp" "" examplename0 ${example})
-        string(REGEX REPLACE ".+\/" "" examplename ${examplename0})
+        string(REPLACE ".c" "" examplename1 ${examplename0})
+        string(REGEX REPLACE ".+\/" "" examplename ${examplename1})
         add_executable(${examplename} ${CMAKE_SOURCE_DIR}/example/${example})
         target_link_libraries(${examplename} TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
     endforeach(example ${EXAMPLE_SRC})
