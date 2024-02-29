@@ -9,7 +9,7 @@
 #include "../apriltag/Localizer.hpp"
 #include "../helper/ConfigReader.hpp"
 #include "../helper/Vector3D.hpp"
-#include "../networking/Client.hpp"
+#include "../networking/Client.h"
 
 class ApriltagDetector
 {
