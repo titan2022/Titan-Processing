@@ -18,11 +18,28 @@
 // TODO: test on ARM
 struct VectorData
 {
-    char name[16] = { 0 };
-    double x;  // 8 bytes
-    double y;  // 8 bytes
-    double z;  // 8 bytes
-    char type; // 8 bytes (1 + 7)
+    char type;
+    char name[15] = { 0 };
+    double x;
+    double y;
+    double z;
+};
+
+struct PoseData
+{
+    char type;
+    char name[15] = { 0 };
+    std::array<double, 3> pos;
+    std::array<double, 3> rot;
+};
+
+struct TagData
+{
+    char type;
+    char name[15] = { 0 };
+    std::array<double, 3> pos;
+    std::array<double, 3> rot;
+    int id;
 };
 
 NetworkingClient::NetworkingClient(std::string ip, uint16_t port)
@@ -38,11 +55,11 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
 {
     VectorData data;
 
+    data.type = 'v';
     strcpy(data.name, msg.c_str());
     data.x = v.getX();
     data.y = v.getY();
     data.z = v.getZ();
-    data.type = 'v';
 
     size_t dataLength = sizeof(data);
 
@@ -59,4 +76,35 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
     }
 
     return Vector3D();
+}
+
+void NetworkingClient::send_pose(std::string msg, Vector3D &pos, Vector3D &rot)
+{
+    PoseData data;
+
+    data.type = 'p';
+    strcpy(data.name, msg.c_str());
+    data.pos = pos.toArray();
+    data.rot = rot.toArray();
+
+    size_t dataLength = sizeof(data);
+
+    const void* buffer = static_cast<void*>(&data);
+    ::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+}
+
+void NetworkingClient::send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot)
+{
+    TagData data;
+
+    data.type = 't';
+    strcpy(data.name, msg.c_str());
+    data.pos = pos.toArray();
+    data.rot = rot.toArray();
+    data.id = id;
+
+    size_t dataLength = sizeof(data);
+
+    const void* buffer = static_cast<void*>(&data);
+    ::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 }

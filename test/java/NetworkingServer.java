@@ -17,7 +17,7 @@ import types.Translation3d;
  * UDP-based networking server that replaces NetworkTable
  */
 public class NetworkingServer implements Runnable {
-    private static final int MAX_PACKET_SIZE = 48;
+    private static final int MAX_PACKET_SIZE = 128;
     private static final int DEFAULT_PORT = 5800;
 
     private final int port;
@@ -84,10 +84,10 @@ public class NetworkingServer implements Runnable {
                 System.out.println(err.getMessage());
             }
 
-            // for (int i = 0; i < 48; i++) {
-            //     System.out.print(String.format("%8s", Integer.toBinaryString(buffer[i] & 0xFF)).replace(' ', '0') + " ");
-            // }
-            // System.out.println("\r\n");
+            for (int i = 0; i < 48; i++) {
+                System.out.print(String.format("%8s", Integer.toBinaryString(buffer[i] & 0xFF)).replace(' ', '0') + " ");
+            }
+            System.out.println("\r\n");
 
             char packetType = getPacketType(buffer);
 
@@ -109,7 +109,7 @@ public class NetworkingServer implements Runnable {
     }
 
     private char getPacketType(byte[] data) {
-        return bytesToChar(Arrays.copyOfRange(data, 40, 41));
+        return bytesToChar(Arrays.copyOfRange(data, 0, 1));
     }
 
     private <T> void updateValue(String name, T value) {
@@ -126,7 +126,7 @@ public class NetworkingServer implements Runnable {
             return null;
         }
 
-        String name = bytesToString(Arrays.copyOfRange(data, 0, 16));
+        String name = bytesToString(Arrays.copyOfRange(data, 1, 16));
         double x = bytesToDouble(Arrays.copyOfRange(data, 16, 24));
         double y = bytesToDouble(Arrays.copyOfRange(data, 24, 32));
         double z = bytesToDouble(Arrays.copyOfRange(data, 32, 40));
@@ -139,15 +139,14 @@ public class NetworkingServer implements Runnable {
             return null;
         }
 
-        double x = bytesToDouble(Arrays.copyOfRange(data, 8, 16)); // 8 - 15: x of vector (double)
-        double y = bytesToDouble(Arrays.copyOfRange(data, 16, 24)); // 16 - 23: y of vector (double)
-        double z = bytesToDouble(Arrays.copyOfRange(data, 24, 32)); // 24 - 31: z of vector (double)
+        String name = bytesToString(Arrays.copyOfRange(data, 1, 16));
+        double x = bytesToDouble(Arrays.copyOfRange(data, 16, 24));
+        double y = bytesToDouble(Arrays.copyOfRange(data, 24, 32));
+        double z = bytesToDouble(Arrays.copyOfRange(data, 32, 40));
 
-        double roll = bytesToDouble(Arrays.copyOfRange(data, 32, 40)); // 32- 39: roll of vector (double)
-        double pitch = bytesToDouble(Arrays.copyOfRange(data, 40, 48)); // 40 - 47: pitch of vector (double)
-        double yaw = bytesToDouble(Arrays.copyOfRange(data, 48, 56)); // 48 - 55: yaw of vector (double)
-
-        String name = bytesToString(Arrays.copyOfRange(data, 56, length)); // 56 - N: name
+        double roll = bytesToDouble(Arrays.copyOfRange(data, 40, 48));
+        double pitch = bytesToDouble(Arrays.copyOfRange(data, 48, 56));
+        double yaw = bytesToDouble(Arrays.copyOfRange(data, 56, 64));
 
         return new NetworkingPose(name, new Translation3d(x, y, z), new Translation3d(roll, pitch, yaw));
     }
@@ -157,21 +156,21 @@ public class NetworkingServer implements Runnable {
             return null;
         }
 
-        double x = bytesToDouble(Arrays.copyOfRange(data, 8, 16)); // 8 - 15: x of vector (double)
-        double y = bytesToDouble(Arrays.copyOfRange(data, 16, 24)); // 16 - 23: y of vector (double)
-        double z = bytesToDouble(Arrays.copyOfRange(data, 24, 32)); // 24 - 31: z of vector (double)
+        String name = bytesToString(Arrays.copyOfRange(data, 1, 16));
+        double x = bytesToDouble(Arrays.copyOfRange(data, 16, 24));
+        double y = bytesToDouble(Arrays.copyOfRange(data, 24, 32));
+        double z = bytesToDouble(Arrays.copyOfRange(data, 32, 40));
 
-        double roll = bytesToDouble(Arrays.copyOfRange(data, 32, 40)); // 32- 39: roll of vector (double)
-        double pitch = bytesToDouble(Arrays.copyOfRange(data, 40, 48)); // 40 - 47: pitch of vector (double)
-        double yaw = bytesToDouble(Arrays.copyOfRange(data, 48, 56)); // 48 - 55: yaw of vector (double)
-
-        int id = bytesToInt(Arrays.copyOfRange(data, 56, 64)); // 56 - 63: id of tag
-        String name = bytesToString(Arrays.copyOfRange(data, 64, length)); // 32 - N: name
+        double roll = bytesToDouble(Arrays.copyOfRange(data, 40, 48));
+        double pitch = bytesToDouble(Arrays.copyOfRange(data, 48, 56));
+        double yaw = bytesToDouble(Arrays.copyOfRange(data, 56, 64));
+        int id = bytesToInt(Arrays.copyOfRange(data, 64, 68));
 
         return new NetworkingTag(name, new Translation3d(x, y, z), new Translation3d(roll, pitch, yaw), id);
     }
 
     private double bytesToDouble(byte[] buffer) {
+        // Change endian
         for(int i = 0; i < buffer.length / 2; i++)
         {
             byte temp = buffer[i];
