@@ -32,14 +32,16 @@ class NetworkingClient
     public:
         NetworkingClient(std::string ip, uint16_t port);
         Vector3D send_vector(std::string msg, Vector3D &v, bool withReply);
+        void send_pose(std::string msg, Vector3D &pos, Vector3D &rot);
+        void send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot);
+
         TRBVector3D send_vector_c(char* msg, TRBVector3D v, bool withReply);
+        void send_pose_c(char* msg, TRBVector3D pos, TRBVector3D rot);
+        void send_tag_c(char* msg, int id, TRBVector3D pos, TRBVector3D rot);
 
     private:
         int sock;
         sockaddr_in destination;
-        double bytes_to_double(char *b);
-        template <class T>
-        T change_endian(T in);
 };
 
 typedef NetworkingClient* TRBNetworkingClientRef;
@@ -53,6 +55,8 @@ TRB_BEGIN_EXTERN_C
 TRBVector3D TRBVector3DMake(double x, double y, double z);
 TRBNetworkingClientRef TRBNetworkingClientCreate(char* ip, uint16_t port);
 TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char* msg, TRBVector3D v, _Bool withReply);
+void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char* msg, TRBVector3D pos, TRBVector3D rot);
+void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, int id, char* msg, TRBVector3D pos, TRBVector3D rot);
 
 TRB_END_EXTERN_C
 
