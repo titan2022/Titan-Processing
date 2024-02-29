@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 
 #include <opencv2/core.hpp>
 
@@ -27,6 +28,7 @@ class Vector3D
         Vector3D getNormalized();
         std::string toString();
         cv::Vec<double, 3> toCV();
+        std::array<double, 3> toArray();
         static Vector3D matToVec(double (&mat)[]);
 
         double setX(const double value);

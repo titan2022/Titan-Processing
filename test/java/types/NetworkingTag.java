@@ -12,4 +12,8 @@ public class NetworkingTag {
         this.rotation = rotation;
         this.id = id;
     }
+
+    public String toString() {
+        return id + ": " + position.toString() + " " + rotation.toString();
+    }
 }

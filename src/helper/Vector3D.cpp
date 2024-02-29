@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <array>
 
 #include <opencv2/core.hpp>
 
@@ -120,6 +121,14 @@ std::string Vector3D::toString()
 cv::Vec<double, 3> Vector3D::toCV()
 {
     return cv::Vec<double, 3>{x, y, z};
+}
+
+std::array<double, 3> Vector3D::toArray() {
+    std::array<double, 3> arr;
+    arr[0] = x;
+    arr[1] = y;
+    arr[2] = z;
+    return arr;
 }
 
 Vector3D Vector3D::matToVec(double (&mat)[]) {
