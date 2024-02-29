@@ -1,8 +1,6 @@
 #ifndef TRB_CLIENT_H
 #define TRB_CLIENT_H
 
-#include <string>
-
 #include <netinet/in.h>
 #include <sys/types.h>
 
@@ -26,6 +24,7 @@ TRB_END_EXTERN_C
 
 #if __cplusplus
 #include "../helper/Vector3D.hpp"
+#include <string>
 
 class NetworkingClient
 {
@@ -56,7 +55,7 @@ TRBVector3D TRBVector3DMake(double x, double y, double z);
 TRBNetworkingClientRef TRBNetworkingClientCreate(char* ip, uint16_t port);
 TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char* msg, TRBVector3D v, _Bool withReply);
 void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char* msg, TRBVector3D pos, TRBVector3D rot);
-void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, int id, char* msg, TRBVector3D pos, TRBVector3D rot);
+void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char* msg, int id, TRBVector3D pos, TRBVector3D rot);
 
 TRB_END_EXTERN_C
 
