@@ -84,10 +84,10 @@ public class NetworkingServer implements Runnable {
                 System.out.println(err.getMessage());
             }
 
-            for (int i = 0; i < 48; i++) {
-                System.out.print(String.format("%8s", Integer.toBinaryString(buffer[i] & 0xFF)).replace(' ', '0') + " ");
-            }
-            System.out.println("\r\n");
+            // for (int i = 0; i < 72; i++) {
+            //     System.out.print(String.format("%8s", Integer.toBinaryString(buffer[i] & 0xFF)).replace(' ', '0') + " ");
+            // }
+            // System.out.println("\r\n");
 
             char packetType = getPacketType(buffer);
 
@@ -160,24 +160,32 @@ public class NetworkingServer implements Runnable {
         double x = bytesToDouble(Arrays.copyOfRange(data, 16, 24));
         double y = bytesToDouble(Arrays.copyOfRange(data, 24, 32));
         double z = bytesToDouble(Arrays.copyOfRange(data, 32, 40));
-
+        
         double roll = bytesToDouble(Arrays.copyOfRange(data, 40, 48));
         double pitch = bytesToDouble(Arrays.copyOfRange(data, 48, 56));
         double yaw = bytesToDouble(Arrays.copyOfRange(data, 56, 64));
+
         int id = bytesToInt(Arrays.copyOfRange(data, 64, 68));
 
         return new NetworkingTag(name, new Translation3d(x, y, z), new Translation3d(roll, pitch, yaw), id);
     }
 
-    private double bytesToDouble(byte[] buffer) {
-        // Change endian
+    private byte[] changeEndian(byte[] buffer) {
         for(int i = 0; i < buffer.length / 2; i++)
         {
             byte temp = buffer[i];
             buffer[i] = buffer[buffer.length - i - 1];
             buffer[buffer.length - i - 1] = temp;
         }
-        return ByteBuffer.wrap(buffer).getDouble();
+        return buffer;
+    }
+
+    private double bytesToDouble(byte[] buffer) {
+        return ByteBuffer.wrap(changeEndian(buffer)).getDouble();
+    }
+
+    private int bytesToInt(byte[] buffer) {
+        return ByteBuffer.wrap(changeEndian(buffer)).getInt();
     }
 
     private char bytesToChar(byte[] buffer) {
@@ -186,9 +194,5 @@ public class NetworkingServer implements Runnable {
 
     private String bytesToString(byte[] buffer) {
         return new String(buffer, StandardCharsets.UTF_8).replaceAll("\0", "");
-    }
-
-    private int bytesToInt(byte[] buffer) {
-        return ByteBuffer.wrap(buffer).getInt();
     }
 }
