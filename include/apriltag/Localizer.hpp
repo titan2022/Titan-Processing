@@ -7,7 +7,7 @@
 #include "apriltag/Apriltag.hpp"
 #include "../helper/ConfigReader.hpp"
 #include "../helper/Vector3D.hpp"
-#include "../networking/Client.hpp"
+#include "../networking/Client.h"
 #include "../physics/PoseFilter.hpp"
 
 class Localizer

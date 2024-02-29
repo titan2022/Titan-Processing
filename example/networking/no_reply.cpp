@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "../../include/networking/Client.hpp"
+#include "../../include/networking/Client.h"
 #include "../../include/helper/Vector3D.hpp"
 
 int main(int argc, char const *argv[])
