@@ -62,7 +62,6 @@ void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, 
     Apriltag invTag = correctPerspective(id, tvec, rvec, size);
     
     auto globTag = getGlobalTag(id);
-    std::cout << globTag->id  << ": " << globTag->size  << ", " << globTag->position.toString() << std::endl;
 
     invTag.position *= -1;
     invTag.position.setZ(-invTag.position.getZ());
@@ -75,11 +74,13 @@ void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, 
 }
 
 void Localizer::step(double dt) {
-    client.send_vector("pos", filter.position, false);
-    client.send_vector("rot", filter.rotation, false);
+    // client.send_vector("pos", filter.position, false);
+    // client.send_vector("rot", filter.rotation, false);
 
-    Vector3D test(filter.test1, filter.test2, 0);
-    client.send_vector("test", test, false);
+    // Vector3D test(filter.test1, filter.test2, 0);
+    // client.send_vector("test", test, false);
+    
+    client.send_pose("pose", filter.position, filter.rotation);
 
     filter.predict(dt);
 }
