@@ -18,7 +18,7 @@ config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
 
 void ApriltagDetector::startStream()
 {
-    cv::VideoCapture cap(this->streamId);
+    cv::VideoCapture cap(config.cameras[this->streamId].id);
     this->cap = cap;
     if (!cap.isOpened())
     {
