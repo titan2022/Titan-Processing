@@ -9,7 +9,7 @@
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
-constexpr int CAM_NUM = 2; // Number of available cameras
+constexpr int CAM_NUM = 1; // Number of available cameras
 
 int main(int argc, char const *argv[])
 {

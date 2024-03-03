@@ -26,10 +26,10 @@ void ApriltagDetector::startStream()
         return;
     }
 
-    cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
-    cap.set(cv::CAP_PROP_EXPOSURE, config.cameras[this->streamId].exposure);
+    //cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
+    //cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
+    //cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
+    //cap.set(cv::CAP_PROP_EXPOSURE, config.cameras[this->streamId].exposure);
 }
 
 void ApriltagDetector::detect()
