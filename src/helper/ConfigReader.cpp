@@ -11,7 +11,6 @@ using json = nlohmann::json;
 #include "helper/ConfigReader.hpp"
 #include "helper/Unit.hpp"
 
-
 ConfigReader::ConfigReader(std::string path)
 {
     this->init(path);
@@ -28,7 +27,8 @@ void ConfigReader::init(std::string path)
     readJSONFile(path + "/config.json");
 }
 
-void ConfigReader::readJSONFile(std::string path) {
+void ConfigReader::readJSONFile(std::string path)
+{
     std::ifstream in(path);
     json data = json::parse(in);
 
@@ -39,10 +39,11 @@ void ConfigReader::readJSONFile(std::string path) {
     this->quadSigma = data["quadSigma"];
     this->decodeSharpening = data["decodeSharpening"];
 
-    for (auto &tagObj : data["cameras"]) {
+    for (auto &tagObj : data["cameras"])
+    {
         Camera cam;
 
-        cam.id = tagObj["id"];
+        cam.name = tagObj["name"];
         cam.width = tagObj["width"];
         cam.height = tagObj["height"];
         cam.fps = tagObj["fps"];
@@ -51,7 +52,7 @@ void ConfigReader::readJSONFile(std::string path) {
         cam.focalY = tagObj["focalY"];
         cam.centerX = tagObj["centerX"];
         cam.centerY = tagObj["centerY"];
-        
+
         cam.cameraMat = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
         cam.cameraMat.at<double>(0, 0) = cam.focalX;
         cam.cameraMat.at<double>(1, 1) = cam.focalY;
@@ -66,10 +67,11 @@ void ConfigReader::readJSONFile(std::string path) {
         cam.distCoeffs.at<double>(0, 3) = tagObj["p2"];
         cam.distCoeffs.at<double>(0, 4) = tagObj["k3"];
 
-        this->cameras.push_back(cam);
+        this->cameras.push_back(&cam);
     }
 
-    for (auto &tagObj : data["apriltags"]) {
+    for (auto &tagObj : data["apriltags"])
+    {
         std::vector<double> posArr = tagObj["position"];
         std::vector<double> rotArr = tagObj["rotation"];
         double size = tagObj["size"];
@@ -79,7 +81,7 @@ void ConfigReader::readJSONFile(std::string path) {
         Vector3D rot(rotArr);
         rot *= Unit::DEG;
 
-        Apriltag* tag = new Apriltag(id, pos, rot, size);
+        Apriltag *tag = new Apriltag(id, pos, rot, size);
         this->tags.insert({id, tag});
     }
 }

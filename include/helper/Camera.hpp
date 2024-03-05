@@ -1,13 +1,14 @@
 #ifndef CAMERA
 #define CAMERA
 
+#include <string>
+
 #include <opencv2/core.hpp>
 
 class Camera
 {
     public:
-        // Camera();
-
+        std::string name;
         int id;
         int width;
         int height;

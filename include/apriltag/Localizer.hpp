@@ -24,6 +24,7 @@ class Localizer
         ConfigReader &config;
         NetworkingClient &client;
         PoseFilter filter;
+
 };
 
 #endif

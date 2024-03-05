@@ -56,19 +56,18 @@ config(config), client(client), filter(filter)
 
 void Localizer::addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
 {
-    // TODO: add to relative tag hash map
-    // TODO: add to absolute tag hash map
-
     Apriltag invTag = correctPerspective(id, tvec, rvec, size);
-    
-    auto globTag = getGlobalTag(id);
 
     // Inverting tag position
     invTag.position *= -1;
     invTag.position.setZ(-invTag.position.getZ());
     invTag.rotation.setY(-invTag.rotation.getY());
 
+    // Send relative tag (no Kalman filter)
+    client.send_tag("tag", id, invTag.position, invTag.rotation);
+
     // Rotating around tag to fit global position
+    auto globTag = getGlobalTag(id);
     invTag.position.rotateX(globTag->rotation.getX());
     invTag.position.rotateY(globTag->rotation.getY());
     invTag.position.rotateZ(globTag->rotation.getZ());
