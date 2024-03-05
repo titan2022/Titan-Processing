@@ -8,7 +8,6 @@
     "cameras": [
         {
             "name": "lifecam",
-            "id": 2,
             "width": 640,
             "height": 480,
             "fps": 30,
@@ -25,7 +24,6 @@
         },
         {
             "name": "arducam_bw",
-            "id": 4,
             "width": 1280,
             "height": 800,
             "fps": 30,
