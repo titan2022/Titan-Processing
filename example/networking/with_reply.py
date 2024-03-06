@@ -1,4 +1,4 @@
-from common import Vector3D, load_lib
+from TRBNetworking import Vector3D, load_lib
 
 if __name__ == "__main__":
     lib = load_lib()

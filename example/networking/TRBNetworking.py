@@ -18,6 +18,9 @@ class Vector3D(Structure):
         ("z", c_double),
     ]
 
+    def __repr__(self):
+        return f"<{self.x}, {self.y}, {self.z}>"
+
 
 def load_lib() -> CDLL:
     "Loads the `libTitanProcessing` library and sets functions signatures"
@@ -45,3 +48,19 @@ def load_lib() -> CDLL:
     lib.TRBNetworkingClientSendTag.restype = None
 
     return lib
+
+class Client:
+    def __init__(self, lib: CDLL, ip, port):
+        self.raw_client = lib.TRBNetworkingClientCreate(ip, port)
+    
+    def sendVector(msg, v, withReply) -> Vector3D:
+        return TRBNetworkingClientSendVector(self.raw_client, msg, v, withReply)
+    
+    def sendPose(msg, pos, rot):
+        return TRBNetworkingClientSendPose(self.raw_client, msg, pos, rot)
+    
+    def sendTag(msg, id, pos, rot):
+        return TRBNetworkingClientSendTag(self.raw_client, msg, id, pos, rot)
+    
+    def __repr__(self):
+        return f"<TRBNetworkingClient connected to {self.ip}:{self.port}>"
