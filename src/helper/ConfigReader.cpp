@@ -53,6 +53,14 @@ void ConfigReader::readJSONFile(std::string path)
         cam.centerX = tagObj["centerX"];
         cam.centerY = tagObj["centerY"];
 
+        std::vector<double> posArr = tagObj["position"];
+        std::vector<double> rotArr = tagObj["rotation"];
+        Vector3D pos(posArr);
+        Vector3D rot(rotArr);
+        rot *= Unit::DEG;
+        cam.position = pos;
+        cam.rotation = rot;
+
         cam.cameraMat = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
         cam.cameraMat.at<double>(0, 0) = cam.focalX;
         cam.cameraMat.at<double>(1, 1) = cam.focalY;
