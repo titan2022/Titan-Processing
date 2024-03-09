@@ -24,7 +24,7 @@ class Vector3D(Structure):
 
 def load_lib(pathToLibTitanProcessing = "lib/libTitanProcessing.so") -> CDLL:
     "Loads the `libTitanProcessing` library and sets functions signatures"
-    lib = cdll.LoadLibrary(pathToLibTitanProcessing)
+    lib = cdll.LoadLibrary(str(pathToLibTitanProcessing))
 
     lib.TRBVector3DMake.argtypes = [c_double, c_double, c_double]
     lib.TRBVector3DMake.restype = Vector3D
@@ -51,16 +51,17 @@ def load_lib(pathToLibTitanProcessing = "lib/libTitanProcessing.so") -> CDLL:
 
 class Client:
     def __init__(self, lib: CDLL, ip, port):
+        self.lib = lib
         self.raw_client = lib.TRBNetworkingClientCreate(ip, port)
     
-    def sendVector(msg, v, withReply) -> Vector3D:
-        return TRBNetworkingClientSendVector(self.raw_client, msg, v, withReply)
+    def sendVector(self, msg, v, withReply=False) -> Vector3D:
+        return self.lib.TRBNetworkingClientSendVector(self.raw_client, msg, v, withReply)
     
-    def sendPose(msg, pos, rot):
-        return TRBNetworkingClientSendPose(self.raw_client, msg, pos, rot)
+    def sendPose(self, msg, pos, rot):
+        return self.lib.TRBNetworkingClientSendPose(self.raw_client, msg, pos, rot)
     
-    def sendTag(msg, id, pos, rot):
-        return TRBNetworkingClientSendTag(self.raw_client, msg, id, pos, rot)
+    def sendTag(self, msg, id, pos, rot):
+        return self.lib.TRBNetworkingClientSendTag(self.raw_client, msg, id, pos, rot)
     
     def __repr__(self):
         return f"<TRBNetworkingClient connected to {self.ip}:{self.port}>"
