@@ -14,7 +14,7 @@ class Localizer
 {
     public:
         Localizer(ConfigReader &config, NetworkingClient &client, PoseFilter &filter);
-        void addApriltag(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt);
+        void addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt);
         void step(double dt);
         Vector3D position;
         Vector3D rotation;
