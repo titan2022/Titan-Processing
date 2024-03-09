@@ -42,6 +42,9 @@ std::string getCamName(int id)
     return exec(idCmd.c_str());
 }
 
+/**
+ * Stars streams with every camera available
+*/
 int main(int argc, char const *argv[])
 {
     ConfigReader config(CONFIG_FOLDER);
