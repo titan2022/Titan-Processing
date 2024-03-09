@@ -87,7 +87,7 @@ void ApriltagDetector::detect()
                 cv::Vec3d rVec = rVecs[i];
                 cv::Vec3d tVec = tVecs[i];
 
-                localizer.addApriltag(ids[i], tVec, rVec, markerLength, dt);
+                localizer.addApriltag(ids[i], this->streamId, tVec, rVec, markerLength, dt);
 
                 if (this->showWindow) {
                     cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
