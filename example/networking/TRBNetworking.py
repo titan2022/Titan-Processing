@@ -22,9 +22,9 @@ class Vector3D(Structure):
         return f"<{self.x}, {self.y}, {self.z}>"
 
 
-def load_lib() -> CDLL:
+def load_lib(pathToLibTitanProcessing = "lib/libTitanProcessing.so") -> CDLL:
     "Loads the `libTitanProcessing` library and sets functions signatures"
-    lib = cdll.LoadLibrary("lib/libTitanProcessing.so")
+    lib = cdll.LoadLibrary(pathToLibTitanProcessing)
 
     lib.TRBVector3DMake.argtypes = [c_double, c_double, c_double]
     lib.TRBVector3DMake.restype = Vector3D
