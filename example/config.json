@@ -12,8 +12,8 @@
     "cameras": [
         {
             "name": "lifecam",
-            "position": [-0.05, 0.03, 0],
-            "rotation": [0, 90, 0],
+            "position": [0, 0.5, 0],
+            "rotation": [0, 0, 0],
             "width": 640,
             "height": 480,
             "fps": 30,
@@ -30,8 +30,8 @@
         },
         {
             "name": "Arducam",
-            "position": [0.05, 0.03, 0],
-            "rotation": [0, -90, 0],
+            "position": [0, 0.5, 0],
+            "rotation": [0, 0, 0],
             "width": 1280,
             "height": 800,
             "fps": 60,
