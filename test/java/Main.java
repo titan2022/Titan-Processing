@@ -13,6 +13,10 @@ public class Main {
             System.out.println(position.toString());
         });
 
+        server.subscribe("note", (NetworkingCall<Translation3d>)(Translation3d note) -> {
+            System.out.println(note.toString());
+        });
+
         server.subscribe("pose", (NetworkingCall<NetworkingPose>)(NetworkingPose pose) -> {
             System.out.println(pose.toString());
         });
