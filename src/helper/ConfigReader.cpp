@@ -75,7 +75,7 @@ void ConfigReader::readJSONFile(std::string path)
         cam.distCoeffs.at<double>(0, 3) = tagObj["p2"];
         cam.distCoeffs.at<double>(0, 4) = tagObj["k3"];
 
-        this->cameras.push_back(&cam);
+        this->cameras.push_back(cam);
     }
 
     for (auto &tagObj : data["apriltags"])

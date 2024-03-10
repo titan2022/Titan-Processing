@@ -1,19 +1,19 @@
 {
-    "ip": "127.0.0.1",
-    "port": 5800,
-    "threads": 2,
+    "ip": "143.195.92.181",
+    "port": 5804,
+    "threads": 4,
     "quadDecimate": 1,
     "quadSigma": 2,
     "decodeSharpening": 0.25,
     "robot": {
-        "width": 0,
-        "length": 0
+        "width": 0.1,
+        "length": 0.05
     },
     "cameras": [
         {
             "name": "lifecam",
-            "position": [0, 0, 0],
-            "rotation": [0, 0, 0],
+            "position": [-0.05, 0.03, 0],
+            "rotation": [0, 90, 0],
             "width": 640,
             "height": 480,
             "fps": 30,
@@ -30,11 +30,11 @@
         },
         {
             "name": "Arducam",
-            "position": [0, 0, 0],
-            "rotation": [0, 0, 0],
+            "position": [0.05, 0.03, 0],
+            "rotation": [0, -90, 0],
             "width": 1280,
             "height": 800,
-            "fps": 30,
+            "fps": 60,
             "exposure": 10,
             "focalX": 900.1952156742097,
             "focalY": 894.6754195471635,

@@ -18,7 +18,8 @@ config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
 
 void ApriltagDetector::startStream()
 {
-    cv::VideoCapture cap(config.cameras[this->streamId]->id);
+    std::cout << config.cameras[this->streamId].name << std::endl;
+    cv::VideoCapture cap(config.cameras[this->streamId].id);
     this->cap = cap;
     if (!cap.isOpened())
     {
@@ -39,8 +40,8 @@ void ApriltagDetector::detect()
     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
     double markerLength = 0.16;
-    cv::Mat cameraMatrix = config.cameras[this->streamId]->cameraMat;
-    cv::Mat distCoeffs = config.cameras[this->streamId]->distCoeffs;
+    cv::Mat cameraMatrix = config.cameras[this->streamId].cameraMat;
+    cv::Mat distCoeffs = config.cameras[this->streamId].distCoeffs;
 
     cv::Mat objPoints(4, 1, CV_32FC3);
     objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength/2.f, markerLength/2.f, 0);
@@ -50,7 +51,7 @@ void ApriltagDetector::detect()
 
     auto prevTS = std::chrono::steady_clock::now();
     auto postTS = prevTS;
-    double dt = 1.0 / config.cameras[this->streamId]->fps;
+    double dt = 1.0 / config.cameras[this->streamId].fps;
 
     while (true)
     {

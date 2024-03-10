@@ -26,7 +26,7 @@ class ConfigReader
 
         // Stuff from config.json
         std::unordered_map<int, Apriltag*> tags;
-        std::vector<Camera*> cameras;
+        std::vector<Camera> cameras;
 
         ConfigReader(std::string path);
         ConfigReader();
