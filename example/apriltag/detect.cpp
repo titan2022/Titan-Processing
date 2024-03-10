@@ -59,9 +59,9 @@ int main(int argc, char const *argv[])
         // Find cameras by name
         for (auto cam : config.cameras)
         {
-            if (getCamName(i).find(cam->name) != std::string::npos)
+            if (getCamName(i).find(cam.name) != std::string::npos)
             {
-                cam->id = i;
+                cam.id = i;
                 continue;
             }
         }

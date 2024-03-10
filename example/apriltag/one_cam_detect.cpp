@@ -10,7 +10,8 @@
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
-constexpr int CAM_ID = 0;
+constexpr int CAM_ID = 2;
+constexpr int CAM_CONFIG_INDEX = 0;
 constexpr auto CONFIG_FOLDER = "../example";
 
 /**
@@ -18,16 +19,19 @@ constexpr auto CONFIG_FOLDER = "../example";
 */
 int main(int argc, char const *argv[])
 {
+    std::cout << "Starting stream at camera " << CAM_ID << std::endl;
+
     ConfigReader config(CONFIG_FOLDER);
     NetworkingClient client(config.ip, config.port);
 
     PoseFilter filter(config);
     Localizer localizer(config, client, filter);
 
-    for (auto cam : config.cameras) {
-        cam->id = CAM_ID;
+    for (int i = 0; i < config.cameras.size(); i++) {
+        config.cameras[i].id = CAM_ID;
     }
-    ApriltagDetector detector(CAM_ID, true, config, localizer);
+
+    ApriltagDetector detector(CAM_CONFIG_INDEX, true, config, localizer);
     detector.startStream();
 
     // Multithread streams
