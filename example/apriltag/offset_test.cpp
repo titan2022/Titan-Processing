@@ -10,12 +10,11 @@
 
 int main(int argc, char const *argv[])
 {
-    Vector3D invTagPos(3, 4, 0);
-    Vector3D invTagRot(0, 0, 3.0 / 4.0 * M_PI);
+    Vector3D invTagPos(3, 4, 1);
+    Vector3D invTagRot(0, 0, M_PI / 4.0);
 
-    Apriltag invTag(0, invTagPos, invTagRot, 1);
-    Vector3D camPos(0, 2, 0);
-    Vector3D camRot(0, 0, 0);
+    Apriltag invTag(0, invTagPos, invTagRot, 0);
+    Vector3D camPos(0, 0, -2);
 
     invTag.position += camPos.getRotated(-invTag.rotation.getX(), -invTag.rotation.getY(), -invTag.rotation.getZ());
 

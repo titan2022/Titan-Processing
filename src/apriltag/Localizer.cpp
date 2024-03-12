@@ -74,19 +74,18 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     auto globTag = getGlobalTag(id);
     invTag.position.rotateX(globTag->rotation.getX());
     invTag.position.rotateY(globTag->rotation.getY());
-    invTag.position.rotateZ(globTag->rotation.getZ());
+    invTag.position.rotateZ(globTag->rotation.getZ());  
 
     // Offsetting by global pose
     invTag.position += globTag->position;
     invTag.rotation += globTag->rotation;
 
     // Offsetting by camera pose on the robot to get robot pose
-    // invTag.position -= config.cameras[camId].position.getRotated(config.cameras[camId].rotation.getX(), config.cameras[camId].rotation.getY(), config.cameras[camId].rotation.getZ());
     Vector3D rotOffset = config.cameras[camId].position;
-    rotOffset.rotateX(invTag.rotation.getX());
-    rotOffset.rotateY(invTag.rotation.getY());
-    rotOffset.rotateZ(invTag.rotation.getZ());
-    invTag.position -= rotOffset;
+    // rotOffset.rotateX(-invTag.rotation.getX());
+    // rotOffset.rotateY(-invTag.rotation.getY());
+    rotOffset.rotateZ(-invTag.rotation.getZ());
+    invTag.position += rotOffset;
 
     filter.updateTag(invTag, dt);
 }
