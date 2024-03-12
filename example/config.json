@@ -11,7 +11,7 @@
     "cameras": [
         {
             "name": "Arducam",
-            "position": [0, 0, 0.5],
+            "position": [0, 0, 1],
             "rotation": [0, 0, 0],
             "width": 1280,
             "height": 800,
@@ -42,7 +42,7 @@
             "size": 0.1651
         },
         {
-            "id": 3,
+            "id": 15,
             "position": [1.032, 1.357, 0],
             "rotation": [0, 0, 0],
             "size": 0.1651

@@ -65,10 +65,10 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 
     // TODO: check if robot offsetting works for relative tag poses
     // Send relative tag (no Kalman filter)
-    Apriltag relTag = invTag;
-    relTag.position -= config.cameras[camId].position; // Offsetting by camera pose on the robot to get robot pose
-    relTag.rotation -= config.cameras[camId].rotation;
-    client.send_tag("tag", id, relTag.position, relTag.rotation);
+    // Apriltag relTag = invTag;
+    // relTag.position -= config.cameras[camId].position; // Offsetting by camera pose on the robot to get robot pose
+    // relTag.rotation -= config.cameras[camId].rotation;
+    // client.send_tag("tag", id, relTag.position, relTag.rotation);
 
     // Rotating around tag to fit global position
     auto globTag = getGlobalTag(id);
@@ -80,12 +80,13 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     invTag.position += globTag->position;
     invTag.rotation += globTag->rotation;
 
+    client.send_pose("prepose", invTag.position, invTag.rotation);
+
     // Offsetting by camera pose on the robot to get robot pose
     Vector3D rotOffset = config.cameras[camId].position;
-    // rotOffset.rotateX(-invTag.rotation.getX());
-    // rotOffset.rotateY(-invTag.rotation.getY());
-    rotOffset.rotateZ(-invTag.rotation.getZ());
+    rotOffset.rotateY(-invTag.rotation.getY());
     invTag.position += rotOffset;
+    invTag.rotation.setY(M_PI - invTag.rotation.getY());
 
     filter.updateTag(invTag, dt);
 }
