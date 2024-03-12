@@ -11,7 +11,7 @@
 #include "../../include/physics/PoseFilter.hpp"
 
 constexpr int CAM_ID = 2;
-constexpr int CAM_CONFIG_INDEX = 1;
+constexpr int CAM_CONFIG_INDEX = 0;
 constexpr auto CONFIG_FOLDER = "../example";
 
 /**

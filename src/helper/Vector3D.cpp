@@ -110,7 +110,6 @@ std::string Vector3D::toString()
     std::string xStr = std::to_string(getX());
     std::string yStr = std::to_string(getY());
     std::string zStr = std::to_string(getZ());
-    s +=  + ", ";
     s += xStr + ", ";
     s += yStr + ", ";
     s += zStr;
