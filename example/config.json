@@ -6,31 +6,12 @@
     "quadSigma": 2,
     "decodeSharpening": 0.25,
     "robot": {
-        "width": 0.1,
-        "length": 0.05
+        "size": [0.2, 0.1, 0.05]
     },
     "cameras": [
         {
-            "name": "lifecam",
-            "position": [0, 0.5, 0],
-            "rotation": [0, 0, 0],
-            "width": 640,
-            "height": 480,
-            "fps": 30,
-            "exposure": 10,
-            "focalX": 675.7506920893655,
-            "focalY": 672.515371004964,
-            "centerX": 335.7860269282015,
-            "centerY": 228.95257088198858,
-            "k1": 0.0949650082746549,
-            "k2": -0.5815183579933634,
-            "p1": 0.003619693942495133,
-            "p2": 0.007212786342203347,
-            "k3": 0.3538247532994049
-        },
-        {
             "name": "Arducam",
-            "position": [0, 0.5, 0],
+            "position": [0, 0, 0.5],
             "rotation": [0, 0, 0],
             "width": 1280,
             "height": 800,
