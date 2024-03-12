@@ -11,7 +11,7 @@
   ```
 2. Run to generate Makefile and link vcpkg with CMake
 ```bash
-mkdir && cd build
+mkdir build && cd build
 cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcpkg.cmake
 
 # If installed via our binaries 
