@@ -19,7 +19,7 @@ class PoseFilter
         PoseFilter(ConfigReader &config);
         void predict(double dt);
         void step(double dt);
-        void updateTag(Apriltag &tag, double dt);
+        void updateTag(Apriltag &tag, double tagDist, double dt);
         void addControlInput(double x_vel, double y_vel, double rot_vel);
 
         Vector3D position;
