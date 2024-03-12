@@ -72,7 +72,7 @@ void ApriltagDetector::detect()
         std::vector<int> ids;
         std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
 
-        detector.detectMarkers(frame, markerCorners, ids, rejectedCandidates);
+        detector.detectMarkers(gray, markerCorners, ids, rejectedCandidates);
         
         if (ids.size() > 0) {
             cv::aruco::drawDetectedMarkers(out, markerCorners, ids);
