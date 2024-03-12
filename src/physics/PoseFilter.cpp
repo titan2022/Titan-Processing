@@ -111,7 +111,7 @@ void PoseFilter::step(double dt) {
 
 }
 
-void PoseFilter::updateTag(Apriltag &tag, double dt)
+void PoseFilter::updateTag(Apriltag &tag, double tagDist, double dt)
 {
     double xPos = tag.position.getX();
     double yPos = tag.position.getY();
@@ -145,7 +145,7 @@ void PoseFilter::updateTag(Apriltag &tag, double dt)
 
     // Increase uncertainty based on distance
     for (int i = 0; i < 3; i++) {
-        R.at<double>(i, i) = abs(z.at<double>(2, 0)) * 10;
+        R.at<double>(i, i) = tagDist * tagDist;
     }
 
     // System uncertenty

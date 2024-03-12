@@ -62,6 +62,12 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     invTag.position *= -1;
     invTag.position.setZ(-invTag.position.getZ());
     invTag.rotation.setY(-invTag.rotation.getY());
+    double tagDist = invTag.position.getMagnitude();
+
+    // Reject tags over a certain distance (too much noise)
+    if (tagDist > 5) {
+        return;
+    }
 
     // TODO: check if robot offsetting works for relative tag poses
     // Send relative tag (no Kalman filter)
@@ -88,7 +94,7 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     invTag.position += rotOffset;
     invTag.rotation.setY(M_PI - invTag.rotation.getY());
 
-    filter.updateTag(invTag, dt);
+    filter.updateTag(invTag, tagDist, dt);
 }
 
 void Localizer::step(double dt) {
