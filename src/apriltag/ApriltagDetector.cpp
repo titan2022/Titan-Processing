@@ -19,7 +19,7 @@ config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
 void ApriltagDetector::startStream()
 {
     std::cout << config.cameras[this->streamId].name << std::endl;
-    cv::VideoCapture cap(config.cameras[this->streamId].id);
+    cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
     this->cap = cap;
     if (!cap.isOpened())
     {
@@ -27,15 +27,21 @@ void ApriltagDetector::startStream()
         return;
     }
 
-    //cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId]->fps);
-    //cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId]->width);
-    //cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId]->height);
+    // cap.set(cv::CV_CAP_PROP_FOURCC ,cv::CV_CAP_PROP_FOURCC ('M', 'J', 'P', 'G') );
+    cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
+    std::cout << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
     //cap.set(cv::CAP_PROP_EXPOSURE, config.cameras[this->streamId]->exposure);
 }
 
 void ApriltagDetector::detect()
 {
     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+    detectorParams.cornerRefinementMethod = cv::aruco::CornerRefineMethod::CORNER_REFINE_APRILTAG;
+    detectorParams.aprilTagQuadDecimate = config.quadDecimate;
+    detectorParams.aprilTagQuadSigma = config.quadSigma;
+
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
@@ -81,7 +87,7 @@ void ApriltagDetector::detect()
             std::vector<cv::Vec3d> rVecs(nMarkers), tVecs(nMarkers);
 
             for (int i = 0; i < nMarkers; i++) {
-                cv::solvePnP(objPoints, markerCorners.at(i), cameraMatrix, distCoeffs, rVecs.at(i), tVecs.at(i), false, cv::SOLVEPNP_IPPE_SQUARE);
+                cv::solvePnP(objPoints, markerCorners.at(i), cameraMatrix, distCoeffs, rVecs.at(i), tVecs.at(i), false, cv::SOLVEPNP_IPPE_SQUARE); // SOLVEPNP_P3P
             }
 
             for (int i = 0; i < tVecs.size(); ++i) {
