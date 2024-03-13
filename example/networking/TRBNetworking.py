@@ -22,7 +22,7 @@ class Vector3D(Structure):
         return f"<{self.x}, {self.y}, {self.z}>"
 
 
-def load_lib(pathToLibTitanProcessing = "lib/libTitanProcessing.so") -> CDLL:
+def load_lib(pathToLibTitanProcessing = "lib/libTRBNetworking.so") -> CDLL:
     "Loads the `libTitanProcessing` library and sets functions signatures"
     lib = cdll.LoadLibrary(str(pathToLibTitanProcessing))
 
