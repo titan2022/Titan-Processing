@@ -5,13 +5,17 @@
 #include <vector>
 #include <array>
 
+#if 0
 #include <opencv2/core.hpp>
+#endif
 
 class Vector3D
 {
     public:
         Vector3D(double x, double y, double z);
+        #if 0
         Vector3D(cv::Vec3d v);
+        #endif
         Vector3D(std::vector<double> v);
         Vector3D(double (&v)[]);
         Vector3D(char* d);
@@ -27,7 +31,9 @@ class Vector3D
         double getMagnitude();
         Vector3D getNormalized();
         std::string toString();
+        #if 0
         cv::Vec<double, 3> toCV();
+        #endif
         std::array<double, 3> toArray();
         static Vector3D matToVec(double (&mat)[]);
 
