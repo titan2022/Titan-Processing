@@ -19,7 +19,15 @@ config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
 void ApriltagDetector::startStream()
 {
     std::cout << config.cameras[this->streamId].name << std::endl;
-    cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
+
+    std::string cameraPipeline;
+    cameraPipeline ="v4l2src device=/dev/video2 extra-controls=\"white_balance_automatic=0,auto_exposure=0\" ! ";
+    cameraPipeline+="video/x-raw, format=BGR, framerate=100/1, width=(int)640,height=(int)480";
+    // cameraPipeline+="appsink";
+
+    // cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
+    cv::VideoCapture cap(cameraPipeline);
+
     this->cap = cap;
     if (!cap.isOpened())
     {
