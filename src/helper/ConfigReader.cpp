@@ -33,6 +33,7 @@ void ConfigReader::readJSONFile(std::string path)
     json data = json::parse(in);
 
     this->ip = data["ip"];
+    this->dashboardIp = data["dashboardIp"];
     this->port = data["port"];
     this->threads = data["threads"];
     this->quadDecimate = data["quadDecimate"];

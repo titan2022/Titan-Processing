@@ -14,6 +14,7 @@ class ConfigReader
     public:
         // Networking
         std::string ip;
+        std::string dashboardIp;
         int port;
 
         // Performance

@@ -1,21 +1,23 @@
 {
-    "ip": "143.195.92.181",
+    "ip": "10.20.22.2",
+    "dashboardIp": "143.195.92.181",
     "port": 5804,
     "threads": 4,
     "quadDecimate": 1,
     "quadSigma": 2,
     "decodeSharpening": 0.25,
     "robot": {
-        "size": [0.2, 0.1, 0.05]
+        "size": [0.6092, 0.1, 0.6092]
     },
     "cameras": [
         {
             "name": "Arducam",
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
-            "width": 640,
-            "height": 480,
-            "fps": 100,
+            "color": 0x0ff00ff,
+            "width": 1280,
+            "height": 800,
+            "fps": 60,
             "exposure": 10,
             "focalX": 900.1952156742097,
             "focalY": 894.6754195471635,
@@ -30,26 +32,8 @@
     ],
     "apriltags": [
         {
-            "id": 1,
-            "position": [0.600, 1.448, 2.850],
-            "rotation": [0, 180, 0],
-            "size": 0.1651
-        },
-        {
-            "id": 2,
-            "position": [-0.091, 1.333, 1.300],
-            "rotation": [0, 90, 0],
-            "size": 0.1651
-        },
-        {
-            "id": 13,
-            "position": [1.032, 1.357, 0],
-            "rotation": [0, 0, 0],
-            "size": 0.1651
-        },
-        {
-            "id": 4,
-            "position": [0.613, 1.357, 0],
+            "id": 3,
+            "position": [0, 0, 1.4732],
             "rotation": [0, 0, 0],
             "size": 0.1651
         }

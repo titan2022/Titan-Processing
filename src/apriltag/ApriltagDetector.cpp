@@ -21,12 +21,12 @@ void ApriltagDetector::startStream()
     std::cout << config.cameras[this->streamId].name << std::endl;
 
     std::string cameraPipeline;
-    cameraPipeline ="v4l2src device=/dev/video2 extra-controls=\"white_balance_automatic=0,auto_exposure=0\" ! ";
-    cameraPipeline+="video/x-raw, format=BGR, framerate=100/1, width=(int)640,height=(int)480";
-    // cameraPipeline+="appsink";
+    // cameraPipeline ="v4l2src device=/dev/video0  format=BGR, framerate=100/1, width=640,height=480";
+    // cameraPipeline = "gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,framerate=30/1,format=MJPEG' ! v4l2h264enc ! 'video/x-h264,level=(string)4' ! decodebin ! videoconvert ! autovideosink";
+    // cameraPipeline = "gst-launch-1.0 -v v4l2src device=\"/dev/video0\" ! video/x-raw,framerate=30/1,format=UYVY,width=640,height=480 ! appsink";
 
-    // cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
-    cv::VideoCapture cap(cameraPipeline);
+    cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
+    // cv::VideoCapture cap(cameraPipeline);
 
     this->cap = cap;
     if (!cap.isOpened())
@@ -36,10 +36,11 @@ void ApriltagDetector::startStream()
     }
 
     // cap.set(cv::CV_CAP_PROP_FOURCC ,cv::CV_CAP_PROP_FOURCC ('M', 'J', 'P', 'G') );
-    cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
+    // cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
+    // cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
+    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
     std::cout << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
+    std::cout << cap.get(cv::CAP_PROP_FPS) << std::endl;
     //cap.set(cv::CAP_PROP_EXPOSURE, config.cameras[this->streamId]->exposure);
 }
 
