@@ -23,9 +23,10 @@ int main(int argc, char const *argv[])
 
     ConfigReader config(CONFIG_FOLDER);
     NetworkingClient client(config.ip, config.port);
+    NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
     PoseFilter filter(config);
-    Localizer localizer(config, client, filter);
+    Localizer localizer(config, client, dashboardClient, filter);
 
     for (int i = 0; i < config.cameras.size(); i++) {
         config.cameras[i].id = CAM_ID;

@@ -48,8 +48,8 @@ Apriltag* Localizer::getGlobalTag(int id) {
     return nullptr;
 }
 
-Localizer::Localizer(ConfigReader &config, NetworkingClient &client, PoseFilter &filter) :
-config(config), client(client), filter(filter)
+Localizer::Localizer(ConfigReader &config, NetworkingClient &client, NetworkingClient &dashboardClient, PoseFilter &filter) :
+config(config), client(client), dashboardClient(dashboardClient), filter(filter)
 {
     
 }
@@ -87,6 +87,7 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     invTag.rotation += globTag->rotation;
 
     client.send_pose("prepose", invTag.position, invTag.rotation);
+    dashboardClient.send_pose("prepose", invTag.position, invTag.rotation);
 
     // Offsetting by camera pose on the robot to get robot pose
     Vector3D rotOffset = config.cameras[camId].position;
@@ -99,6 +100,7 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 
 void Localizer::step(double dt) {
     client.send_pose("pose", filter.position, filter.rotation);
+    dashboardClient.send_pose("pose", filter.position, filter.rotation);
 
     filter.predict(dt);
 }
