@@ -49,9 +49,10 @@ int main(int argc, char const *argv[])
 {
     ConfigReader config(CONFIG_FOLDER);
     NetworkingClient client(config.ip, config.port);
+    NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
     PoseFilter filter(config);
-    Localizer localizer(config, client, filter);
+    Localizer localizer(config, client, dashboardClient, filter);
 
     int camNum = std::min(MAX_CAMS, getCamNum());
     for (int i = 0; i < camNum; i++)
