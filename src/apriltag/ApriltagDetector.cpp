@@ -25,8 +25,12 @@ void ApriltagDetector::startStream()
     // cameraPipeline = "gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,framerate=30/1,format=MJPEG' ! v4l2h264enc ! 'video/x-h264,level=(string)4' ! decodebin ! videoconvert ! autovideosink";
     // cameraPipeline = "gst-launch-1.0 -v v4l2src device=\"/dev/video0\" ! video/x-raw,framerate=30/1,format=UYVY,width=640,height=480 ! appsink";
 
-    cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
-    // cv::VideoCapture cap(cameraPipeline);
+    cameraPipeline = "v4l2src device=/dev/video" + std::to_string(config.cameras[this->streamId].id) + " ! "
+                        "videorate ! videoconvert ! videoscale !"
+                        "video/x-raw, format=BGR, width=640, height=480, pixel-aspect-ratio=1/1, framerate=30/1 ! "
+                        "decodebin ! videoconvert ! appsink";
+    // cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
+    cv::VideoCapture cap(cameraPipeline);
 
     this->cap = cap;
     if (!cap.isOpened())

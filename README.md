@@ -16,6 +16,9 @@ cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcp
 
 # If installed via our binaries 
 cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+# clangd support and examples
+cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1
 ```
 * If you want to use `clangd` in your IDE, add `-DCMAKE_EXPORT_COMPILE_COMMANDS=1` to the end of the CMake commands
 * Also works with Ninja build system
