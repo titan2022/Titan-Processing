@@ -12,6 +12,7 @@
     "cameras": [
         {
             "name": "Arducam",
+            "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9782_USB_Camera_UC852-video-index0",
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
             "width": 1280,
