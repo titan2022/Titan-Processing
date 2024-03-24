@@ -11,7 +11,7 @@
 
 
 ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer) : 
-config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
+config(config), localizer(localizer), streamId(streamId), showWindow(showWindow), cameraName("")
 {
     
 }
@@ -25,7 +25,7 @@ void ApriltagDetector::startStream()
     // cameraPipeline = "gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,framerate=30/1,format=MJPEG' ! v4l2h264enc ! 'video/x-h264,level=(string)4' ! decodebin ! videoconvert ! autovideosink";
     // cameraPipeline = "gst-launch-1.0 -v v4l2src device=\"/dev/video0\" ! video/x-raw,framerate=30/1,format=UYVY,width=640,height=480 ! appsink";
 
-    cameraPipeline = "v4l2src device=/dev/video" + std::to_string(config.cameras[this->streamId].id) + " ! "
+    cameraPipeline =    "v4l2src device=/dev/v4l/by-id/" + config.cameras[this->streamId].usbName + " ! "
                         "videorate ! videoconvert ! videoscale !"
                         "video/x-raw, format=BGR, width=640, height=480, pixel-aspect-ratio=1/1, framerate=30/1 ! "
                         "decodebin ! videoconvert ! appsink";

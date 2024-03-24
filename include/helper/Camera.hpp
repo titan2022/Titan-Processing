@@ -10,6 +10,7 @@ class Camera
 {
     public:
         std::string name;
+        std::string usbName;
         int id;
         Vector3D position;
         Vector3D rotation;

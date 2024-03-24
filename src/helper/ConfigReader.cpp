@@ -45,6 +45,7 @@ void ConfigReader::readJSONFile(std::string path)
         Camera cam;
 
         cam.name = tagObj["name"];
+        cam.usbName = tagObj["usbName"];
         cam.width = tagObj["width"];
         cam.height = tagObj["height"];
         cam.fps = tagObj["fps"];
