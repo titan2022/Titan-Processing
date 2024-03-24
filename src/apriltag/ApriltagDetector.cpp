@@ -11,7 +11,7 @@
 
 
 ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer) : 
-config(config), localizer(localizer), streamId(streamId), showWindow(showWindow), cameraName("")
+config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
 {
     
 }
