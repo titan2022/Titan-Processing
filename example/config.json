@@ -14,7 +14,6 @@
             "name": "Arducam",
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
-            "color": 0x0ff00ff,
             "width": 1280,
             "height": 800,
             "fps": 60,
