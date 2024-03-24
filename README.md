@@ -14,11 +14,11 @@
 mkdir build && cd build
 cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcpkg.cmake
 
-# If installed via our binaries 
+# Production builds:
 cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
 
-# clangd support and examples
-cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1
+# Development builds:
+cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
 ```
 * If you want to use `clangd` in your IDE, add `-DCMAKE_EXPORT_COMPILE_COMMANDS=1` to the end of the CMake commands
 * Also works with Ninja build system
