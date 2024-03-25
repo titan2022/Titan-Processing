@@ -52,3 +52,22 @@ cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cm
 * [Java networking server example](test/java/NetworkingServer.java)
   * UDP server for networking values
   * All types implimented
+
+## Deploying to production
+
+The deployment scripts assume a computer running Debian Bookworm, with Titan-Processing already built and its source code in `/home/titan/Projects/Titan-Processing`, with username `titan` and a password which you may find in the scripts.
+
+```bash
+# Set up pushes to the Orange Pi at 10.0.0.159, and create a git remote called orangepi
+./scripts/host-orangepi/set-up-push.sh orangepi 10.0.0.159
+# Push the current HEAD to the Orange Pi's branch __titan_deployment_staging and build
+./scripts/host-orangepi/push-build.sh orangepi 10.0.0.159
+# Autostart the example `detect_headless`
+./scripts/host-orangepi/autostart.sh orangepi 10.0.0.159
+# Reboot the Orange Pi so that the autostart goes into effect
+./scripts/host-orangepi/reboot.sh orangepi 10.0.0.159
+# Show the log for the titan2022-apriltag.service
+./scripts/host-orangepi/log.sh orangepi 10.0.0.159
+# Disable autostart and go back to the desktop
+./scripts/host-orangepi/no-autostart.sh orangepi 10.0.0.159
+```
