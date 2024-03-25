@@ -14,5 +14,5 @@ if [[ -z "$git_remote"  || -z "$deployment_target" ]]; then
     exit 1
 fi
 
-ssh "titan@$deployment_target" "cd /home/titan/Projects/Titan-Processing && ./scripts/orangepi/autostart.sh"
+ssh "titan@$deployment_target" "cd /home/titan/Projects/Titan-Processing && yes titans | ./scripts/orangepi/autostart.sh"
 
