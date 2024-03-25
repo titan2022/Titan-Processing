@@ -14,6 +14,7 @@ if [[ -z "$git_remote"  || -z "$deployment_target" ]]; then
     exit 1
 fi
 
+ssh "titan@$deployment_target" "cd /home/titan/Projects/Titan-Processing && git checkout main --force"
 git push "$git_remote" HEAD:__titan_deployment_staging --force
 ssh "titan@$deployment_target" "cd /home/titan/Projects/Titan-Processing && git checkout __titan_deployment_staging; rm -r build; mkdir build && cd build; cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -GNinja; ninja"
 
