@@ -12,10 +12,10 @@
 2. Run to generate Makefile and link vcpkg with CMake
 ```bash
 mkdir build && cd build
-cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcpkg.cmake
+cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=1
 
 # Production builds:
-cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=1
 
 # Development builds:
 cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
