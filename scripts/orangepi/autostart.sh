@@ -15,7 +15,7 @@ After=network.target
 [Service]
 User=titan
 Type=simple
-ExecStart=/home/titan/Projects/FRC-2024-Vision/titan2022-apriltag-service.sh
+ExecStart=/home/titan/Projects/Titan-Processing/scripts/orangepi/titan2022-apriltag-service.sh
 Restart=always
 RestartSec=1
 KillMode=process
