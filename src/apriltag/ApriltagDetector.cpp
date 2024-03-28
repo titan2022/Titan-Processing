@@ -10,26 +10,24 @@
 #include "helper/Unit.hpp"
 
 
-ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer) : 
-config(config), localizer(localizer), streamId(streamId), showWindow(showWindow)
+ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer, NetworkingClient &client) : 
+config(config), localizer(localizer), streamId(streamId), showWindow(showWindow), client(client)
 {
     
 }
 
 void ApriltagDetector::startStream()
 {
-    std::cout << config.cameras[this->streamId].name << std::endl;
+    Camera cam = config.cameras[this->streamId];
+    std::cout << cam.name << std::endl;
 
     std::string cameraPipeline;
-    // cameraPipeline ="v4l2src device=/dev/video0  format=BGR, framerate=100/1, width=640,height=480";
-    // cameraPipeline = "gst-launch-1.0 v4l2src device=/dev/video0 ! 'video/x-raw,framerate=30/1,format=MJPEG' ! v4l2h264enc ! 'video/x-h264,level=(string)4' ! decodebin ! videoconvert ! autovideosink";
-    // cameraPipeline = "gst-launch-1.0 -v v4l2src device=\"/dev/video0\" ! video/x-raw,framerate=30/1,format=UYVY,width=640,height=480 ! appsink";
 
-    cameraPipeline =    "v4l2src device=/dev/v4l/by-id/" + config.cameras[this->streamId].usbName + " ! "
-                        "videorate ! videoconvert ! videoscale !"
-                        "video/x-raw, format=BGR, width=640, height=480, pixel-aspect-ratio=1/1, framerate=30/1 ! "
+    cameraPipeline =    "v4l2src device=/dev/v4l/by-id/" + cam.usbName + " ! "
+                        // "videorate ! videoconvert ! videoscale !"
+                        // "video/x-raw, format=BGR, width=" + std::to_string(cam.width) + ", height=" + std::to_string(cam.height) + ", pixel-aspect-ratio=1/1, framerate=" + std::to_string(cam.fps) + "/1 ! "
+                        "image/jpeg, width=" + std::to_string(cam.width) + ", height=" + std::to_string(cam.height) + ", framerate=" + std::to_string(cam.fps) + "/1 ! "
                         "decodebin ! videoconvert ! appsink";
-    // cv::VideoCapture cap(config.cameras[this->streamId].id, cv::CAP_V4L2);
     cv::VideoCapture cap(cameraPipeline);
 
     this->cap = cap;
@@ -39,13 +37,8 @@ void ApriltagDetector::startStream()
         return;
     }
 
-    // cap.set(cv::CV_CAP_PROP_FOURCC ,cv::CV_CAP_PROP_FOURCC ('M', 'J', 'P', 'G') );
-    // cap.set(cv::CAP_PROP_FPS, config.cameras[this->streamId].fps);
-    // cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[this->streamId].width);
-    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[this->streamId].height);
     std::cout << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
     std::cout << cap.get(cv::CAP_PROP_FPS) << std::endl;
-    //cap.set(cv::CAP_PROP_EXPOSURE, config.cameras[this->streamId]->exposure);
 }
 
 void ApriltagDetector::detect()
@@ -58,7 +51,7 @@ void ApriltagDetector::detect()
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
-    double markerLength = 0.16;
+    double markerLength = 0.1651;
     cv::Mat cameraMatrix = config.cameras[this->streamId].cameraMat;
     cv::Mat distCoeffs = config.cameras[this->streamId].distCoeffs;
 
@@ -71,6 +64,9 @@ void ApriltagDetector::detect()
     auto prevTS = std::chrono::steady_clock::now();
     auto postTS = prevTS;
     double dt = 1.0 / config.cameras[this->streamId].fps;
+
+    // Temporary...
+    Vector3D visible(0, 0, 0);
 
     while (true)
     {
@@ -88,12 +84,16 @@ void ApriltagDetector::detect()
         gray = channels[0];
         frame.copyTo(out);
 
+        std::cout << 1.0 / dt << std::endl;
+
         std::vector<int> ids;
         std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
 
         detector.detectMarkers(gray, markerCorners, ids, rejectedCandidates);
         
         if (ids.size() > 0) {
+            visible.setX(1);
+
             cv::aruco::drawDetectedMarkers(out, markerCorners, ids);
 
             int nMarkers = markerCorners.size();
@@ -113,10 +113,14 @@ void ApriltagDetector::detect()
                     cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
                 }
             }
+        } else {
+            visible.setX(-1);
         }
 
+        this->client.send_vector("visible", visible, false);
+
+        localizer.step(dt);
         if (this->showWindow) {
-            localizer.step(dt);
             cv::imshow("Apriltag Debug Window", out);
             if (cv::waitKey(1) == 27) { // ESC key
                 break;

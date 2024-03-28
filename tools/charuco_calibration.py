@@ -5,8 +5,8 @@ import cv2
 config_path = sys.argv[1]
 config = configobj.ConfigObj(config_path)
 
-SQUARE_LENGTH = 3.2 * 0.01
-MARKER_LENGTH = 1.9 * 0.01
+SQUARE_LENGTH = 0.0254 * 1.5
+MARKER_LENGTH = SQUARE_LENGTH * 0.6
 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_1000)
 board = cv2.aruco.CharucoBoard((5, 7), SQUARE_LENGTH, MARKER_LENGTH, aruco_dict)
@@ -14,7 +14,7 @@ arucoParams = cv2.aruco.DetectorParameters()
 
 counter, corners_list, id_list = [], [], []
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(config.get("width")))
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(config.get("height")))
 
