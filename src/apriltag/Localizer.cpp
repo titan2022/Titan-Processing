@@ -86,6 +86,10 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     invTag.position += globTag->position;
     invTag.rotation += globTag->rotation;
 
+    std::cout << "cam x: " << invTag.position.getX() << std::endl;
+    std::cout << "cam y (up): " << invTag.position.getY() << std::endl;
+    std::cout << "cam z: " << invTag.position.getZ() << std::endl;
+
     client.send_pose("prepose", invTag.position, invTag.rotation);
     dashboardClient.send_pose("prepose", invTag.position, invTag.rotation);
 
@@ -94,6 +98,9 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
     rotOffset.rotateY(-invTag.rotation.getY());
     invTag.position += rotOffset;
     invTag.rotation.setY(M_PI - invTag.rotation.getY());
+
+    std::cout << "robot x: " << invTag.position.getX() << std::endl;
+    std::cout << "robot z: " << invTag.position.getZ() << std::endl;
 
     filter.updateTag(invTag, tagDist, dt);
 }

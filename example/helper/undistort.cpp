@@ -8,7 +8,7 @@
 
 #include "../../include/helper/ConfigReader.hpp"
 
-constexpr int CAM_ID = 2;
+constexpr int CAM_ID = 1;
 constexpr int CAM_CONFIG_INDEX = 0;
 
 int main(int argc, char const *argv[])

@@ -14,7 +14,7 @@
 class ApriltagDetector
 {
     public:
-        ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer);
+        ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer, NetworkingClient &client);
         void startStream();
         void detect();
         cv::VideoCapture cap;
@@ -24,6 +24,7 @@ class ApriltagDetector
         bool showWindow;
         ConfigReader &config;
         Localizer &localizer;
+        NetworkingClient &client;
 };
 
 #endif
