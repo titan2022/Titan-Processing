@@ -1,12 +1,11 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include <iostream>
 #include <array>
 
 #include <opencv2/core.hpp>
 
-#include "helper/Vector3D.hpp"
+#include "util/Vector3D.hpp"
 
 Vector3D::Vector3D(double x, double y, double z)
 {
@@ -42,9 +41,9 @@ struct StructVector3D
     double y;
     double z;
 };
-Vector3D::Vector3D(char* d)
+Vector3D::Vector3D(const char* d)
 {
-    StructVector3D* structVec = reinterpret_cast<StructVector3D *>(d);
+    const StructVector3D* structVec = reinterpret_cast<const StructVector3D *>(d);
     x = structVec->x;
     y = structVec->y;
     z = structVec->z;
@@ -72,31 +71,67 @@ double Vector3D::getZ()
     return z;
 }
 
+/**
+ * @brief Returns rotated vector, all units are radians
+ * 
+ * @param angle In Radians
+ * @return Vector3D Rotated Vector
+ */
 Vector3D Vector3D::getRotatedX(double angle)
 {
     return Vector3D(x, y * cos(angle) - z * sin(angle), y * sin(angle) + z * cos(angle));
 }
 
+/**
+ * @brief Returns rotated vector, all units are radians
+ * 
+ * @param angle In Radians
+ * @return Vector3D Rotated Vector
+ */
 Vector3D Vector3D::getRotatedY(double angle)
 {
     return Vector3D(x * cos(angle) + z * sin(angle), y, x * -sin(angle) + z * cos(angle));
 }
 
+/**
+ * @brief Returns rotated vector, all units are radians
+ * 
+ * @param angle In Radians
+ * @return Vector3D Rotated Vector
+ */
 Vector3D Vector3D::getRotatedZ(double angle)
 {
     return Vector3D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle), z);
 }
 
+/**
+ * @brief Returns rotated vector in order of ZYX, all units are raiduans
+ * 
+ * @param xAngle In Radians
+ * @param yAngle In Radians
+ * @param zAngle In Radians
+ * @return Vector3D Rotated Vector
+ */
 Vector3D Vector3D::getRotated(double xAngle, double yAngle, double zAngle)
 {
     return getRotatedZ(zAngle).getRotatedY(yAngle).getRotatedX(xAngle);
 }
 
+/**
+ * @brief Returns magnitude or absolute length of vector
+ * 
+ * @return double 
+ */
 double Vector3D::getMagnitude()
 {
     return sqrt(x * x + y * y + z * z);
 }
 
+/**
+ * @brief Returns normalized vector (unit length of 1)
+ * 
+ * @return Vector3D 
+ */
 Vector3D Vector3D::getNormalized()
 {
     double mag = getMagnitude();
@@ -130,6 +165,12 @@ std::array<double, 3> Vector3D::toArray() {
     return arr;
 }
 
+/**
+ * @brief Rotates vector using 3x3 rotation matrix
+ * 
+ * @param mat 3x3 rotation matrix
+ * @return Vector3D Rotated vector
+ */
 Vector3D Vector3D::matToVec(double (&mat)[]) {
     // Source: http://motion.pratt.duke.edu/RoboticSystems/3DRotations.html#Converting-from-a-rotation-matrix
     // Temporarily copied from: https://github.com/titan2022/Jetson-Vision-2023/blob/apriltags/py/detector_client.py
@@ -164,6 +205,11 @@ double Vector3D::setZ(const double value) {
     return z;
 }
 
+/**
+ * @brief Normalizes the vector (turns magnitude to 1)
+ * 
+ * @return Vector3D Normalized vector
+ */
 Vector3D Vector3D::normalize()
 {
     Vector3D normalized = getNormalized();
@@ -188,18 +234,32 @@ void Vector3D::rotateZ(double angle)
     *this = getRotatedZ(angle);
 }
 
+/**
+ * @brief Rotates vector in order of ZYX, all units are raiduans
+ * 
+ * @param xAngle In Radians
+ * @param yAngle In Radians
+ * @param zAngle In Radians
+ * @return Vector3D Rotated Vector
+ */
 void Vector3D::rotate(double xAngle, double yAngle, double zAngle)
 {
-    rotateX(xAngle);
-    rotateY(yAngle);
     rotateZ(zAngle);
+    rotateY(yAngle);
+    rotateX(xAngle);
 }
 
+/**
+ * @brief Rotates vector in order of ZYX, all units are raiduans
+ * 
+ * @param vec Rotation vector
+ * @return Vector3D Rotated Vector
+ */
 void Vector3D::rotate(Vector3D &vec)
 {
-    rotateX(vec.getX());
-    rotateY(vec.getY());
     rotateZ(vec.getZ());
+    rotateY(vec.getY());
+    rotateX(vec.getX());
 }
 
 Vector3D &Vector3D::operator=(const Vector3D &v)
@@ -277,6 +337,12 @@ const bool Vector3D::operator!=(const Vector3D &v)
     return !(*this == v);
 }
 
+/**
+ * @brief Gets value. 0 = x, 1 = y, 2 = z
+ * 
+ * @param index From 0 to 2
+ * @return const double 
+ */
 const double Vector3D::operator[](const int index)
 {
     switch (index)

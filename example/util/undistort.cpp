@@ -6,14 +6,15 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
 
-#include "../../include/helper/ConfigReader.hpp"
+#include "../../include/util/ConfigReader.hpp"
 
 constexpr int CAM_ID = 1;
 constexpr int CAM_CONFIG_INDEX = 0;
 
 int main(int argc, char const *argv[])
 {
-    ConfigReader config("../example");
+    ConfigReader config;
+    config.readFromFile("../example");
 
     // std::cout << cv::getBuildInformation() << std::endl;
 

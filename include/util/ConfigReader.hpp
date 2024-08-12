@@ -9,6 +9,11 @@
 #include "../apriltag/Apriltag.hpp"
 #include "Camera.hpp"
 
+
+/**
+ * @brief Interface for config.json, contains camera and tag information. See docs for config structure
+ * 
+ */
 class ConfigReader
 {
     public:
@@ -29,13 +34,16 @@ class ConfigReader
         std::unordered_map<int, Apriltag*> tags;
         std::vector<Camera> cameras;
 
-        ConfigReader(std::string path);
-        ConfigReader();
+        /**
+         * @brief Reads config.json inside specified directory
+         * 
+         * @param path Path for directory
+         * @return int Error code
+         */
+        int readFromFile(std::string path);
 
     private:
         std::string configPath;
-        void init(std::string path);
-        void readJSONFile(std:: string path);
 };
 
 #endif

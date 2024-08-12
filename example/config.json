@@ -1,6 +1,6 @@
 {
-    "ip": "10.20.22.2",
-    "dashboardIp": "143.195.92.181",
+    "ip": "127.0.0.1",
+    "dashboardIp": "127.0.0.1",
     "port": 5804,
     "threads": 4,
     "quadDecimate": 1,

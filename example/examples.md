@@ -9,7 +9,7 @@ Same as no reply example but includes a return vector
 Detects specified AprilTag and sends to specified dashboard address
 ### Global Detection
 Detects all AprilTags, maps to global position according to `apriltags.json` and sends to specified dashboard address
-## Helper
+## util
 ### Read Config
 Reads `processing.cfg` file and outputs port
 ### Undistort

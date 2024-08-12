@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20.0)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 project(TitanProcessing VERSION 1.0.0 LANGUAGES C CXX)
+
+option(TEST "Build all tests." OFF)
 
 # Directories
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
@@ -25,7 +27,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 # Creating the library
 file(GLOB SRC 
     src/apriltag/*.cpp
-    src/helper/*.cpp
+    src/util/*.cpp
     src/networking/*.cpp
     src/physics/*.cpp
 )
@@ -50,4 +52,35 @@ if (BUILD_EXAMPLES)
         add_executable(${examplename} ${CMAKE_SOURCE_DIR}/example/${example})
         target_link_libraries(${examplename} TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
     endforeach(example ${EXAMPLE_SRC})
+endif()
+
+if (TEST)
+    enable_testing()
+
+    find_package(GTest CONFIG REQUIRED)
+
+    # Server testing
+    # Requires Java 17
+    find_package(Java REQUIRED)
+    include(UseJava)
+    set(CMAKE_JAVA_COMPILE_FLAGS "-source" "17" "-target" "17")
+    file(GLOB_RECURSE JAVA_SRC ${CMAKE_SOURCE_DIR}/test/server/*.java)
+    add_jar(ServerTest ${JAVA_SRC} ENTRY_POINT ServerTest OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test)
+    get_target_property(_jarFile ServerTest JAR_FILE)
+    get_target_property(_classDir ServerTest CLASSDIR)
+
+    # message(STATUS "Jar file ${_jarFile}")
+    # message(STATUS "Class compiled to ${_classDir}")
+    # add_test(NAME TestServer COMMAND ${Java_JAVA_EXECUTABLE} -cp ${_jarFile} ServerTest WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+    file(GLOB_RECURSE test_sources ${CMAKE_SOURCE_DIR}/test/*.cpp)
+    foreach(test_source ${test_sources})
+        get_filename_component(test_source_name ${test_source} NAME_WE)
+        add_executable(${test_source_name} ${test_source})
+        set_target_properties(${test_source_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test)
+        target_link_libraries(${test_source_name} gtest gtest_main TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
+        add_test(${test_source_name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test/${test_source_name})
+    endforeach()
 endif()

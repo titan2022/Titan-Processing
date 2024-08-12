@@ -23,7 +23,7 @@ typedef struct TRBVector3D {
 TRB_END_EXTERN_C
 
 #if __cplusplus
-#include "../helper/Vector3D.hpp"
+#include "../util/Vector3D.hpp"
 #include <string>
 
 class NetworkingClient

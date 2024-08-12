@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "apriltag/Apriltag.hpp"
-#include "../helper/ConfigReader.hpp"
-#include "../helper/Vector3D.hpp"
+#include "../util/ConfigReader.hpp"
+#include "../util/Vector3D.hpp"
 #include "../networking/Client.h"
 #include "../physics/PoseFilter.hpp"
 

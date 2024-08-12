@@ -7,7 +7,7 @@
 #include "../../include/apriltag/Apriltag.hpp"
 #include "../../include/apriltag/ApriltagDetector.hpp"
 #include "../../include/apriltag/Localizer.hpp"
-#include "../../include/helper/ConfigReader.hpp"
+#include "../../include/util/ConfigReader.hpp"
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
@@ -18,7 +18,8 @@ constexpr auto CONFIG_FOLDER = "../example";
 */
 int main(int argc, char const *argv[])
 {
-    ConfigReader config(CONFIG_FOLDER);
+    ConfigReader config;
+    config.readFromFile(CONFIG_FOLDER);
     NetworkingClient client(config.ip, config.port);
     NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
@@ -28,7 +29,7 @@ int main(int argc, char const *argv[])
     for(int i = 0; i < config.cameras.size(); i++) {
         Camera cam = config.cameras[i];
 
-        ApriltagDetector detector(i, true, config, localizer);
+        ApriltagDetector detector(i, true, config, localizer, client);
         detector.startStream();
 
         // Multithread streams

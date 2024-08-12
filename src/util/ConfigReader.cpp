@@ -1,35 +1,32 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 
 #include <opencv2/core.hpp>
 #include <nlohmann/json.hpp>
+
+#include "util/ConfigReader.hpp"
+#include "util/Unit.hpp"
+
+namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-#include "helper/ConfigReader.hpp"
-#include "helper/Unit.hpp"
 
-ConfigReader::ConfigReader(std::string path)
-{
-    this->init(path);
-}
-
-ConfigReader::ConfigReader()
-{
-    this->init("processing.cfg");
-}
-
-void ConfigReader::init(std::string path)
+int ConfigReader::readFromFile(std::string path)
 {
     this->configPath = path;
-    readJSONFile(path + "/config.json");
-}
 
-void ConfigReader::readJSONFile(std::string path)
-{
-    std::ifstream in(path);
+    fs::path filePathObj(fs::path(path) / "config.json");
+    if (!fs::exists(filePathObj)) {
+        return 2;
+    }
+    std::ifstream in(filePathObj);
+    if (!in) {
+        return 5;
+    }
     json data = json::parse(in);
 
     this->ip = data["ip"];
@@ -94,4 +91,6 @@ void ConfigReader::readJSONFile(std::string path)
         Apriltag *tag = new Apriltag(id, pos, rot, size);
         this->tags.insert({id, tag});
     }
+
+    return 0;
 }

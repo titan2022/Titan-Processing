@@ -6,7 +6,7 @@
 #include <math.h>
 
 #include "../../include/apriltag/Apriltag.hpp"
-#include "../../include/helper/Vector3D.hpp"
+#include "../../include/util/Vector3D.hpp"
 
 int main(int argc, char const *argv[])
 {
