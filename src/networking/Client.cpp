@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "helper/Vector3D.hpp"
+#include "util/Vector3D.hpp"
 #include "networking/Client.h"
 
 const int NAME_LEN = 15;

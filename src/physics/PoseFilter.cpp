@@ -6,9 +6,9 @@
 #include <opencv2/calib3d.hpp>
 
 #include "physics/PoseFilter.hpp"
-#include "helper/ConfigReader.hpp"
-#include "helper/Vector3D.hpp"
-#include "helper/Unit.hpp"
+#include "util/ConfigReader.hpp"
+#include "util/Vector3D.hpp"
+#include "util/Unit.hpp"
 
 // Source: https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
 

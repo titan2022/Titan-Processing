@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../helper/ConfigReader.hpp"
-#include "../helper/Vector3D.hpp"
+#include "../util/ConfigReader.hpp"
+#include "../util/Vector3D.hpp"
 #include "../apriltag/Apriltag.hpp"
 
 /**

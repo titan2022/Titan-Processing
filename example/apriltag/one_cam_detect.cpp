@@ -6,7 +6,7 @@
 
 #include "../../include/apriltag/ApriltagDetector.hpp"
 #include "../../include/apriltag/Localizer.hpp"
-#include "../../include/helper/ConfigReader.hpp"
+#include "../../include/util/ConfigReader.hpp"
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
@@ -21,7 +21,8 @@ int main(int argc, char const *argv[])
 {
     std::cout << "Starting stream at camera " << CAM_CONFIG_INDEX << std::endl;
 
-    ConfigReader config(CONFIG_FOLDER);
+    ConfigReader config;
+    config.readFromFile(CONFIG_FOLDER);
     NetworkingClient client(config.ip, config.port);
     NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
@@ -32,7 +33,7 @@ int main(int argc, char const *argv[])
     //     config.cameras[i].id = CAM_ID;
     // }
 
-    ApriltagDetector detector(CAM_CONFIG_INDEX, true, config, localizer);
+    ApriltagDetector detector(CAM_CONFIG_INDEX, true, config, localizer, client);
     detector.startStream();
 
     // Multithread streams
