@@ -24,6 +24,7 @@ public class NetworkingServer implements Runnable {
     private Thread thread;
     private DatagramSocket socket;
     private List<NetworkingObserver> observers = new ArrayList<NetworkingObserver>();
+    private StartObserver startObserver = null;
 
     /**
      * Networking server constructor
@@ -32,9 +33,16 @@ public class NetworkingServer implements Runnable {
      */
     public NetworkingServer(int port) {
         this.port = port;
+    }
 
+    public void start() {
         thread = new Thread(this, "ComputeNetworkingServer");
         thread.start();
+    }
+
+    public void stop() {
+        socket.close();
+        thread.interrupt();
     }
 
     /**
@@ -52,6 +60,10 @@ public class NetworkingServer implements Runnable {
      */
     public void subscribe(String objectName, NetworkingCall call) {
         observers.add(new NetworkingObserver(objectName, call));
+    }
+
+    public void onStart(StartCall call) {
+        this.startObserver = new StartObserver(call);
     }
 
     /**
@@ -75,13 +87,19 @@ public class NetworkingServer implements Runnable {
         DatagramPacket packet = null;
         byte[] buffer = new byte[MAX_PACKET_SIZE];
 
+        startObserver.start();
+
         while (true) {
             packet = new DatagramPacket(buffer, buffer.length);
 
             try {
                 socket.receive(packet);
             } catch (IOException err) {
+                if (err.getMessage().contains("Socket closed")) {
+                    return;
+                }
                 System.out.println(err.getMessage());
+                continue;
             }
 
             // for (int i = 0; i < 72; i++) {

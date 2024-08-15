@@ -75,7 +75,7 @@ if (TEST)
 
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-    file(GLOB_RECURSE test_sources ${CMAKE_SOURCE_DIR}/test/*.cpp)
+    file(GLOB test_sources ${CMAKE_SOURCE_DIR}/test/client/*.cpp)
     foreach(test_source ${test_sources})
         get_filename_component(test_source_name ${test_source} NAME_WE)
         add_executable(${test_source_name} ${test_source})
@@ -83,4 +83,8 @@ if (TEST)
         target_link_libraries(${test_source_name} gtest gtest_main TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
         add_test(${test_source_name} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test/${test_source_name})
     endforeach()
+
+    add_executable(test_client_exec ${CMAKE_SOURCE_DIR}/test/client/util/test_client_exec.cpp)
+    set_target_properties(test_client_exec PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test/util)
+    target_link_libraries(test_client_exec TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
 endif()
