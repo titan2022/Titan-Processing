@@ -18,7 +18,7 @@ endif()
 # OpenCV linking
 set(OpenCV_DIR /usr/lib/opencv)
 option(OpenCV_STATIC OFF)
-find_package(OpenCV 4)
+find_package(OpenCV 4.8)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # nlohmann/json linking

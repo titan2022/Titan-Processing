@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 #include "../../include/util/ConfigReader.hpp"
 
 
-TEST(ConfigTest, IOTest) {
+TEST(ConfigTest, IO) {
     fs::path configFolderPath = fs::current_path().parent_path() / "example";
     ConfigReader config;
     int error = config.readFromFile(configFolderPath.string());

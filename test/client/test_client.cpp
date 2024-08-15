@@ -25,7 +25,7 @@ void execServerTest(std::promise<std::string> &&execPromise) {
     execPromise.set_value(result);
 }
 
-TEST(ConfigTest, IOTest) {
+TEST(ClientTest, ServerClientAllTypes) {
     fs::path configFolderPath = fs::current_path().parent_path() / "example";
     ConfigReader config;
 
