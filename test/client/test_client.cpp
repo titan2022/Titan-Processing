@@ -10,10 +10,10 @@
 namespace fs = std::filesystem;
 
 
-void execServerTest(std::promise<std::string> &&execPromise) {
+void execServerTest(std::string cmd, std::promise<std::string> &&execPromise) {
     std::array<char, 128> buffer;
     std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("timeout 5 java -cp ../bin/test/ServerTest.jar ServerTest", "r"), pclose);
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(("timeout 5 " + cmd).c_str(), "r"), pclose);
     if (!pipe) {
         throw std::runtime_error("popen() failed!");
     }
@@ -33,9 +33,24 @@ TEST(ClientTest, ServerClientAllTypes) {
     
     std::promise<std::string> execPromise;
     auto execFuture = execPromise.get_future();
-    std::thread serverTestThread(&execServerTest, std::move(execPromise));
+    std::thread serverTestThread(&execServerTest, "java -cp ../bin/test/ServerTest.jar ServerTest", std::move(execPromise));
     serverTestThread.join();
     std::string result = execFuture.get();
 
-    ASSERT_THAT(result, ::testing::HasSubstr("test passed")) << "Unknwon UDP socket error.";
+    ASSERT_THAT(result, ::testing::HasSubstr("test passed")) << "Unknown UDP socket error.";
+}
+
+TEST(ClientTest, PythonServerClientAllTypes) {
+    fs::path configFolderPath = fs::current_path().parent_path() / "example";
+    ConfigReader config;
+
+    NetworkingClient client(config.ip, config.port);
+    
+    std::promise<std::string> execPromise;
+    auto execFuture = execPromise.get_future();
+    std::thread serverTestThread(&execServerTest, "python3 ", std::move(execPromise));
+    serverTestThread.join();
+    std::string result = execFuture.get();
+
+    ASSERT_THAT(result, ::testing::HasSubstr("test passed")) << "Unknown UDP socket error.";
 }
