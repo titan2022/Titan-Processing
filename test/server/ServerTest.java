@@ -1,15 +1,9 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import types.NetworkingPose;
 import types.NetworkingTag;
 import types.Translation3d;
 
 public class ServerTest {
-    private static final int TIMEOUT = 5; // In seconds
     private static final double SUCCESS_RATIO = 0.5; // Ratio of correct packets needed to pass the test
 
     private static final int PORT = 5801;
@@ -78,7 +72,5 @@ public class ServerTest {
                 System.out.println(error);
             }
         });
-
-        System.out.println("last line");
     }
 }
