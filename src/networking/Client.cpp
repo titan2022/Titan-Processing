@@ -14,6 +14,9 @@
 #include "util/Vector3D.hpp"
 #include "networking/Client.h"
 
+using namespace titan;
+
+
 const int NAME_LEN = 15;
 
 // Aligned on linux x86 GCC

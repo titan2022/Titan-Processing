@@ -3,6 +3,9 @@
 
 #include "../../include/util/ConfigReader.hpp"
 
+using namespace titan;
+
+
 int main(int argc, char const *argv[])
 {
     ConfigReader config;

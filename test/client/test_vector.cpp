@@ -4,6 +4,8 @@
 
 #include "../../include/util/Vector3D.hpp"
 
+using namespace titan;
+
 
 TEST(VectorTest, DoubleConstructor) {
     Vector3D v(-1.5, 0.0, 1.0);

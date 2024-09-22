@@ -4,6 +4,9 @@
 #include "../../include/util/Vector3D.hpp"
 #include "../../include/networking/Client.h"
 
+using namespace titan;
+
+
 int main(int argc, char const *argv[]) {
   std::string ip = "127.0.0.1";
   int port = 5800;

@@ -8,6 +8,9 @@
 #include "../../include/apriltag/Apriltag.hpp"
 #include "../../include/util/Vector3D.hpp"
 
+using namespace titan;
+
+
 int main(int argc, char const *argv[])
 {
     Vector3D invTagPos(3, 4, 1);

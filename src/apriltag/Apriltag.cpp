@@ -1,6 +1,9 @@
 #include "apriltag/Apriltag.hpp"
 #include "util/Vector3D.hpp"
 
+using namespace titan;
+
+
 Apriltag::Apriltag(int id, Vector3D &position, Vector3D &rotation, double size) : id(id), position(position), rotation(rotation), size(size)
 {
     size = -1;

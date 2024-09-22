@@ -8,6 +8,9 @@
 #include "util/Vector3D.hpp"
 #include "util/Unit.hpp"
 
+using namespace titan;
+
+
 // Translates position origin from camera to tag
 Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size)
 {

@@ -7,6 +7,9 @@
 
 #include "util/Vector3D.hpp"
 
+using namespace titan;
+
+
 Vector3D::Vector3D(double x, double y, double z)
 {
     this->x = x;

@@ -1,6 +1,8 @@
 #include "networking/Client.h"
-#include <iostream>
 #include <string>
+
+using namespace titan;
+
 
 int main(int argc, char const *argv[])
 {

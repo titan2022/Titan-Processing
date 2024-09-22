@@ -8,6 +8,9 @@
 
 #include "../../include/util/ConfigReader.hpp"
 
+using namespace titan;
+
+
 constexpr int CAM_ID = 1;
 constexpr int CAM_CONFIG_INDEX = 0;
 

@@ -9,6 +9,8 @@
 #include "apriltag/ApriltagDetector.hpp"
 #include "util/Unit.hpp"
 
+using namespace titan;
+
 
 ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer, NetworkingClient &client) : 
 config(config), localizer(localizer), streamId(streamId), showWindow(showWindow), client(client)
