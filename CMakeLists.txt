@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20.0)
 set(CMAKE_CXX_STANDARD 20)
-project(TitanProcessing VERSION 1.0.0 LANGUAGES C CXX)
+project(TitanProcessing VERSION 2.0.0 LANGUAGES C CXX)
 
 option(TEST "Build all tests." OFF)
 
@@ -35,9 +35,15 @@ if (NOT NO_REALSENSE)
     file(GLOB RS_SRC src/realsense/*.cpp)
     add_library(TitanProcessing SHARED ${SRC} ${RS_SRC})
 else()
-    add_library(TitanProcessing ${SRC})
+    add_library(TitanProcessing SHARED ${SRC})
 endif()
-install(TARGETS TitanProcessing DESTINATION TitanProcessing)
+set_target_properties(TitanProcessing PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(TitanProcessing PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+include(GNUInstallDirs)
+# install(TARGETS TitanProcessing DESTINATION TitanProcessing)
+install(TARGETS TitanProcessing
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Linking libraries
 target_link_libraries(TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
@@ -88,3 +94,5 @@ if (TEST)
     set_target_properties(test_client_exec PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test/util)
     target_link_libraries(test_client_exec TitanProcessing ${apriltag_LIBRARIES} ${OpenCV_LIBS})
 endif()
+
+# install(TARGETS test DESTINATION bin)
