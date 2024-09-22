@@ -11,6 +11,7 @@
 #include "util/ConfigReader.hpp"
 #include "util/Unit.hpp"
 
+using namespace titan;
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 

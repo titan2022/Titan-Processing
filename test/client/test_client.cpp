@@ -8,6 +8,7 @@
 #include <thread>
 
 namespace fs = std::filesystem;
+using namespace titan;
 
 
 void execServerTest(std::string cmd, std::promise<std::string> &&execPromise) {

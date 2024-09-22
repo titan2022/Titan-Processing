@@ -10,6 +10,9 @@
 #include "util/Vector3D.hpp"
 #include "util/Unit.hpp"
 
+using namespace titan;
+
+
 // Source: https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
 
 template <typename T>

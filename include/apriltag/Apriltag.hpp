@@ -3,15 +3,19 @@
 
 #include "../util/Vector3D.hpp"
 
-class Apriltag
+
+namespace titan
 {
-    public:
-        Apriltag(int id, Vector3D &position, Vector3D &rotation, double size);
-        Apriltag& operator=(const Apriltag& other);
-        Vector3D position;
-        Vector3D rotation;
-        double size;
-        int id;
-};
+    class Apriltag
+    {
+        public:
+            Apriltag(int id, Vector3D &position, Vector3D &rotation, double size);
+            Apriltag& operator=(const Apriltag& other);
+            Vector3D position;
+            Vector3D rotation;
+            double size;
+            int id;
+    };
+}
 
 #endif

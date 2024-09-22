@@ -1,15 +1,13 @@
-#include <algorithm>
-#include <iostream>
 #include <string>
 #include <thread>
 #include <string>
 
-#include "../../include/apriltag/Apriltag.hpp"
-#include "../../include/apriltag/ApriltagDetector.hpp"
-#include "../../include/apriltag/Localizer.hpp"
-#include "../../include/util/ConfigReader.hpp"
-#include "../../include/networking/Client.h"
-#include "../../include/physics/PoseFilter.hpp"
+#include <../include/apriltag/Apriltag.hpp>
+#include "../include/apriltag/ApriltagDetector.hpp"
+#include "../include/apriltag/Localizer.hpp"
+#include "../include/util/ConfigReader.hpp"
+#include "../include/networking/Client.h"
+#include "../include/physics/PoseFilter.hpp"
 
 using namespace titan;
 
@@ -32,7 +30,7 @@ int main(int argc, char const *argv[])
     for(int i = 0; i < config.cameras.size(); i++) {
         Camera cam = config.cameras[i];
 
-        ApriltagDetector detector(i, true, config, localizer, client);
+        ApriltagDetector detector(i, false, config, localizer, client);
         detector.startStream();
 
         // Multithread streams

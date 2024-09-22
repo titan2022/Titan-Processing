@@ -10,6 +10,9 @@
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
+using namespace titan;
+
+
 // constexpr int CAM_ID = 0;
 constexpr int CAM_CONFIG_INDEX = 0;
 constexpr auto CONFIG_FOLDER = "../example";

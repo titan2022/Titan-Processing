@@ -11,6 +11,9 @@
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 
+using namespace titan;
+
+
 constexpr auto CONFIG_FOLDER = "../example";
 
 /**

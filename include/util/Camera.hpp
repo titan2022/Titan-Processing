@@ -6,24 +6,28 @@
 #include <opencv2/core.hpp>
 #include "./Vector3D.hpp"
 
-class Camera
+
+namespace titan
 {
-    public:
-        std::string name;
-        std::string usbName;
-        int id;
-        Vector3D position;
-        Vector3D rotation;
-        int width;
-        int height;
-        int fps;
-        int exposure;
-        double focalX;
-        double focalY;
-        double centerX;
-        double centerY;
-        cv::Mat cameraMat;
-        cv::Mat distCoeffs;
-};
+    class Camera
+    {
+        public:
+            std::string name;
+            std::string usbName;
+            int id;
+            Vector3D position;
+            Vector3D rotation;
+            int width;
+            int height;
+            int fps;
+            int exposure;
+            double focalX;
+            double focalY;
+            double centerX;
+            double centerY;
+            cv::Mat cameraMat;
+            cv::Mat distCoeffs;
+    };
+}
 
 #endif

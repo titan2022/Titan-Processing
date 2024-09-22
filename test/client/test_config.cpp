@@ -2,9 +2,10 @@
 #include <filesystem>
 #include <string>
 
-namespace fs = std::filesystem;
-
 #include "../../include/util/ConfigReader.hpp"
+
+namespace fs = std::filesystem;
+using namespace titan;
 
 
 TEST(ConfigTest, IO) {
