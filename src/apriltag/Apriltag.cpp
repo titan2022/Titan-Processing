@@ -3,20 +3,21 @@
 
 using namespace titan;
 
-
-Apriltag::Apriltag(int id, Vector3D &position, Vector3D &rotation, double size) : id(id), position(position), rotation(rotation), size(size)
+Apriltag::Apriltag(int id, Vector3D &position, Vector3D &rotation, double size)
+	: id(id), position(position), rotation(rotation), size(size)
 {
-    size = -1;
+	size = -1;
 }
 
-Apriltag& Apriltag::operator=(const Apriltag& other)
+Apriltag &Apriltag::operator=(const Apriltag &other)
 {
-    if (this != &other) {
-        id = other.id;
-        position = other.position;
-        position = other.rotation;
-        size = other.size;
-    }
+	if (this != &other)
+	{
+		id = other.id;
+		position = other.position;
+		position = other.rotation;
+		size = other.size;
+	}
 
-    return *this;
+	return *this;
 }

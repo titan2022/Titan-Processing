@@ -1,9 +1,8 @@
 #include "util/Camera.hpp"
-#include <string>
 #include <opencv2/core.hpp>
+#include <string>
 
 using namespace titan;
-
 
 // Camera::Camera() {
 

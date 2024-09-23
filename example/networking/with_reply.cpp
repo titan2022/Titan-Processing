@@ -1,22 +1,21 @@
 #include <iostream>
 #include <string>
 
-#include "../../include/util/Vector3D.hpp"
 #include "../../include/networking/Client.h"
+#include "../../include/util/Vector3D.hpp"
 
 using namespace titan;
 
+int main(int argc, char const *argv[])
+{
+	std::string ip = "127.0.0.1";
+	int port = 5800;
+	Vector3D v(0, 1, 2);
 
-int main(int argc, char const *argv[]) {
-  std::string ip = "127.0.0.1";
-  int port = 5800;
-  Vector3D v(0, 1, 2);
+	NetworkingClient client(ip, port);
+	client.send_vector("test", v, false);
 
-  NetworkingClient client(ip, port);
-  client.send_vector("test", v, false);
+	std::cout << "Vector " << v.toString() << " sent to " << ip << ":" << port << std::endl;
 
-  std::cout << "Vector " << v.toString() << " sent to " << ip << ":" << port
-            << std::endl;
-
-  return 0;
+	return 0;
 }
