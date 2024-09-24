@@ -3,9 +3,8 @@
 
 #include <opencv2/core.hpp>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <vector>
-
 
 #include "../apriltag/Apriltag.hpp"
 #include "Camera.hpp"
@@ -33,7 +32,7 @@ class ConfigReader
 	double decodeSharpening;
 
 	// Stuff from config.json
-	std::unordered_map<int, Apriltag *> tags;
+	std::map<int, Apriltag *> tags;
 	std::vector<Camera> cameras;
 
 	/**
@@ -43,6 +42,8 @@ class ConfigReader
 	 * @return int Error code
 	 */
 	int readFromFile(std::string path);
+
+	~ConfigReader();
 
   private:
 	std::string configPath;

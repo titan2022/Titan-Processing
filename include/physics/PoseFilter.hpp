@@ -2,9 +2,6 @@
 #define POSE_FILTER
 
 #include <map>
-#include <string>
-#include <unordered_map>
-#include <vector>
 
 #include "../apriltag/Apriltag.hpp"
 #include "../util/ConfigReader.hpp"
@@ -36,7 +33,7 @@ class PoseFilter
 	bool init = false;
 
 	cv::Mat x;							// Previous mean input matrix
-	std::unordered_map<int, cv::Mat> P; // Covariance matrices
+	std::map<int, cv::Mat> P; // Covariance matrices
 	cv::Mat R;							// _____
 	cv::Mat Q;							// _____
 	cv::Mat u;							// Control input (default is no control)

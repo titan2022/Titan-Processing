@@ -3,13 +3,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <unordered_map>
-
 
 #include <nlohmann/json.hpp>
 #include <opencv2/core.hpp>
 
-
+#include "apriltag/Apriltag.hpp"
 #include "util/ConfigReader.hpp"
 #include "util/Unit.hpp"
 
@@ -97,4 +95,12 @@ int ConfigReader::readFromFile(std::string path)
 	}
 
 	return 0;
+}
+
+ConfigReader::~ConfigReader()
+{
+	for (const auto &tagPair : this->tags)
+	{
+		delete tagPair.second;
+	}
 }
