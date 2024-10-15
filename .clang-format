@@ -1,4 +1,4 @@
 {
     BasedOnStyle: "Microsoft"
-    UseTab: Always
+    UseTab: "Always"
 }
