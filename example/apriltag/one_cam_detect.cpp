@@ -8,6 +8,7 @@
 #include "../../include/networking/Client.h"
 #include "../../include/physics/PoseFilter.hpp"
 #include "../../include/util/ConfigReader.hpp"
+#include "util/CameraVideoStream.hpp"
 
 using namespace titan;
 
@@ -34,7 +35,10 @@ int main(int argc, char const *argv[])
 	//     config.cameras[i].id = CAM_ID;
 	// }
 
-	ApriltagDetector detector(CAM_CONFIG_INDEX, true, config, localizer, client);
+    CameraVideoStream stream;
+    stream.id = CAM_CONFIG_INDEX;
+    
+	ApriltagDetector detector(stream, true, config, localizer, client);
 	detector.startStream();
 
 	// Multithread streams

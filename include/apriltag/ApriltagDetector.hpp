@@ -6,20 +6,21 @@
 #include "../apriltag/Localizer.hpp"
 #include "../networking/Client.h"
 #include "../util/ConfigReader.hpp"
+#include "util/VideoStream.hpp"
 
 namespace titan
 {
 class ApriltagDetector
 {
   public:
-	ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer,
+	ApriltagDetector(VideoStream &stream, bool showWindow, ConfigReader &config, Localizer &localizer,
 					 NetworkingClient &client);
 	void startStream();
 	void detect();
 	cv::VideoCapture cap;
 
   private:
-	int streamId;
+	VideoStream stream;
 	bool showWindow;
 	ConfigReader &config;
 	Localizer &localizer;
