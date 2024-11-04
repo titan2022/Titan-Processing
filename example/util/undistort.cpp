@@ -7,6 +7,8 @@
 #include <opencv2/calib3d.hpp>
 
 #include "../../include/util/ConfigReader.hpp"
+#include "util/CameraVideoStream.hpp"
+#include "util/VideoStream.hpp"
 
 using namespace titan;
 
@@ -19,26 +21,14 @@ int main(int argc, char const *argv[])
     ConfigReader config;
     config.readFromFile("../example");
 
-    // std::cout << cv::getBuildInformation() << std::endl;
-
-    // cv::VideoCapture cap("gst-launch-1.0 -v v4l2src device=/dev/video2 ! video/x-raw,framerate=6/1 ! appsink", cv::CAP_GSTREAMER);
-    cv::VideoCapture cap(CAM_ID);
-    if (!cap.isOpened())
-    {
-        std::cerr << "Couldn't open video capture device" << std::endl;
-        return 0;
-    }
-
-    // cap.set(cv::CAP_PROP_FPS, config.cameras[CAM_CONFIG_INDEX].fps);
-    // cap.set(cv::CAP_PROP_FRAME_WIDTH, config.cameras[CAM_CONFIG_INDEX].width);
-    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, config.cameras[CAM_CONFIG_INDEX].height);
-    std::cout << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
-    std::cout << cap.get(cv::CAP_PROP_FPS) << std::endl;
+    CameraVideoStream stream;
+    stream.id = CAM_CONFIG_INDEX;
+    stream.initStream();
 
     while (true)
     {
         cv::Mat frame, out;
-        cap >> frame;
+        frame = stream.getNextFrame();
 
         cv::undistort(frame, out, config.cameras[CAM_CONFIG_INDEX].cameraMat, config.cameras[CAM_CONFIG_INDEX].distCoeffs);
 

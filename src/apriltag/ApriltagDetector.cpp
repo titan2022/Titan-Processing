@@ -8,44 +8,19 @@
 #include "apriltag/Apriltag.hpp"
 #include "apriltag/ApriltagDetector.hpp"
 #include "util/Unit.hpp"
+#include "util/VideoStream.hpp"
 
 using namespace titan;
 
-ApriltagDetector::ApriltagDetector(int streamId, bool showWindow, ConfigReader &config, Localizer &localizer,
+ApriltagDetector::ApriltagDetector(VideoStream &stream, bool showWindow, ConfigReader &config, Localizer &localizer,
 								   NetworkingClient &client)
-	: config(config), localizer(localizer), streamId(streamId), showWindow(showWindow), client(client)
+	: stream(stream), config(config), localizer(localizer), showWindow(showWindow), client(client)
 {
 }
 
 void ApriltagDetector::startStream()
 {
-	Camera cam = config.cameras[this->streamId];
-	std::cout << cam.name << std::endl;
-
-	std::string cameraPipeline;
-
-	cameraPipeline =
-		"v4l2src device=/dev/v4l/by-id/" + cam.usbName +
-		" ! "
-		// "videorate ! videoconvert ! videoscale !"
-		// "video/x-raw, format=BGR, width=" + std::to_string(cam.width) + ", height=" + std::to_string(cam.height) + ",
-		// pixel-aspect-ratio=1/1, framerate=" + std::to_string(cam.fps) + "/1 ! "
-		"image/jpeg, width=" +
-		std::to_string(cam.width) + ", height=" + std::to_string(cam.height) +
-		", framerate=" + std::to_string(cam.fps) +
-		"/1 ! "
-		"decodebin ! videoconvert ! appsink";
-	cv::VideoCapture cap(cameraPipeline);
-
-	this->cap = cap;
-	if (!cap.isOpened())
-	{
-		std::cerr << "Couldn't open video capture device" << std::endl;
-		return;
-	}
-
-	std::cout << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
-	std::cout << cap.get(cv::CAP_PROP_FPS) << std::endl;
+	stream.initStream();
 }
 
 void ApriltagDetector::detect()
@@ -59,8 +34,8 @@ void ApriltagDetector::detect()
 	cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
 	double markerLength = 0.1651;
-	cv::Mat cameraMatrix = config.cameras[this->streamId].cameraMat;
-	cv::Mat distCoeffs = config.cameras[this->streamId].distCoeffs;
+	cv::Mat cameraMatrix = config.cameras[stream.id].cameraMat;
+	cv::Mat distCoeffs = config.cameras[stream.id].distCoeffs;
 
 	cv::Mat objPoints(4, 1, CV_32FC3);
 	objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength / 2.f, markerLength / 2.f, 0);
@@ -70,7 +45,7 @@ void ApriltagDetector::detect()
 
 	auto prevTS = std::chrono::steady_clock::now();
 	auto postTS = prevTS;
-	double dt = 1.0 / config.cameras[this->streamId].fps;
+	double dt = 1.0 / config.cameras[stream.id].fps;
 
 	// Temporary...
 	Vector3D visible(0, 0, 0);
@@ -118,7 +93,7 @@ void ApriltagDetector::detect()
 				cv::Vec3d rVec = rVecs[i];
 				cv::Vec3d tVec = tVecs[i];
 
-				localizer.addApriltag(ids[i], this->streamId, tVec, rVec, markerLength, dt);
+				localizer.addApriltag(ids[i], stream.id, tVec, rVec, markerLength, dt);
 
 				if (this->showWindow)
 				{
