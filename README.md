@@ -1,6 +1,55 @@
 # Titan Processing
 
 ## Building
+### Running locally in a Conda environment
+
+#### Installing the Conda environment
+First, please have Conda or Mamba installed on your computer. If it's not installed, please install [Miniforge3](https://conda-forge.org/miniforge/), which includes Conda, Mamba and a conda-forge based Python environment. You can install Miniforge3 using the following command:
+
+```bash
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+rm Miniforge3-$(uname)-$(uname -m).sh
+```
+
+Close and reopen your shell, and run:
+
+```bash
+# Prevent Conda from polluting your environment when you're not working on Conda-managed projects.
+conda config --set auto_activate_base false
+```
+
+Now, you can use Conda to install the dependencies.
+
+```bash
+mamba env create -f environment.yml
+mamba activate Titan-Processing
+```
+
+If you modify `environment.yml`, please run
+
+```bash
+mamba env update -f environment.yml
+```
+
+Occassionally, you should update all the packages to the latest versions:
+
+```bash
+mamba activate Titan-Processing
+mamba update --all
+```
+
+#### Building the library and examples
+
+```bash
+mamba activate Titan-Processing
+
+# Debug/development builds:
+cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
+# Release builds:
+cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=1 -GNinja
+```
+
 ### Linux
 1. Install OpenCV 4.8.x or above with Aruco contrib module, and Python support if using `calibration.py`
 1. Install [nlohmann/json](https://github.com/nlohmann/json) using [vcpkg](https://github.com/Microsoft/vcpkg). If you want to install vcpkg using our binaries, do:
