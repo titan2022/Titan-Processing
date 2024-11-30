@@ -36,7 +36,7 @@ Occassionally, you should update all the packages to the latest versions:
 
 ```bash
 mamba activate Titan-Processing
-mamba update --all
+mamba update --all -c https://repo.prefix.dev/titan-forge
 ```
 
 #### Building the library and examples
@@ -44,13 +44,21 @@ mamba update --all
 ```bash
 mamba activate Titan-Processing
 
+mkdir build && cd build
+export CC=clang
+export CXX=clang++
+export CXXFLAGS="-pthread"
+
 # Debug/development builds:
-cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
+cmake -B . -S .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DBUILD_EXAMPLES=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
 # Release builds:
-cmake -B . -S .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=1 -GNinja
+cmake -B . -S .. -DBUILD_EXAMPLES=1 -GNinja
+
+# Actually run the build
+ninja
 ```
 
-### Linux
+### Linux (without Conda)
 1. Install OpenCV 4.8.x or above with Aruco contrib module, and Python support if using `calibration.py`
 1. Install [nlohmann/json](https://github.com/nlohmann/json) using [vcpkg](https://github.com/Microsoft/vcpkg). If you want to install vcpkg using our binaries, do:
   ```bash
