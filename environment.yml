@@ -8,4 +8,6 @@ dependencies:
   - nlohmann_json
   - cmake
   - ninja
-  - clang-19
+  - clang
+  - clangxx
+  - googletest
