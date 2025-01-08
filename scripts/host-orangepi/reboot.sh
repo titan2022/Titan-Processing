@@ -2,5 +2,5 @@
 
 source credentials.sh
 
-ssh "$username@$deployment_target" "yes \"$password\" | sudo -S reboot now"
+ssh "$username@$remote_hostname" "yes \"$password\" | sudo -S reboot now"
 
