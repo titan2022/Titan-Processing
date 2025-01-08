@@ -2,5 +2,5 @@
 
 source credentials.sh
 
-ssh "$username@$deployment_target" "cd ~/Projects/Titan-Processing && yes \"$password\" | ./scripts/orangepi/no-autostart.sh"
+ssh "$username@$remote_hostname" "cd ~/Projects/Titan-Processing && yes \"$password\" | ./scripts/orangepi/no-autostart.sh"
 
