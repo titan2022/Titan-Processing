@@ -33,7 +33,7 @@ int main(int argc, char const *argv[])
         CameraVideoStream stream;
         stream.id = i;
 
-		ApriltagDetector detector(stream, false, config, localizer, client);
+		ApriltagDetector detector(std::make_shared<CameraVideoStream>(stream), false, config, localizer, client);
 		detector.startStream();
 
 		// Multithread streams

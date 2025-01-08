@@ -12,7 +12,7 @@
 
 using namespace titan;
 
-ApriltagDetector::ApriltagDetector(VideoStream &stream, bool showWindow, ConfigReader &config, Localizer &localizer,
+ApriltagDetector::ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer,
 								   NetworkingClient &client)
 	: stream(stream), config(config), localizer(localizer), showWindow(showWindow), client(client)
 {
@@ -20,7 +20,7 @@ ApriltagDetector::ApriltagDetector(VideoStream &stream, bool showWindow, ConfigR
 
 void ApriltagDetector::startStream()
 {
-	stream.initStream();
+	stream.get()->initStream();
 }
 
 void ApriltagDetector::detect()
@@ -34,8 +34,8 @@ void ApriltagDetector::detect()
 	cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
 	double markerLength = 0.1651;
-	cv::Mat cameraMatrix = config.cameras[stream.id].cameraMat;
-	cv::Mat distCoeffs = config.cameras[stream.id].distCoeffs;
+	cv::Mat cameraMatrix = config.cameras[stream.get()->id].cameraMat;
+	cv::Mat distCoeffs = config.cameras[stream.get()->id].distCoeffs;
 
 	cv::Mat objPoints(4, 1, CV_32FC3);
 	objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength / 2.f, markerLength / 2.f, 0);
@@ -45,7 +45,7 @@ void ApriltagDetector::detect()
 
 	auto prevTS = std::chrono::steady_clock::now();
 	auto postTS = prevTS;
-	double dt = 1.0 / config.cameras[stream.id].fps;
+	double dt = 1.0 / config.cameras[stream.get()->id].fps;
 
 	// Temporary...
 	Vector3D visible(0, 0, 0);
@@ -93,7 +93,7 @@ void ApriltagDetector::detect()
 				cv::Vec3d rVec = rVecs[i];
 				cv::Vec3d tVec = tVecs[i];
 
-				localizer.addApriltag(ids[i], stream.id, tVec, rVec, markerLength, dt);
+				localizer.addApriltag(ids[i], stream.get()->id, tVec, rVec, markerLength, dt);
 
 				if (this->showWindow)
 				{

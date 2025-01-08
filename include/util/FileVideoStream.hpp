@@ -1,5 +1,5 @@
-#ifndef CAMERA_VIDEO_STREAM
-#define CAMERA_VIDEO_STREAM
+#ifndef FILE_VIDEO_STREAM
+#define FILE_VIDEO_STREAM
 
 #include "util/ConfigReader.hpp"
 #include "util/VideoStream.hpp"
@@ -7,9 +7,13 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
+/**
+ * @brief Reads video from specified file.
+ * Requires `filePath` and `config` to be specified before initialization.
+ */
 namespace titan
 {
-class CameraVideoStream : public VideoStream
+class FileVideoStream : public VideoStream
 {
   public:
 	std::shared_ptr<ConfigReader> config;
@@ -19,6 +23,8 @@ class CameraVideoStream : public VideoStream
 	int getWidth();
 	int getHeight();
 	int getFPS();
+    
+	std::string filePath = "";
 
   private:
 	cv::VideoCapture cap;
