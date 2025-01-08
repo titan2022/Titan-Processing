@@ -15,31 +15,34 @@ using namespace titan;
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-int ConfigReader::readFromFile(std::string path)
+int ConfigReader::readFromFile(std::string configPath, std::string tagPath)
 {
-	this->configPath = path;
+	this->configPath = configPath;
 
-	fs::path filePathObj(fs::path(path) / "config.json");
-	if (!fs::exists(filePathObj))
+	fs::path fileConfigPathObj(fs::path(configPath));
+	fs::path fileTagPathObj(fs::path(tagPath));
+	if (!fs::exists(fileConfigPathObj)||!fs::exists(fileTagPathObj))
 	{
 		return 2;
 	}
-	std::ifstream in(filePathObj);
-	if (!in)
+	std::ifstream inConfig(fileConfigPathObj);
+	std::ifstream inTag(fileTagPathObj);
+	if (!inConfig||!inTag)
 	{
 		return 5;
 	}
-	json data = json::parse(in);
+	json configData = json::parse(inConfig);
+	json tagData = json::parse(inTag);
 
-	this->ip = data["ip"];
-	this->dashboardIp = data["dashboardIp"];
-	this->port = data["port"];
-	this->threads = data["threads"];
-	this->quadDecimate = data["quadDecimate"];
-	this->quadSigma = data["quadSigma"];
-	this->decodeSharpening = data["decodeSharpening"];
+	this->ip = configData["ip"];
+	this->dashboardIp = configData["dashboardIp"];
+	this->port = configData["port"];
+	this->threads = configData["threads"];
+	this->quadDecimate = configData["quadDecimate"];
+	this->quadSigma = configData["quadSigma"];
+	this->decodeSharpening = configData["decodeSharpening"];
 
-	for (auto &tagObj : data["cameras"])
+	for (auto &tagObj : configData["cameras"])
 	{
 		Camera cam;
 
@@ -79,15 +82,15 @@ int ConfigReader::readFromFile(std::string path)
 		this->cameras.push_back(cam);
 	}
 
-	for (auto &tagObj : data["apriltags"])
+	for (auto &tagObj : tagData["tags"])
 	{
-		std::vector<double> posArr = tagObj["position"];
-		std::vector<double> rotArr = tagObj["rotation"];
-		double size = tagObj["size"];
-		int id = tagObj["id"];
+		json pose = tagObj["pose"];
+		std::vector<double> posArr = {pose["translation"]["x"],pose["translation"]["y"],pose["translation"]["z"]};
+		double size = 0.1651;
+		int id = tagObj["ID"];
 
 		Vector3D pos(posArr);
-		Vector3D rot(rotArr);
+		Vector3D rot = Vector3D::fromQuaternion(pose["translation"]["w"],pose["translation"]["x"],pose["translation"]["y"],pose["translation"]["z"]);
 		rot *= Unit::DEG;
 
 		Apriltag *tag = new Apriltag(id, pos, rot, size);

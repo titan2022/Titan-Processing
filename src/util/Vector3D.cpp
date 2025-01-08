@@ -196,6 +196,30 @@ Vector3D Vector3D::matToVec(double (&mat)[])
 	return result;
 }
 
+Vector3D Vector3D::fromQuaternion(double w, double x, double y, double z)
+{
+	//code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code_2
+
+
+	//x-axis
+	double sinr_cosp = 2*(w*x+y*z);
+    double cosr_cosp = 1-2*(x*x+y*y);
+    roll = std::atan2(sinr_cosp, cosr_cosp);
+
+	//y-axis
+    double sinp = std::sqrt(1+2*(w*y-x*z));
+    double cosp = std::sqrt(1-2*(w*y-x*z));
+    pitch = 2 * std::atan2(sinp, cosp) - M_PI / 2;
+
+    //z-axis
+    double siny_cosp = 2*(w*z+x*y);
+    double cosy_cosp = 1-2*(y*y+z*z);
+    yaw = std::atan2(siny_cosp, cosy_cosp);
+
+	Vector3D result(roll, yaw, pitch);
+	return result;
+}
+
 double Vector3D::setX(const double value)
 {
 	x = value;

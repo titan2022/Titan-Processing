@@ -41,7 +41,7 @@ class ConfigReader
 	 * @param path Path for directory
 	 * @return int Error code
 	 */
-	int readFromFile(std::string path);
+	int readFromFile(std::string configPath, std::string tagPath);
 
 	~ConfigReader();
 
