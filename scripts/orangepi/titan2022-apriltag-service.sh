@@ -1,5 +1,5 @@
 #!/bin/bash
 
-export VCPKG_FORCE_SYSTEM_BINARIES=1
+mamba activate Titan-Processing
 cd /home/titan/Projects/Titan-Processing/bin
 ./detect_headless
