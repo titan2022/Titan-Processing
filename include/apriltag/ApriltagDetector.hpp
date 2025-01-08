@@ -7,20 +7,21 @@
 #include "../networking/Client.h"
 #include "../util/ConfigReader.hpp"
 #include "util/VideoStream.hpp"
+#include <memory>
 
 namespace titan
 {
 class ApriltagDetector
 {
   public:
-	ApriltagDetector(VideoStream &stream, bool showWindow, ConfigReader &config, Localizer &localizer,
+	ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer,
 					 NetworkingClient &client);
 	void startStream();
 	void detect();
 	cv::VideoCapture cap;
 
   private:
-	VideoStream stream;
+	std::shared_ptr<VideoStream> stream;
 	bool showWindow;
 	ConfigReader &config;
 	Localizer &localizer;

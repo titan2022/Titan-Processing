@@ -3,7 +3,6 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <util/CameraVideoStream.hpp>
-#include "util/VideoStream.hpp"
 
 using namespace titan;
 
@@ -23,18 +22,12 @@ int CameraVideoStream::initStream()
 
 	Camera cam = config.get()->cameras[id];
 
-	std::string cameraPipeline;
-	cameraPipeline =
-		"v4l2src device=/dev/v4l/by-id/" + cam.usbName +
-		" ! "
-		// "videorate ! videoconvert ! videoscale !"
-		// "video/x-raw, format=BGR, width=" + std::to_string(cam.width) + ", height=" + std::to_string(cam.height) + ",
-		// pixel-aspect-ratio=1/1, framerate=" + std::to_string(cam.fps) + "/1 ! "
-		"image/jpeg, width=" +
-		std::to_string(cam.width) + ", height=" + std::to_string(cam.height) +
+    // Opens first available camera (hardcoded to /dev/video0)
+	std::string cameraPipeline =
+		"v4l2src device=/dev/video0 ! image/jpeg, width=" + std::to_string(cam.width) +
+        ", height=" + std::to_string(cam.height) +
 		", framerate=" + std::to_string(cam.fps) +
-		"/1 ! "
-		"decodebin ! videoconvert ! appsink";
+		"/1 ! decodebin ! videoconvert ! appsink";
 	cv::VideoCapture cap(cameraPipeline);
 
 	this->cap = cap;
@@ -52,4 +45,20 @@ cv::Mat CameraVideoStream::getNextFrame()
     cv::Mat frame;
     cap >> frame;
     return frame;
+}
+
+bool CameraVideoStream::isOpened() {
+    return cap.isOpened();
+}
+
+int CameraVideoStream::getWidth() {
+    return cap.get(cv::CAP_PROP_FRAME_WIDTH);
+}
+
+int CameraVideoStream::getHeight() {
+    return cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+}
+
+int CameraVideoStream::getFPS() {
+    return cap.get(cv::CAP_PROP_FPS);
 }
