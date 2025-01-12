@@ -1,5 +1,3 @@
-#include "util/Camera.hpp"
-#include "util/VideoStream.hpp"
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
@@ -38,4 +36,20 @@ cv::Mat FileVideoStream::getNextFrame()
     cap >> frame;
     cv::VideoCapture* thing = new cv::VideoCapture(1);
     return frame;
+}
+
+bool FileVideoStream::isOpened() {
+    return cap.isOpened();
+}
+
+int FileVideoStream::getWidth() {
+    return cap.get(cv::CAP_PROP_FRAME_WIDTH);
+}
+
+int FileVideoStream::getHeight() {
+    return cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+}
+
+int FileVideoStream::getFPS() {
+    return cap.get(cv::CAP_PROP_FPS);
 }
