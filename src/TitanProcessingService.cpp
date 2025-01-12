@@ -20,6 +20,8 @@ constexpr auto TAGS_PATH = "../config/apriltags2025.json";
  */
 int main(int argc, char const *argv[])
 {
+    std::cout << "Starting service..." << std::endl;
+
 	ConfigReader config;
 	config.readFromFile(CONFIG_PATH, TAGS_PATH);
 	NetworkingClient client(config.ip, config.port);
@@ -32,7 +34,10 @@ int main(int argc, char const *argv[])
 	{
 		Camera cam = config.cameras[i];
         CameraVideoStream stream;
+        stream.config = std::make_shared<ConfigReader>(config);
         stream.id = i;
+
+        std::cout << "Initializing camera: " << cam.name << std::endl;
 
 		ApriltagDetector detector(std::make_shared<CameraVideoStream>(stream), false, config, localizer, client);
 		detector.startStream();
