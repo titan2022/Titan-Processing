@@ -6,8 +6,7 @@
 #include <map>
 
 #include "physics/PoseFilter.hpp"
-#include "util/ConfigReader.hpp"
-#include "util/Unit.hpp"
+#include "util/Config.hpp"
 #include "util/Vector3D.hpp"
 
 using namespace titan;
@@ -42,12 +41,12 @@ std::string pm(cv::Mat &m)
 	return result;
 }
 
-PoseFilter::PoseFilter(ConfigReader &config) : config(config), position(), rotation()
+PoseFilter::PoseFilter(Config &config) : config(config), position(), rotation()
 {
 	// Initialize covariance matrices
 	for (auto &tag : config.tags)
 	{
-		P[tag.second->id] = cv::Mat::eye(12, 12, CV_64FC1);
+		P[tag.second.id] = cv::Mat::eye(12, 12, CV_64FC1);
 	}
 
 	// Initialize process noise matrix
@@ -112,7 +111,7 @@ void PoseFilter::predict(double dt)
 	for (auto &tag : config.tags)
 	{
 		// Predicting covariance
-		P[tag.second->id] = F * P[tag.second->id] * F.t() + Q;
+		P[tag.second.id] = F * P[tag.second.id] * F.t() + Q;
 	}
 }
 

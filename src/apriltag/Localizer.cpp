@@ -1,17 +1,19 @@
 #include <cmath>
-#include <iostream>
 #include <functional>
+#include <iostream>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
+#include <optional>
 
 #include "apriltag/Localizer.hpp"
-#include "util/ConfigReader.hpp"
+#include "util/Camera.hpp"
+#include "util/Config.hpp"
 #include "util/Unit.hpp"
 #include "util/Vector3D.hpp"
 
 using namespace titan;
 
-Localizer::Localizer(ConfigReader &config, PoseFilter &filter, std::function<void(Vector3D&, Vector3D&)> poseHandler)
+Localizer::Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D &, Vector3D &)> poseHandler)
 	: config(config), filter(filter), poseHandler(poseHandler)
 {
 }
@@ -48,19 +50,19 @@ Apriltag toGlobalPose(Apriltag &relative, Apriltag &global)
 	return result;
 }
 
-Apriltag *Localizer::getGlobalTag(int id)
+std::optional<Apriltag> Localizer::getGlobalTag(int id)
 {
 	for (auto tagPair : this->config.tags)
 	{
-		if (tagPair.second->id == id)
+		if (tagPair.second.id == id)
 		{
 			return tagPair.second;
 		}
 	}
-	return nullptr;
+	return {};
 }
 
-void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
+void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
 {
 	Apriltag invTag = correctPerspective(id, tvec, rvec, size);
 
@@ -94,7 +96,7 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 	invTag.rotation += globTag->rotation;
 
 	// Offsetting by camera pose on the robot to get robot pose
-	Vector3D rotOffset = config.cameras[camId].position;
+	Vector3D rotOffset = cam.position;
 	rotOffset.rotateY(-invTag.rotation.getY());
 	invTag.position += rotOffset;
 	invTag.rotation.setY(M_PI - invTag.rotation.getY());
@@ -107,6 +109,6 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 
 void Localizer::step(double dt)
 {
-    this->poseHandler(filter.position, filter.rotation);
+	this->poseHandler(filter.position, filter.rotation);
 	filter.predict(dt);
 }

@@ -6,18 +6,12 @@
 #include <opencv2/opencv.hpp>
 
 #include "apriltag/ApriltagDetector.hpp"
-#include "util/VideoStream.hpp"
 
 using namespace titan;
 
-ApriltagDetector::ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer)
+ApriltagDetector::ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Localizer &localizer)
 	: stream(stream), config(config), localizer(localizer), showWindow(showWindow)
 {
-}
-
-void ApriltagDetector::startStream()
-{
-	stream.get()->initStream();
 }
 
 void ApriltagDetector::detect()
@@ -31,8 +25,8 @@ void ApriltagDetector::detect()
 	cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
 	double markerLength = 0.1651;
-	cv::Mat cameraMatrix = config.cameras[stream.get()->cameraIndex].cameraMat;
-	cv::Mat distCoeffs = config.cameras[stream.get()->cameraIndex].distCoeffs;
+	cv::Mat cameraMatrix = cam.cameraMat;
+	cv::Mat distCoeffs = cam.distCoeffs;
 
 	cv::Mat objPoints(4, 1, CV_32FC3);
 	objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength / 2.f, markerLength / 2.f, 0);
@@ -42,9 +36,9 @@ void ApriltagDetector::detect()
 
 	auto prevTS = std::chrono::steady_clock::now();
 	auto postTS = prevTS;
-	double dt = 1.0 / config.cameras[stream.get()->cameraIndex].fps;
+	double dt = 1.0 / cam.fps;
 
-	while (stream->isOpened())
+	while (stream.isOpened())
 	{
 		// Measure delta time
 		postTS = std::chrono::steady_clock::now();
@@ -52,7 +46,7 @@ void ApriltagDetector::detect()
 		prevTS = postTS;
 
 		cv::Mat frame, gray, out;
-        frame = stream->getNextFrame();
+		stream >> frame;
 
 		// Split YUV into channels to get the grayscale image without extra processing
 		// std::vector<cv::Mat> channels(3);
@@ -60,8 +54,8 @@ void ApriltagDetector::detect()
 		// gray = channels[0];
 		// frame.copyTo(out);
 
-        // Convert MJPEG to grayscale
-        cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
+		// Convert MJPEG to grayscale
+		cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
 		// std::cout << 1.0 / dt << std::endl;
 
@@ -88,7 +82,7 @@ void ApriltagDetector::detect()
 				cv::Vec3d rVec = rVecs[i];
 				cv::Vec3d tVec = tVecs[i];
 
-				localizer.addApriltag(ids[i], stream.get()->cameraIndex, tVec, rVec, markerLength, dt);
+				localizer.addApriltag(ids[i], cam, tVec, rVec, markerLength, dt);
 
 				if (this->showWindow)
 				{

@@ -3,28 +3,29 @@
 
 #include <functional>
 
-#include "../networking/Client.h"
 #include "../physics/PoseFilter.hpp"
-#include "../util/ConfigReader.hpp"
+#include "../util/Config.hpp"
 #include "../util/Vector3D.hpp"
 #include "./Apriltag.hpp"
+#include "util/Camera.hpp"
+#include <optional>
 
 namespace titan
 {
 class Localizer
 {
   public:
-	Localizer(ConfigReader &config, PoseFilter &filter, std::function<void(Vector3D&, Vector3D&)> poseHandler);
-	void addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt);
+	Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D &, Vector3D &)> poseHandler);
+	void addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt);
 	void step(double dt);
 	Vector3D position;
 	Vector3D rotation;
 
   private:
-	Apriltag *getGlobalTag(int id);
-	ConfigReader &config;
+	std::optional<Apriltag> getGlobalTag(int id);
+	Config &config;
 	PoseFilter &filter;
-    std::function<void(Vector3D&, Vector3D&)> poseHandler;
+	std::function<void(Vector3D &, Vector3D &)> poseHandler;
 };
 } // namespace titan
 

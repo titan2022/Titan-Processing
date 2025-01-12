@@ -1,13 +1,11 @@
 #include "networking/Client.h"
-#include "util/ConfigReader.hpp"
-#include <filesystem>
+#include "util/Config.hpp"
 #include <future>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <string>
 #include <thread>
 
-namespace fs = std::filesystem;
 using namespace titan;
 
 void execServerTest(std::string cmd, std::promise<std::string> &&execPromise)
@@ -31,8 +29,7 @@ void execServerTest(std::string cmd, std::promise<std::string> &&execPromise)
 TEST(ClientTest, ServerClientAllTypes)
 {
 	// std::cout << "bruh" << std::endl;
-	fs::path configFolderPath = fs::current_path().parent_path() / "example";
-	ConfigReader config;
+	Config config(CONFIG_PATH, TAGS_PATH);
 
 	NetworkingClient client(config.ip, config.port);
 

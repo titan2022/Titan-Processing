@@ -1,9 +1,10 @@
-#include "util/ConfigReader.hpp"
-#include "util/CameraVideoStream.hpp"
+#include "util/Camera.hpp"
+#include "util/Config.hpp"
 #include <iostream>
 #include <fstream>
 #include <memory>
 #include <opencv2/aruco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/aruco/charuco.hpp>
@@ -11,6 +12,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect/charuco_detector.hpp>
+#include <opencv2/videoio.hpp>
 #include <vector>
 #include <nlohmann/json.hpp>
 #include <filesystem>
@@ -35,15 +37,16 @@ void showImage(cv::Mat image) {
  */
 int main(int argc, char const *argv[])
 {
-    fs::path configPath = fs::current_path().parent_path() / "config" / "config.json";
-    fs::path tagsPath = fs::current_path().parent_path() / "config" / "apriltags2025.json";
-    ConfigReader config;
-    config.readFromFile(configPath.string(), tagsPath.string());
+	if (argc != 2)
+	{
+		std::cout << "1 argument was expected, " << argc - 1 << " were passed.\n";
+		return 1;
+	}
+	auto cam_name = argv[1];
+	Config cfg(CONFIG_PATH, TAGS_PATH);
 
-    CameraVideoStream stream;
-    stream.config = std::make_shared<ConfigReader>(config);
-    stream.cameraIndex = 0;
-    stream.initStream();
+	Camera cam = cfg.cameras[cam_name];
+	cv::VideoCapture stream = cam.openStream();
 
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_1000);
     cv::aruco::CharucoBoard board(cv::Size(5, 7), SQUARE_LENGTH, MARKER_LENGTH, dictionary);
@@ -60,9 +63,11 @@ int main(int argc, char const *argv[])
     std::vector<std::vector<cv::Point2f>> cornersList;
     std::vector<std::vector<int>> idList;
 
-    while (stream.isOpened()) {
-        cv::Mat image = stream.getNextFrame();
-        int key = cv::waitKey(1);
+	while (stream.isOpened())
+	{
+		cv::Mat image;
+		stream >> image;
+		int key = cv::waitKey(1);
 
         std::vector<int> ids;
         std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
@@ -112,23 +117,15 @@ int main(int argc, char const *argv[])
     std::vector<cv::Mat> rvecs, tvecs;
     double repError = cv::aruco::calibrateCameraCharuco(cornersList, idList, &board, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs);
 
-    json data;
-    data["cameras"] = json::array({{
-        {"width", stream.getWidth()},
-        {"height", stream.getHeight()},
-        {"focalX", cameraMatrix.at<float>(0, 0)},
-        {"focalY", cameraMatrix.at<float>(1, 1)},
-        {"centerX", cameraMatrix.at<float>(0, 2)},
-        {"centerY", cameraMatrix.at<float>(1, 2)},
-        {"k1", distCoeffs.at<float>(0, 0)},
-        {"k2", distCoeffs.at<float>(0, 1)},
-        {"p1", distCoeffs.at<float>(0, 2)},
-        {"p2", distCoeffs.at<float>(0, 3)},
-        {"k3", distCoeffs.at<float>(0, 4)},
-    }});
+	cam.width = stream.get(cv::CAP_PROP_FRAME_WIDTH);
+	cam.height = stream.get(cv::CAP_PROP_FRAME_HEIGHT);
+	cam.focalX = cameraMatrix.at<float>(0, 0);
+	cam.focalY = cameraMatrix.at<float>(1, 1);
+	cam.centerX = cameraMatrix.at<float>(0, 2);
+	cam.centerY = cameraMatrix.at<float>(1, 2);
+	cam.distCoeffs = distCoeffs;
 
-    std::ofstream file(configPath.string());
-    file << data;
+	cfg.write(CONFIG_PATH, TAGS_PATH);
 
 	return 0;
 }

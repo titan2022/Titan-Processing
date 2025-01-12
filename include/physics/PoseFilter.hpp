@@ -4,7 +4,7 @@
 #include <map>
 
 #include "../apriltag/Apriltag.hpp"
-#include "../util/ConfigReader.hpp"
+#include "../util/Config.hpp"
 #include "../util/Vector3D.hpp"
 
 namespace titan
@@ -15,7 +15,7 @@ namespace titan
 class PoseFilter
 {
   public:
-	PoseFilter(ConfigReader &config);
+	PoseFilter(Config &config);
 	void predict(double dt);
 	void step(double dt);
 	void updateTag(Apriltag &tag, double tagDist, double dt);
@@ -28,7 +28,7 @@ class PoseFilter
 	double test2 = 0;
 
   private:
-	ConfigReader &config;
+	Config &config;
 
 	bool init = false;
 

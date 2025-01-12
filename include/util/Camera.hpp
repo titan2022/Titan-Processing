@@ -1,6 +1,7 @@
 #ifndef CAMERA
 #define CAMERA
 
+#include <opencv2/videoio.hpp>
 #include <string>
 
 #include "./Vector3D.hpp"
@@ -13,7 +14,6 @@ class Camera
   public:
 	std::string name;
 	std::string usbName;
-	int id;
 	Vector3D position;
 	Vector3D rotation;
 	int width;
@@ -26,6 +26,7 @@ class Camera
 	double centerY;
 	cv::Mat cameraMat;
 	cv::Mat distCoeffs;
+	cv::VideoCapture openStream();
 };
 } // namespace titan
 

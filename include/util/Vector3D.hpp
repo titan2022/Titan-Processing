@@ -34,6 +34,8 @@ class Vector3D
     
 	static Vector3D matToVec(double (&mat)[]);
 	static Vector3D fromQuaternion(double w, double x, double y, double z);
+	/// Returns a tuple of (w, x, y, z).
+	std::tuple<double, double, double, double> toQuaternion();
 
 	double setX(const double value);
 	double setY(const double value);

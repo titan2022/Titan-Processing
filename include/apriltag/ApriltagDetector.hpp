@@ -1,28 +1,25 @@
 #ifndef APRILTAG_DETECTOR
 #define APRILTAG_DETECTOR
 
-#include "opencv2/opencv.hpp"
-
 #include "../apriltag/Localizer.hpp"
 #include "../networking/Client.h"
-#include "../util/ConfigReader.hpp"
-#include "util/VideoStream.hpp"
-#include <memory>
+#include "../util/Config.hpp"
+#include "util/Camera.hpp"
+#include <opencv2/opencv.hpp>
 
 namespace titan
 {
 class ApriltagDetector
 {
   public:
-	ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer);
-	void startStream();
+	ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Localizer &localizer);
 	void detect();
-	cv::VideoCapture cap;
 
   private:
-	std::shared_ptr<VideoStream> stream;
+	cv::VideoCapture stream;
+	Camera cam;
 	bool showWindow;
-	ConfigReader &config;
+	Config &config;
 	Localizer &localizer;
 };
 } // namespace titan

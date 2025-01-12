@@ -1,6 +1,7 @@
 #include <array>
 #include <cmath>
 #include <string>
+#include <tuple>
 #include <vector>
 
 
@@ -218,6 +219,24 @@ Vector3D Vector3D::fromQuaternion(double w, double x, double y, double z)
 
 	Vector3D result(roll, yaw, pitch);
 	return result;
+}
+std::tuple<double, double, double, double> Vector3D::toQuaternion()
+{
+	// code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code
+
+	double cr = cos(x * 0.5);
+	double sr = sin(x * 0.5);
+	double cp = cos(y * 0.5);
+	double sp = sin(y * 0.5);
+	double cy = cos(z * 0.5);
+	double sy = sin(z * 0.5);
+
+	double w = cr * cp * cy + sr * sp * sy;
+	double x = sr * cp * cy - cr * sp * sy;
+	double y = cr * sp * cy + sr * cp * sy;
+	double z = cr * cp * sy - sr * sp * cy;
+	std::tuple<double, double, double, double> q = {w, x, y, z};
+	return q;
 }
 
 double Vector3D::setX(const double value)
