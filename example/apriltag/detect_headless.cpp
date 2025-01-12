@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
     for(int i = 0; i < config.cameras.size(); i++) {
         Camera cam = config.cameras[i];
 
-        ApriltagDetector detector(i, false, config, localizer);
+        ApriltagDetector detector(i, false, config, localizer, client);
         detector.startStream();
 
         // Multithread streams

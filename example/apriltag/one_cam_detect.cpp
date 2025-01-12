@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
     //     config.cameras[i].id = CAM_ID;
     // }
 
-    ApriltagDetector detector(CAM_CONFIG_INDEX, true, config, localizer);
+    ApriltagDetector detector(CAM_CONFIG_INDEX, true, config, localizer, client);
     detector.startStream();
 
     // Multithread streams
