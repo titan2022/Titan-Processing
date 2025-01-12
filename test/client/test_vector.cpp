@@ -59,3 +59,9 @@ TEST(VectorTest, Rotation)
 	ASSERT_DOUBLE_EQ(v.getX(), rotatedV.getX());
 	// ASSERT_DOUBLE_EQ(v1.getX(), rotatedV1.getX());
 }
+
+// TODO: test quaternion to euler angles conversion 
+TEST(VectorTest, QuaternionTest)
+{
+
+}

@@ -22,13 +22,13 @@ int CameraVideoStream::initStream()
 
 	Camera cam = config.get()->cameras[id];
 
-    // Opens first available camera (hardcoded to /dev/video0)
 	std::string cameraPipeline =
-		"v4l2src device=/dev/video0 ! image/jpeg, width=" + std::to_string(cam.width) +
+		"v4l2src device=/dev/v4l/by-id/" + cam.usbName + 
+        " ! image/jpeg, width=" + std::to_string(cam.width) +
         ", height=" + std::to_string(cam.height) +
 		", framerate=" + std::to_string(cam.fps) +
 		"/1 ! decodebin ! videoconvert ! appsink";
-	cv::VideoCapture cap(cameraPipeline);
+	cv::VideoCapture cap(0, cv::CAP_GSTREAMER);
 
 	this->cap = cap;
 	if (!cap.isOpened())

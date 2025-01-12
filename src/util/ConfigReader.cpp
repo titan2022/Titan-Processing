@@ -87,13 +87,17 @@ int ConfigReader::readFromFile(std::string configPath, std::string tagPath)
 	for (auto &tagObj : tagData["tags"])
 	{
 		json pose = tagObj["pose"];
+
 		std::vector<double> posArr = {pose["translation"]["x"],pose["translation"]["y"],pose["translation"]["z"]};
+        Vector3D pos(posArr);
+
+        // double X = pose["rotation"]["quaternion"]["W"];
+
+		Vector3D rot = Vector3D::fromQuaternion(pose["rotation"]["quaternion"]["W"],pose["rotation"]["quaternion"]["X"],pose["rotation"]["quaternion"]["Y"],pose["rotation"]["quaternion"]["Z"]);
+		rot *= Unit::DEG;
+        
 		double size = 0.1651;
 		int id = tagObj["ID"];
-
-		Vector3D pos(posArr);
-		Vector3D rot = Vector3D::fromQuaternion(pose["translation"]["w"],pose["translation"]["x"],pose["translation"]["y"],pose["translation"]["z"]);
-		rot *= Unit::DEG;
 
 		Apriltag *tag = new Apriltag(id, pos, rot, size);
 		this->tags.insert({id, tag});

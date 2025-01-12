@@ -1,13 +1,11 @@
 #include <chrono>
-#include <iomanip>
 #include <iostream>
 
 #include <opencv2/aruco.hpp>
 #include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
 
-#include "apriltag/Apriltag.hpp"
 #include "apriltag/ApriltagDetector.hpp"
-#include "util/Unit.hpp"
 #include "util/VideoStream.hpp"
 
 using namespace titan;
@@ -47,10 +45,7 @@ void ApriltagDetector::detect()
 	auto postTS = prevTS;
 	double dt = 1.0 / config.cameras[stream.get()->id].fps;
 
-	// Temporary...
-	Vector3D visible(0, 0, 0);
-
-	while (true)
+	while (stream->isOpened())
 	{
 		// Measure delta time
 		postTS = std::chrono::steady_clock::now();
@@ -58,13 +53,16 @@ void ApriltagDetector::detect()
 		prevTS = postTS;
 
 		cv::Mat frame, gray, out;
-		cap >> frame;
+        frame = stream->getNextFrame();
 
 		// Split YUV into channels to get the grayscale image without extra processing
-		std::vector<cv::Mat> channels(3);
-		split(frame, channels);
-		gray = channels[0];
-		frame.copyTo(out);
+		// std::vector<cv::Mat> channels(3);
+		// split(frame, channels);
+		// gray = channels[0];
+		// frame.copyTo(out);
+
+        // Convert MJPEG to grayscale
+        cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
 		std::cout << 1.0 / dt << std::endl;
 
@@ -75,8 +73,6 @@ void ApriltagDetector::detect()
 
 		if (ids.size() > 0)
 		{
-			visible.setX(1);
-
 			cv::aruco::drawDetectedMarkers(out, markerCorners, ids);
 
 			int nMarkers = markerCorners.size();
@@ -101,12 +97,6 @@ void ApriltagDetector::detect()
 				}
 			}
 		}
-		else
-		{
-			visible.setX(-1);
-		}
-
-		this->client.send_vector("visible", visible, false);
 
 		localizer.step(dt);
 		if (this->showWindow)
