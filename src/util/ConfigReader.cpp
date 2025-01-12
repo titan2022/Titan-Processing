@@ -19,18 +19,20 @@ int ConfigReader::readFromFile(std::string configPath, std::string tagPath)
 {
 	this->configPath = configPath;
 
-	fs::path fileConfigPathObj(fs::path(configPath));
-	fs::path fileTagPathObj(fs::path(tagPath));
-	if (!fs::exists(fileConfigPathObj)||!fs::exists(fileTagPathObj))
+	fs::path fileConfigPathObj((fs::path(configPath)));
+	fs::path fileTagPathObj((fs::path(tagPath)));
+	if (!fs::exists(fileConfigPathObj) || !fs::exists(fileTagPathObj))
 	{
 		return 2;
 	}
+
 	std::ifstream inConfig(fileConfigPathObj);
 	std::ifstream inTag(fileTagPathObj);
-	if (!inConfig||!inTag)
+	if (!inConfig || !inTag)
 	{
 		return 5;
 	}
+    
 	json configData = json::parse(inConfig);
 	json tagData = json::parse(inTag);
 
