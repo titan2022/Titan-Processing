@@ -12,7 +12,8 @@
 
 using namespace titan;
 
-constexpr auto CONFIG_FOLDER = "../example";
+constexpr auto CONFIG_PATH = "../config/config.json";
+constexpr auto TAGS_PATH = "../config/apriltags2025.json";
 
 /**
  * Stars streams with every camera available
@@ -20,7 +21,7 @@ constexpr auto CONFIG_FOLDER = "../example";
 int main(int argc, char const *argv[])
 {
 	ConfigReader config;
-	config.readFromFile(CONFIG_FOLDER);
+	config.readFromFile(CONFIG_PATH, TAGS_PATH);
 	NetworkingClient client(config.ip, config.port);
 	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 

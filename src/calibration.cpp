@@ -35,10 +35,10 @@ void showImage(cv::Mat image) {
  */
 int main(int argc, char const *argv[])
 {
-    fs::path configPath = fs::current_path().parent_path() / "test" / "data" / "test_config.json";
+    fs::path configPath = fs::current_path().parent_path() / "config" / "config.json";
+    fs::path tagsPath = fs::current_path().parent_path() / "config" / "apriltags2025.json";
     ConfigReader config;
-    config.readFromFile(configPath.string());
-    config.readFromFile("std::string path");
+    config.readFromFile(configPath.string(), tagsPath.string());
 
     CameraVideoStream stream;
     stream.config = std::make_shared<ConfigReader>(config);

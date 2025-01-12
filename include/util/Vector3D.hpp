@@ -31,8 +31,9 @@ class Vector3D
 	std::string toString();
 	cv::Vec<double, 3> toCV();
 	std::array<double, 3> toArray();
+    
 	static Vector3D matToVec(double (&mat)[]);
-	Vector3D fromQuaternion(double w, double x, double y, double z);
+	static Vector3D fromQuaternion(double w, double x, double y, double z);
 
 	double setX(const double value);
 	double setY(const double value);

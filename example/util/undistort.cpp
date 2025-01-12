@@ -12,6 +12,9 @@
 
 using namespace titan;
 
+constexpr auto CONFIG_PATH = "../config/config.json";
+constexpr auto TAGS_PATH = "../config/apriltags2025.json";
+
 
 constexpr int CAM_ID = 1;
 constexpr int CAM_CONFIG_INDEX = 0;
@@ -19,7 +22,7 @@ constexpr int CAM_CONFIG_INDEX = 0;
 int main(int argc, char const *argv[])
 {
     ConfigReader config;
-    config.readFromFile("../example");
+    config.readFromFile(CONFIG_PATH, TAGS_PATH);
 
     CameraVideoStream stream;
     stream.id = CAM_CONFIG_INDEX;

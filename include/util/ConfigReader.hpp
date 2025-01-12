@@ -36,9 +36,10 @@ class ConfigReader
 	std::vector<Camera> cameras;
 
 	/**
-	 * @brief Reads config.json inside specified directory
+	 * @brief Reads config files from specified paths into the object
 	 *
-	 * @param path Path for directory
+	 * @param configPath path to config.json file
+     * @param tagPath path for tags file
 	 * @return int Error code
 	 */
 	int readFromFile(std::string configPath, std::string tagPath);
