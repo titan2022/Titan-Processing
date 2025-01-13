@@ -27,6 +27,10 @@ class Camera
 	cv::Mat cameraMat;
 	cv::Mat distCoeffs;
 	cv::VideoCapture openStream();
+	/// Gets the camera intrinsic matrix
+	cv::Mat getCameraMatrix();
+	/// Sets the camera intrinsic matrix
+	void setCameraMatrix(cv::Mat matrix);
 };
 } // namespace titan
 

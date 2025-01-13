@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
 	auto cam_name = argv[1];
 	Config cfg(CONFIG_PATH, TAGS_PATH);
 
-	Camera cam = cfg.cameras[cam_name];
+	Camera cam = cfg.cameras.at(cam_name);
 	cv::VideoCapture stream = cam.openStream();
 
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_1000);
