@@ -7,6 +7,7 @@
 #include "../include/physics/PoseFilter.hpp"
 #include "../include/util/ConfigReader.hpp"
 #include "util/CameraVideoStream.hpp"
+#include "util/Vector3D.hpp"
 #include "util/VideoStream.hpp"
 #include <../include/apriltag/Apriltag.hpp>
 

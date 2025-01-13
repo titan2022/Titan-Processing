@@ -19,8 +19,6 @@ class CameraVideoStream : public VideoStream
 	int getWidth();
 	int getHeight();
 	int getFPS();
-    
-	int cameraIndex = -1;
 
   private:
 	cv::VideoCapture cap;

@@ -32,8 +32,8 @@ void ApriltagDetector::detect()
 	cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
 	double markerLength = 0.1651;
-	cv::Mat cameraMatrix = config.cameras[stream.get()->id].cameraMat;
-	cv::Mat distCoeffs = config.cameras[stream.get()->id].distCoeffs;
+	cv::Mat cameraMatrix = config.cameras[stream.get()->cameraIndex].cameraMat;
+	cv::Mat distCoeffs = config.cameras[stream.get()->cameraIndex].distCoeffs;
 
 	cv::Mat objPoints(4, 1, CV_32FC3);
 	objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength / 2.f, markerLength / 2.f, 0);
@@ -43,7 +43,7 @@ void ApriltagDetector::detect()
 
 	auto prevTS = std::chrono::steady_clock::now();
 	auto postTS = prevTS;
-	double dt = 1.0 / config.cameras[stream.get()->id].fps;
+	double dt = 1.0 / config.cameras[stream.get()->cameraIndex].fps;
 
 	while (stream->isOpened())
 	{
@@ -89,7 +89,7 @@ void ApriltagDetector::detect()
 				cv::Vec3d rVec = rVecs[i];
 				cv::Vec3d tVec = tVecs[i];
 
-				localizer.addApriltag(ids[i], stream.get()->id, tVec, rVec, markerLength, dt);
+				localizer.addApriltag(ids[i], stream.get()->cameraIndex, tVec, rVec, markerLength, dt);
 
 				if (this->showWindow)
 				{
