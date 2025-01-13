@@ -39,6 +39,15 @@ int FileImageStream::initStream() {
         return 1;
     }
 
+    cv::Mat frame = cv::imread(imagePaths[0]);
+    if (frame.data == NULL) {
+        std::cerr << "Image file \"" << imagePaths[0] << "\" could not be loaded.";
+        return 1;
+    } else {
+        imageWidth = frame.cols;
+        imageHeight = frame.rows;
+    }
+
     return 0;
 }
 
