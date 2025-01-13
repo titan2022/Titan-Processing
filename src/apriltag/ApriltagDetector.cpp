@@ -10,9 +10,8 @@
 
 using namespace titan;
 
-ApriltagDetector::ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer,
-								   NetworkingClient &client)
-	: stream(stream), config(config), localizer(localizer), showWindow(showWindow), client(client)
+ApriltagDetector::ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer)
+	: stream(stream), config(config), localizer(localizer), showWindow(showWindow)
 {
 }
 
@@ -64,7 +63,7 @@ void ApriltagDetector::detect()
         // Convert MJPEG to grayscale
         cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
-		std::cout << 1.0 / dt << std::endl;
+		// std::cout << 1.0 / dt << std::endl;
 
 		std::vector<int> ids;
 		std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;

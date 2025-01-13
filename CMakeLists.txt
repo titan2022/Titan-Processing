@@ -34,7 +34,7 @@ include(${CMAKE_MODULE_PATH}/build_service.cmake)
 
 # Building examples
 if (BUILD_EXAMPLES)
-    include(${CMAKE_MODULE_PATH}/build_examples.cmake)
+    # include(${CMAKE_MODULE_PATH}/build_examples.cmake)
 endif()
 
 # Testing
