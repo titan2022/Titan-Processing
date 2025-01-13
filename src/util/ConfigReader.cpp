@@ -108,8 +108,8 @@ int ConfigReader::readFromFile(std::string configPath, std::string tagPath)
 
 ConfigReader::~ConfigReader()
 {
-	for (const auto &tagPair : this->tags)
-	{
-		delete tagPair.second;
-	}
+	// for (const auto &tagPair : this->tags)
+	// {
+	// 	delete tagPair.second;
+	// }
 }
