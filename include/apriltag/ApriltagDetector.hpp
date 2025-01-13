@@ -14,8 +14,7 @@ namespace titan
 class ApriltagDetector
 {
   public:
-	ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer,
-					 NetworkingClient &client);
+	ApriltagDetector(std::shared_ptr<VideoStream> stream, bool showWindow, ConfigReader &config, Localizer &localizer);
 	void startStream();
 	void detect();
 	cv::VideoCapture cap;
@@ -25,7 +24,6 @@ class ApriltagDetector
 	bool showWindow;
 	ConfigReader &config;
 	Localizer &localizer;
-	NetworkingClient &client;
 };
 } // namespace titan
 

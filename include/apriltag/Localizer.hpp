@@ -1,6 +1,8 @@
 #ifndef LOCALIZER
 #define LOCALIZER
 
+#include <functional>
+
 #include "../networking/Client.h"
 #include "../physics/PoseFilter.hpp"
 #include "../util/ConfigReader.hpp"
@@ -12,7 +14,7 @@ namespace titan
 class Localizer
 {
   public:
-	Localizer(ConfigReader &config, NetworkingClient &client, NetworkingClient &dashboardClient, PoseFilter &filter);
+	Localizer(ConfigReader &config, PoseFilter &filter, std::function<void(Vector3D&, Vector3D&)> poseHandler);
 	void addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt);
 	void step(double dt);
 	Vector3D position;
@@ -21,9 +23,8 @@ class Localizer
   private:
 	Apriltag *getGlobalTag(int id);
 	ConfigReader &config;
-	NetworkingClient &client;
-	NetworkingClient &dashboardClient;
-	PoseFilter filter;
+	PoseFilter &filter;
+    std::function<void(Vector3D&, Vector3D&)> poseHandler;
 };
 } // namespace titan
 

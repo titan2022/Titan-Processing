@@ -116,10 +116,6 @@ void PoseFilter::predict(double dt)
 	}
 }
 
-void PoseFilter::step(double dt)
-{
-}
-
 void PoseFilter::updateTag(Apriltag &tag, double tagDist, double dt)
 {
 	double xPos = tag.position.getX();

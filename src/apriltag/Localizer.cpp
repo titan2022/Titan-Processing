@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <functional>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
 
@@ -9,6 +10,11 @@
 #include "util/Vector3D.hpp"
 
 using namespace titan;
+
+Localizer::Localizer(ConfigReader &config, PoseFilter &filter, std::function<void(Vector3D&, Vector3D&)> poseHandler)
+	: config(config), filter(filter), poseHandler(poseHandler)
+{
+}
 
 // Translates position origin from camera to tag
 Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size)
@@ -54,12 +60,6 @@ Apriltag *Localizer::getGlobalTag(int id)
 	return nullptr;
 }
 
-Localizer::Localizer(ConfigReader &config, NetworkingClient &client, NetworkingClient &dashboardClient,
-					 PoseFilter &filter)
-	: config(config), client(client), dashboardClient(dashboardClient), filter(filter)
-{
-}
-
 void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
 {
 	Apriltag invTag = correctPerspective(id, tvec, rvec, size);
@@ -71,10 +71,10 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 	double tagDist = invTag.position.getMagnitude();
 
 	// Reject tags over a certain distance (too much noise)
-	if (tagDist > 5)
-	{
-		return;
-	}
+	// if (tagDist > 5)
+	// {
+	// 	return;
+	// }
 
 	// TODO: check if robot offsetting works for relative tag poses
 	// Send relative tag (no Kalman filter)
@@ -93,13 +93,6 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 	invTag.position += globTag->position;
 	invTag.rotation += globTag->rotation;
 
-	std::cout << "cam x: " << invTag.position.getX() << std::endl;
-	std::cout << "cam y (up): " << invTag.position.getY() << std::endl;
-	std::cout << "cam z: " << invTag.position.getZ() << std::endl;
-
-	client.send_pose("prepose", invTag.position, invTag.rotation);
-	dashboardClient.send_pose("prepose", invTag.position, invTag.rotation);
-
 	// Offsetting by camera pose on the robot to get robot pose
 	Vector3D rotOffset = config.cameras[camId].position;
 	rotOffset.rotateY(-invTag.rotation.getY());
@@ -114,8 +107,6 @@ void Localizer::addApriltag(int id, int camId, cv::Vec3d &tvec, cv::Vec3d &rvec,
 
 void Localizer::step(double dt)
 {
-	client.send_pose("pose", filter.position, filter.rotation);
-	dashboardClient.send_pose("pose", filter.position, filter.rotation);
-
+    this->poseHandler(filter.position, filter.rotation);
 	filter.predict(dt);
 }
