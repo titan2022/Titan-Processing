@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
 	{
 		Camera cam = config.cameras[i];
         CameraVideoStream stream;
-        stream.id = i;
+        stream.cameraIndex = i;
 
 		ApriltagDetector detector(std::make_shared<CameraVideoStream>(stream), true, config, localizer, client);
 		detector.startStream();
