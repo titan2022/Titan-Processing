@@ -27,8 +27,13 @@ int main(int argc, char const *argv[])
 	NetworkingClient client(config.ip, config.port);
 	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
+    auto clientPoseSender = [&](Vector3D& pos, Vector3D& rot) {
+        client.send_pose("pose", pos, rot);
+        dashboardClient.send_pose("pose", pos, rot);
+    };
+
 	PoseFilter filter(config);
-	Localizer localizer(config, client, dashboardClient, filter);
+	Localizer localizer(config, filter, clientPoseSender);
 
 	for (int i = 0; i < config.cameras.size(); i++)
 	{
@@ -36,7 +41,7 @@ int main(int argc, char const *argv[])
         CameraVideoStream stream;
         stream.cameraIndex = i;
 
-		ApriltagDetector detector(std::make_shared<CameraVideoStream>(stream), true, config, localizer, client);
+		ApriltagDetector detector(std::make_shared<CameraVideoStream>(stream), true, config, localizer);
 		detector.startStream();
 
 		// Multithread streams

@@ -29,7 +29,6 @@ int main(int argc, char const *argv[])
 	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
     auto clientPoseSender = [&](Vector3D& pos, Vector3D& rot) {
-        std::cout << pos.toString() << std::endl;
         client.send_pose("pose", pos, rot);
         dashboardClient.send_pose("pose", pos, rot);
     };
