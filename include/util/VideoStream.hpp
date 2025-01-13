@@ -14,6 +14,7 @@ class VideoStream
 	virtual int getWidth() = 0;
 	virtual int getHeight() = 0;
 	virtual int getFPS() = 0;
+	int cameraIndex = -1;
 };
 } // namespace titan
 
