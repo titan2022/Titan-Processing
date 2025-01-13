@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
 
     CameraVideoStream stream;
     stream.config = std::make_shared<ConfigReader>(config);
-    stream.id = 0;
+    stream.cameraIndex = 0;
     stream.initStream();
 
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_1000);

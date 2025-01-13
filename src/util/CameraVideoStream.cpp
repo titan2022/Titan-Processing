@@ -14,13 +14,13 @@ int CameraVideoStream::initStream()
         return 1;
 	}
 
-    if (id < 0)
+    if (cameraIndex < 0)
 	{
         std::cerr << "No camera ID in `CameraVideoStream` object defined." << std::endl;
         return 1;
 	}
 
-	Camera cam = config.get()->cameras[id];
+	Camera cam = config.get()->cameras[cameraIndex];
 
 	std::string cameraPipeline =
 		"v4l2src device=/dev/v4l/by-id/" + cam.usbName + 

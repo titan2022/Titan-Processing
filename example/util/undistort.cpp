@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
     config.readFromFile(CONFIG_PATH, TAGS_PATH);
 
     CameraVideoStream stream;
-    stream.id = CAM_CONFIG_INDEX;
+    stream.cameraIndex = CAM_CONFIG_INDEX;
     stream.initStream();
 
     while (stream.isOpened())

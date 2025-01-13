@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
 		Camera cam = config.cameras[i];
         CameraVideoStream stream;
         stream.config = std::make_shared<ConfigReader>(config);
-        stream.id = i;
+        stream.cameraIndex = i;
 
         std::cout << "Initializing camera: " << cam.name << std::endl;
 

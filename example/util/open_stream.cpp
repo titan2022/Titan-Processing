@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
 
     CameraVideoStream stream;
     stream.config = std::make_shared<ConfigReader>(config);
-    stream.id = CAM_INDEX;
+    stream.cameraIndex = CAM_INDEX;
     stream.initStream();
 
     while (true)
