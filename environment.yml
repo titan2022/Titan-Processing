@@ -1,10 +1,10 @@
 name: Titan-Processing
 channels:
-  - https://repo.prefix.dev/titan-forge
   - conda-forge
+  - https://repo.prefix.dev/titan-forge
   - nodefaults
 dependencies:
-  - opencv-titan
+  - opencv-titan 4.10.0 h90f2c7a_1
   - nlohmann_json
   - cmake
   - ninja
