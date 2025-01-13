@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
     stream.id = CAM_CONFIG_INDEX;
     stream.initStream();
 
-    while (true)
+    while (stream.isOpened())
     {
         cv::Mat frame, out;
         frame = stream.getNextFrame();

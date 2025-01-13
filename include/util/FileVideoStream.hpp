@@ -8,7 +8,7 @@
 #include <opencv2/videoio.hpp>
 
 /**
- * @brief Reads video from specified file.
+ * @brief Reads video from specified image file.
  * Requires `filePath` and `config` to be specified before initialization.
  */
 namespace titan
@@ -24,6 +24,7 @@ class FileVideoStream : public VideoStream
 	int getHeight();
 	int getFPS();
     
+    // Path to video file.
 	std::string filePath = "";
 
   private:

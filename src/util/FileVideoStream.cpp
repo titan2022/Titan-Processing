@@ -3,7 +3,9 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/videoio.hpp>
 #include <util/FileVideoStream.hpp>
+#include <filesystem>
 
+namespace fs = std::filesystem;
 using namespace titan;
 
 int FileVideoStream::initStream() {
@@ -18,6 +20,13 @@ int FileVideoStream::initStream() {
         std::cerr << "No video file path in `FileVideoStream` object defined." << std::endl;
         return 1;
 	}
+
+    fs::path filePathObj((fs::path(filePath)));
+    if (!fs::exists(filePathObj))
+    {
+        std::cerr << "Video file path \"" << filePathObj << "\" not found." << std::endl;
+        return 1;
+    }
 
     cv::VideoCapture cap(filePath);
     this->cap = cap;
@@ -34,7 +43,6 @@ cv::Mat FileVideoStream::getNextFrame()
 {
     cv::Mat frame;
     cap >> frame;
-    cv::VideoCapture* thing = new cv::VideoCapture(1);
     return frame;
 }
 
