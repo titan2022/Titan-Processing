@@ -61,3 +61,6 @@ out
 
 # Python
 **/__pycache__
+
+# vcpkg
+vcpkg_installed
