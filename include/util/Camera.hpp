@@ -1,11 +1,11 @@
 #ifndef CAMERA
 #define CAMERA
 
+#include "./Vector3D.hpp"
+#include <nlohmann/json.hpp>
+#include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <string>
-
-#include "./Vector3D.hpp"
-#include <opencv2/core.hpp>
 
 namespace titan
 {
@@ -20,17 +20,11 @@ class Camera
 	int height;
 	int fps;
 	int exposure;
-	double focalX;
-	double focalY;
-	double centerX;
-	double centerY;
-	cv::Mat cameraMat;
-	cv::Mat distCoeffs;
+	cv::Matx<double, 3, 3> cameraMat;
+	cv::Matx<double, 1, 5> distCoeffs;
 	cv::VideoCapture openStream();
-	/// Gets the camera intrinsic matrix
-	cv::Mat getCameraMatrix();
-	/// Sets the camera intrinsic matrix
-	void setCameraMatrix(cv::Mat matrix);
+	static Camera fromJson(nlohmann::json json);
+	nlohmann::json toJson();
 };
 } // namespace titan
 

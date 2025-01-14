@@ -1,6 +1,7 @@
 #ifndef CONFIG
 #define CONFIG
 
+#include <array>
 #include <map>
 #include <opencv2/core.hpp>
 #include <string>
@@ -37,6 +38,9 @@ class Config
 	// Field
 	double fieldLength;
 	double fieldWidth;
+
+	// Robot
+	std::array<double, 3> robotSize;
 
 	// Stuff from config.json
 	std::map<int, Apriltag> tags;

@@ -12,7 +12,6 @@
 #include "apriltag/Apriltag.hpp"
 #include "util/Camera.hpp"
 #include "util/Config.hpp"
-#include "util/Unit.hpp"
 #include "util/Vector3D.hpp"
 
 using namespace titan;
@@ -43,40 +42,17 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	this->quadDecimate = configData["quadDecimate"];
 	this->quadSigma = configData["quadSigma"];
 	this->decodeSharpening = configData["decodeSharpening"];
+	this->robotSize = configData["robotSize"];
 
 	for (auto &tagObj : configData["cameras"])
 	{
-		auto focalX = tagObj["focalX"];
-		auto focalY = tagObj["focalY"];
-		auto centerX = tagObj["centerX"];
-		auto centerY = tagObj["centerY"];
-
-		std::vector<double> posArr = tagObj["position"];
-		std::vector<double> rotArr = tagObj["rotation"];
-		Vector3D pos(posArr);
-		Vector3D rot(rotArr);
-		rot *= Unit::DEG;
-
-		auto cameraMat = cv::Mat(3, 3, CV_64FC1, cv::Scalar::all(0));
-		cameraMat.at<double>(0, 0) = focalX;
-		cameraMat.at<double>(1, 1) = focalY;
-		cameraMat.at<double>(0, 2) = centerX;
-		cameraMat.at<double>(1, 2) = centerY;
-		cameraMat.at<double>(2, 2) = 1;
-
-		auto distCoeffs = cv::Mat(5, 1, CV_64FC1, cv::Scalar::all(0));
-		distCoeffs.at<double>(0, 0) = tagObj["k1"];
-		distCoeffs.at<double>(0, 1) = tagObj["k2"];
-		distCoeffs.at<double>(0, 2) = tagObj["p1"];
-		distCoeffs.at<double>(0, 3) = tagObj["p2"];
-		distCoeffs.at<double>(0, 4) = tagObj["k3"];
-
-		Camera cam = {tagObj["name"], tagObj["usbName"],  pos,	  rot,	  tagObj["width"], tagObj["height"],
-					  tagObj["fps"],  tagObj["exposure"], focalX, focalY, centerX,		   centerY,
-					  cameraMat,	  distCoeffs};
-
+		Camera cam = Camera::fromJson(tagObj);
 		this->cameras.insert({cam.name, cam});
 	}
+
+	auto field = tagData["field"];
+	this->fieldLength = field["length"];
+	this->fieldWidth = field["width"];
 
 	for (auto &tagObj : tagData["tags"])
 	{
@@ -112,21 +88,7 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 	for (auto cam_tuple : cameras)
 	{
 		Camera cam = get<1>(cam_tuple);
-		json json_cam = {
-			{"name", cam.name},
-			{"usbName", cam.usbName},
-			{"width", cam.width},
-			{"height", cam.height},
-			{"fps", cam.fps},
-			{"exposure", cam.exposure},
-			{"focalX", cam.focalX},
-			{"focalY", cam.focalY},
-			{"centerX", cam.centerX},
-			{"centerY", cam.centerY},
-			{"position", {cam.position.getX(), cam.position.getY(), cam.position.getZ()}},
-			{"rotation",
-			 {cam.rotation.getX() * Unit::RAD, cam.position.getY() * Unit::RAD, cam.position.getZ() * Unit::RAD}}};
-		json_cams.push_back(json_cam);
+		json_cams.push_back(cam.toJson());
 	}
 
 	json configData = {
@@ -138,14 +100,15 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 		{"quadSigma", quadSigma},
 		{"decodeSharpening", decodeSharpening},
 		{"cameras", json_cams},
+		{"robotSize", robotSize},
 	};
+	outConfig << configData;
 
 	std::vector<json> json_tags = {};
 	for (auto tag_pair : tags)
 	{
 		auto tag = tag_pair.second;
 		auto q = tag.rotation.toQuaternion();
-		auto x = std::get<3>(q);
 		json json_tag = {
 			{"ID", tag.id},
 			{"pose",
@@ -160,10 +123,10 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 				  {
 					  {"quaternion",
 					   {
-						   {"w", std::get<0>(q)},
-						   {"x", std::get<1>(q)},
-						   {"y", std::get<2>(q)},
-						   {"z", std::get<3>(q)},
+						   {"W", std::get<0>(q)},
+						   {"X", std::get<1>(q)},
+						   {"Y", std::get<2>(q)},
+						   {"Z", std::get<3>(q)},
 					   }},
 				  }},
 			 }},
@@ -179,6 +142,7 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 			 {"width", fieldWidth},
 		 }},
 	};
+	outTag << tagData;
 
 	return 0;
 }

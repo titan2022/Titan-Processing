@@ -6,9 +6,11 @@
     "quadDecimate": 1,
     "quadSigma": 2,
     "decodeSharpening": 0.25,
-    "robot": {
-        "size": [0.6092, 0.1, 0.6092]
-    },
+    "robotSize": [
+        0.6092,
+        0.1,
+        0.6092
+    ],
     "cameras": [
         {
             "name": "Arducam",

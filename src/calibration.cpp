@@ -1,38 +1,34 @@
 #include "util/Camera.hpp"
 #include "util/Config.hpp"
+#include <cassert>
+#include <cstddef>
+#include <exception>
 #include <iostream>
-#include <fstream>
-#include <memory>
-#include <opencv2/aruco.hpp>
-#include <opencv2/aruco/charuco.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/core/matx.hpp>
-#include <opencv2/aruco/charuco.hpp>
-#include <opencv2/core/types.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/objdetect/charuco_detector.hpp>
-#include <opencv2/videoio.hpp>
-#include <vector>
 #include <nlohmann/json.hpp>
-#include <filesystem>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/objdetect/aruco_board.hpp>
+#include <opencv2/objdetect/aruco_detector.hpp>
+#include <opencv2/objdetect/aruco_dictionary.hpp>
+#include <opencv2/objdetect/charuco_detector.hpp>
+#include <opencv2/opencv.hpp>
+#include <optional>
+#include <utility>
+#include <vector>
 
-namespace fs = std::filesystem;
-using json = nlohmann::json;
 using namespace titan;
 
 inline constexpr double SQUARE_LENGTH = 0.0254 * 1.5;
 inline constexpr double MARKER_LENGTH = SQUARE_LENGTH * 0.6;
+inline constexpr int SPACE_KEY = 0x20;
+inline constexpr int ESC_KEY = 0x1b;
 
-
-void showImage(cv::Mat image) {
-    cv::imshow("Camera Calibration", image);
+void showImage(cv::Mat image)
+{
+	cv::imshow("Camera Calibration", image);
 }
 
 /**
- * Translation of the Python ChArUco calibration script from Titan Processing
- * https://github.com/titan2022/Titan-Processing/blob/main/tools/charuco_calibration.py
- *
  * config file required (the path is hard-coded as seen below).
  */
 int main(int argc, char const *argv[])
@@ -42,90 +38,115 @@ int main(int argc, char const *argv[])
 		std::cout << "1 argument was expected, " << argc - 1 << " were passed.\n";
 		return 1;
 	}
+
 	auto cam_name = argv[1];
 	Config cfg(CONFIG_PATH, TAGS_PATH);
 
-	Camera cam = cfg.cameras.at(cam_name);
+	Camera cam;
+	try
+	{
+		cam = cfg.cameras.at(cam_name);
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "Camera \"" << cam_name << "\" not found in " << CONFIG_PATH << "\n";
+		std::cerr << "Known cameras are:\n";
+		for (auto cam : cfg.cameras)
+		{
+			std::cerr << "    " << cam.first << "\n";
+		}
+		return 1;
+	}
 	cv::VideoCapture stream = cam.openStream();
+	cv::Size imageSize(stream.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH),
+					   stream.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT));
 
-    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_1000);
-    cv::aruco::CharucoBoard board(cv::Size(5, 7), SQUARE_LENGTH, MARKER_LENGTH, dictionary);
-    cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+	cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_1000);
+	cv::aruco::CharucoBoard board(cv::Size(5, 7), SQUARE_LENGTH, MARKER_LENGTH, dictionary);
+	cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
 	detectorParams.cornerRefinementMethod = cv::aruco::CornerRefineMethod::CORNER_REFINE_SUBPIX;
 	detectorParams.aprilTagQuadDecimate = 1;
 	detectorParams.aprilTagQuadSigma = 2;
-    cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+	cv::aruco::CharucoDetector detector(board, cv::aruco::CharucoParameters(), detectorParams);
 
-    int imageCounter = 0;
-    cv::Mat cameraMatrix, distCoeffs;
-    cv::Size imageSize;
+	int imageCounter = 0;
 
-    std::vector<std::vector<cv::Point2f>> cornersList;
-    std::vector<std::vector<int>> idList;
+	std::vector<cv::Mat> allCorners, allIds;
+	std::vector<std::vector<cv::Point2f>> allImgPoints;
+	std::vector<std::vector<cv::Point3f>> allObjPoints;
 
 	while (stream.isOpened())
 	{
 		cv::Mat image;
 		stream >> image;
 		int key = cv::waitKey(1);
+		if (key == ESC_KEY)
+		{
+			break;
+		}
 
-        std::vector<int> ids;
-        std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+		std::vector<std::vector<cv::Point2f>> markerCorners;
 
-        cv::Mat gray;
-        cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
-        imageSize = gray.size();
-        detector.detectMarkers(gray, markerCorners, ids, rejectedCandidates);
+		cv::Mat gray;
+		cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+		imageSize = gray.size();
+		cv::Mat curCorners;
+		cv::Mat curIds;
+		detector.detectBoard(gray, curCorners, curIds);
 
-        if (markerCorners.size() == 0) {
-            showImage(image);
-            if (key == 27) { // ESC key
-                break;
-            }
-            continue;
-        }
+		if (curCorners.total() < 4)
+		{
+			showImage(image);
+			if (key == ESC_KEY)
+			{ // ESC key
+				break;
+			}
+			continue;
+		}
 
-        std::vector<cv::Point2f> charucoCorners;
-        std::vector<int> charucoIds;
+		std::vector<cv::Point3f> curObjPoints;
+		std::vector<cv::Point2f> curImgPoints;
 
-        cv::aruco::interpolateCornersCharuco(markerCorners, ids, image, &board, charucoCorners, charucoIds, cameraMatrix, distCoeffs);
+		board.matchImagePoints(curCorners, curIds, curObjPoints, curImgPoints);
 
-        if (charucoIds.size() == 0) {
-            showImage(image);
-            if (key == 27) { // ESC key
-                break;
-            }
-            continue;
-        }
+		if (curObjPoints.empty() || curImgPoints.empty())
+		{
+			showImage(image);
+			continue;
+		}
 
-        cv::aruco::drawDetectedCornersCharuco(image, charucoCorners);
+		assert(allImgPoints.size() == allObjPoints.size());
 
-        if (key == 32) { // Space key
-            if (charucoIds.size() > 20) {
-                cornersList.push_back(charucoCorners);
-                idList.push_back(charucoIds);
-                imageCounter++;
-                std::cout << "Image added: " << imageCounter << std::endl;
-            }
-        } else if (key == 27) {
-            break;
-        }
+		cv::aruco::drawDetectedCornersCharuco(image, curCorners);
 
-        showImage(image);
-    }
+		if (key == SPACE_KEY)
+		{
+			allCorners.push_back(curCorners);
+			allIds.push_back(curIds);
+			allObjPoints.push_back(curObjPoints);
+			allImgPoints.push_back(curImgPoints);
+			imageCounter += 1;
+			std::cout << "Image " << imageCounter << " added\n";
+		}
 
-    std::vector<cv::Mat> rvecs, tvecs;
-    double repError = cv::aruco::calibrateCameraCharuco(cornersList, idList, &board, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs);
+		showImage(image);
+	}
+
+	assert(allObjPoints.size() > 0);
+
+	cv::Mat cameraMat;
+	cv::Mat distCoeffs;
+	cv::calibrateCamera(allObjPoints, allImgPoints, imageSize, cameraMat, distCoeffs, cv::noArray(), cv::noArray());
 
 	cam.width = stream.get(cv::CAP_PROP_FRAME_WIDTH);
 	cam.height = stream.get(cv::CAP_PROP_FRAME_HEIGHT);
-	cam.focalX = cameraMatrix.at<float>(0, 0);
-	cam.focalY = cameraMatrix.at<float>(1, 1);
-	cam.centerX = cameraMatrix.at<float>(0, 2);
-	cam.centerY = cameraMatrix.at<float>(1, 2);
+	cam.cameraMat = cameraMat;
 	cam.distCoeffs = distCoeffs;
 
+	cfg.cameras.at(cam.name) = cam;
+
 	cfg.write(CONFIG_PATH, TAGS_PATH);
+	std::cout << "New config written to " << CONFIG_PATH << "\n";
 
 	return 0;
 }

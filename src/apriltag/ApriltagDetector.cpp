@@ -25,8 +25,6 @@ void ApriltagDetector::detect()
 	cv::aruco::ArucoDetector detector(dictionary, detectorParams);
 
 	double markerLength = 0.1651;
-	cv::Mat cameraMatrix = cam.cameraMat;
-	cv::Mat distCoeffs = cam.distCoeffs;
 
 	cv::Mat objPoints(4, 1, CV_32FC3);
 	objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-markerLength / 2.f, markerLength / 2.f, 0);
@@ -73,8 +71,8 @@ void ApriltagDetector::detect()
 
 			for (int i = 0; i < nMarkers; i++)
 			{
-				cv::solvePnP(objPoints, markerCorners.at(i), cameraMatrix, distCoeffs, rVecs.at(i), tVecs.at(i), false,
-							 cv::SOLVEPNP_IPPE_SQUARE); // SOLVEPNP_P3P
+				cv::solvePnP(objPoints, markerCorners.at(i), cam.cameraMat, cam.distCoeffs, rVecs.at(i), tVecs.at(i),
+							 false, cv::SOLVEPNP_IPPE_SQUARE); // SOLVEPNP_P3P
 			}
 
 			for (int i = 0; i < tVecs.size(); ++i)
@@ -86,7 +84,7 @@ void ApriltagDetector::detect()
 
 				if (this->showWindow)
 				{
-					cv::drawFrameAxes(out, cameraMatrix, distCoeffs, rVec, tVec, 0.1);
+					cv::drawFrameAxes(out, cam.cameraMat, cam.distCoeffs, rVec, tVec, 0.1);
 				}
 			}
 		}

@@ -217,7 +217,7 @@ Vector3D Vector3D::fromQuaternion(double w, double x, double y, double z)
     double cosy_cosp = 1-2*(y*y+z*z);
     double yaw = std::atan2(siny_cosp, cosy_cosp);
 
-	Vector3D result(roll, yaw, pitch);
+	Vector3D result(roll, pitch, yaw);
 	return result;
 }
 std::tuple<double, double, double, double> Vector3D::toQuaternion()
