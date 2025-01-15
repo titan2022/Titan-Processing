@@ -134,6 +134,7 @@ void Localizer::submitStepCommand(LocalizerStepCommand command)
 	std::unique_lock<std::mutex> lock(commandQueueMutex);
 	printf("Submitting command to queue\n");
 	commandQueue.push(command);
+	commandQueueCondition.notify_all();
 	// The lock is automatically released when it goes out of scope.
 }
 
@@ -158,7 +159,8 @@ void Localizer::threadMainloop()
 	{
 		printf("[Localizer] waiting for commands...\n");
 		// Wait for commands to be on the queue
-		while(commandQueue.empty() || commandQueue.size() == 0) { __asm(""); }
+		std::unique_lock<std::mutex> lock(commandQueueMutex);
+		while(commandQueue.empty()) { commandQueueCondition.wait(lock); }
 
 		printf("[Localizer] getting command (%lld commands on queue)...\n", (long long)commandQueue.size());
 		Localizer::LocalizerStepCommand command = popCommand();
@@ -168,6 +170,8 @@ void Localizer::threadMainloop()
 		dt = std::chrono::duration_cast<std::chrono::milliseconds>(postTS - prevTS).count() / 1000.0;
 		prevTS = postTS;
 
+		printf("[Localizer] dt = %f s", dt);
+
 		for(Localizer::AddApriltag apriltag : command.apriltags)
 		{
 			addApriltag(apriltag.id, apriltag.cam, apriltag.tvec, apriltag.rvec, apriltag.size, dt);
@@ -175,7 +179,7 @@ void Localizer::threadMainloop()
 
 		step(dt);
 
-		printf("Localizer prediction: position (%f, %f, %f) rotation (%f, %f, %f)", 
+		printf("[Localizer] prediction: position (%f, %f, %f) rotation (%f, %f, %f)", 
 			filter.position.getX(), filter.position.getY(), filter.position.getZ(),
 			filter.rotation.getX(), filter.rotation.getY(), filter.rotation.getZ());
 	}

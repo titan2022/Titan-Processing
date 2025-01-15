@@ -1,6 +1,7 @@
 #ifndef LOCALIZER
 #define LOCALIZER
 
+#include <condition_variable>
 #include <functional>
 
 #include "../physics/PoseFilter.hpp"
@@ -45,6 +46,7 @@ class Localizer
 	std::function<void(Vector3D &, Vector3D &)> poseHandler;
 
 	std::queue<LocalizerStepCommand> commandQueue;
+	std::condition_variable commandQueueCondition;
 	std::mutex commandQueueMutex;
 	LocalizerStepCommand popCommand(void);
 };
