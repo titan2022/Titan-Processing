@@ -11,6 +11,7 @@ cat <<EOF | sudo tee /etc/systemd/system/titan2022-apriltag.service
 [Unit]
 Description=Titan2022
 After=network.target
+StartLimitInterval=0
 
 [Service]
 User=titan
