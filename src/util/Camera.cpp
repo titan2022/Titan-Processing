@@ -15,7 +15,7 @@ cv::VideoCapture Camera::openStream()
 {
 	// Test this using gst-launch-1.0
 	auto cap =
-		cv::VideoCapture("v4l2src device=/dev/v4l/by-id/" + usbName + " ! image/jpeg,framerate=" + std::to_string(fps) + "/1" +
+		cv::VideoCapture("v4l2src device=" + cameraPath + " ! image/jpeg,framerate=" + std::to_string(fps) + "/1" +
 							 " ! decodebin ! videoconvert ! appsink",
 						 cv::CAP_GSTREAMER);
 		// cv::VideoCapture("udpsrc port=8081 caps=\"application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96\" ! rtph264depay ! decodebin ! videoconvert ! appsink",
@@ -23,7 +23,7 @@ cv::VideoCapture Camera::openStream()
 	if (!cap.isOpened())
 	{
 		throw std::runtime_error(std::string("Couldn't open camera. To debug, try running `gst-launch-1.0 ") + 
-			"v4l2src device=/dev/v4l/by-id/" + usbName + " ! image/jpeg,framerate=" + std::to_string(fps) + "/1" +
+			"v4l2src device=" + cameraPath + " ! image/jpeg,framerate=" + std::to_string(fps) + "/1" +
 							 " ! decodebin ! videoconvert ! autovideosink`.");
 	}
 
@@ -43,7 +43,7 @@ Camera Camera::fromJson(nlohmann::json json)
 
 	Camera cam = {
 		.name = json["name"],
-		.usbName = json["usbName"],
+		.cameraPath = json["cameraPath"],
 		.position = pos,
 		.rotation = rot,
 		.width = json["width"],
@@ -59,7 +59,7 @@ nlohmann::json Camera::toJson()
 {
 	nlohmann::json json = {
 		{"name", name},
-		{"usbName", usbName},
+		{"cameraPath", cameraPath},
 		{"position",
 		 {
 			 position.getX(),
