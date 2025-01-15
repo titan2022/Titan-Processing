@@ -1,6 +1,7 @@
 #!/bin/bash
 
-mamba activate Titan-Processing
+source ~/miniforge3/etc/profile.d/conda.sh
+conda activate Titan-Processing
 
 rm -r build
 mkdir build && cd build
