@@ -12,7 +12,7 @@ namespace titan
 class ApriltagDetector
 {
   public:
-	ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Localizer &localizer);
+	ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Camera &cam, Localizer &localizer);
 	void detect();
 
   private:

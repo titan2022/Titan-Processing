@@ -1,8 +1,7 @@
 #include <filesystem>
 #include <gtest/gtest.h>
 
-#include "util/ConfigReader.hpp"
-#include "util/FileImageStream.hpp"
+#include "util/Config.hpp"
 
 namespace fs = std::filesystem;
 using namespace titan;

@@ -9,8 +9,8 @@
 
 using namespace titan;
 
-ApriltagDetector::ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Localizer &localizer)
-	: stream(stream), config(config), localizer(localizer), showWindow(showWindow)
+ApriltagDetector::ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Camera &cam, Localizer &localizer)
+	: stream(stream), config(config), cam(cam), localizer(localizer), showWindow(showWindow)
 {
 }
 
@@ -55,7 +55,7 @@ void ApriltagDetector::detect()
 		// Convert MJPEG to grayscale
 		cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
-		gray.copyTo(out);
+		frame.copyTo(out);
 
 		// std::cout << 1.0 / dt << std::endl;
 
@@ -66,7 +66,9 @@ void ApriltagDetector::detect()
 
 		if (ids.size() > 0)
 		{
-			cv::aruco::drawDetectedMarkers(out, markerCorners, ids);
+            if (this->showWindow) {
+			    cv::aruco::drawDetectedMarkers(out, markerCorners, ids);
+            }
 
 			int nMarkers = markerCorners.size();
 			std::vector<cv::Vec3d> rVecs(nMarkers), tVecs(nMarkers);
@@ -79,6 +81,10 @@ void ApriltagDetector::detect()
 
 			for (int i = 0; i < tVecs.size(); ++i)
 			{
+                if (!config.tags.count(ids[i])) {
+                    continue;
+                }
+
 				cv::Vec3d rVec = rVecs[i];
 				cv::Vec3d tVec = tVecs[i];
 
