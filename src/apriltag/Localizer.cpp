@@ -58,6 +58,7 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
             // Flip axis
             Apriltag globalTag = tagPair.second;
             globalTag.position = Vector3D{globalTag.position.getX(), globalTag.position.getZ(), globalTag.position.getY()};
+            globalTag.rotation = Vector3D{globalTag.rotation.getX(), globalTag.rotation.getZ(), globalTag.rotation.getY()};
 			return globalTag;
 		}
 	}
