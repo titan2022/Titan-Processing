@@ -1,6 +1,7 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/videoio.hpp>
 #include <string>
+#include <thread>
 
 #include "../../include/apriltag/ApriltagDetector.hpp"
 #include "../../include/apriltag/Localizer.hpp"
@@ -29,6 +30,10 @@ int main(int argc, char const *argv[])
 
 	PoseFilter filter(config);
 	Localizer localizer(config, filter, clientPoseSender);
+
+	// Start the localizer thread
+	std::thread localizerThread(&Localizer::threadMainloop, std::ref(localizer));
+	localizerThread.join();
 
 	Camera cam = config.cameras.at("Arducam");
     ApriltagDetector detector(stream, true, config, cam, localizer);
