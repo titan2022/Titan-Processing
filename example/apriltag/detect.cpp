@@ -30,17 +30,17 @@ int main(int argc, char const *argv[])
 
 	if (argc == 1)
 	{
-		allowedCameras = config.debug_cameras;
+		allowedCameras = config.debugCameras;
 	}
 	else if (argc > 2 || strcmp(argv[1], "--help") == 0)
 	{
-		std::cout << "USAGE: ./detect                  (detect using the debug_cameras in ../config/config.json)" << "\n"
-		          << "       ./detect production       (detect using the prod_cameras in ../config/config.json)" << "\n"
+		std::cout << "USAGE: ./detect                  (detect using the debugCameras in ../config/config.json)" << "\n"
+		          << "       ./detect production       (detect using the prodCameras in ../config/config.json)" << "\n"
 				  << "       ./detect [camera name]    (detect using the named camera)" << std::endl;
 	}
 	else if (strcmp(argv[1], "production") == 0)
 	{
-		allowedCameras = config.prod_cameras;
+		allowedCameras = config.prodCameras;
 	}
 	else
 	{

@@ -11,11 +11,11 @@
         0.1,
         0.6092
     ],
-    "debug_cameras": [
+    "debugCameras": [
         "Arducam-UC852",
         "Arducam-UC762"
     ],
-    "prod_cameras": [
+    "prodCameras": [
         "Arducam-UC852"
     ],
     "cameras": [
