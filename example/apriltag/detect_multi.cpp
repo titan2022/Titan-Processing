@@ -49,9 +49,7 @@ int main(int argc, char const *argv[])
 
 	// Start the localizer thread
 	std::thread localizerThread(&Localizer::threadMainloop, std::ref(localizer));
-	localizerThread.join();
-
-
+	
 	// See https://chatgpt.com/share/678743cd-bbf0-8013-a510-c28e38695088
 
 	// We'll create and store these so we can join them all later
@@ -84,6 +82,8 @@ int main(int argc, char const *argv[])
 	{
 		t.join();
 	}
+
+	localizerThread.join();
 
 	return 0;
 }

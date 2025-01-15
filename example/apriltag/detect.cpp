@@ -56,7 +56,6 @@ int main(int argc, char const *argv[])
 
 	// Start the localizer thread
 	std::thread localizerThread(&Localizer::threadMainloop, std::ref(localizer));
-	localizerThread.join();
 
 	for (std::string cameraName : allowedCameras)
 	{
@@ -69,6 +68,8 @@ int main(int argc, char const *argv[])
 		std::thread detectorThread(&ApriltagDetector::detect, &detector);
 		detectorThread.join();
 	}
+
+	localizerThread.join();
 
 	return 0;
 }

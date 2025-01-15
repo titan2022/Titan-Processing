@@ -120,19 +120,19 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
     invTag.position.setX(invTag.position.getX() + camPosOffset.getX());
     invTag.position.setZ(invTag.position.getZ() + camPosOffset.getZ());
 
-    this->poseHandler(invTag.position, invTag.rotation);
+    // this->poseHandler(invTag.position, invTag.rotation);
 	filter.updateTag(invTag, tagDist, dt);
 }
 
 void Localizer::step(double dt)
 {
+	this->poseHandler(filter.position, filter.rotation);
 	filter.predict(dt);
 }
 
 void Localizer::submitStepCommand(LocalizerStepCommand command)
 {
 	std::unique_lock<std::mutex> lock(commandQueueMutex);
-	printf("Submitting command to queue\n");
 	commandQueue.push(command);
 	commandQueueCondition.notify_all();
 	// The lock is automatically released when it goes out of scope.
@@ -157,20 +157,17 @@ void Localizer::threadMainloop()
 
 	while (true)
 	{
-		printf("[Localizer] waiting for commands...\n");
 		// Wait for commands to be on the queue
-		std::unique_lock<std::mutex> lock(commandQueueMutex);
-		while(commandQueue.empty()) { commandQueueCondition.wait(lock); }
+		// std::unique_lock<std::mutex> lock(commandQueueMutex);
+		// while(commandQueue.empty()) { commandQueueCondition.wait(lock); }
+		while(commandQueue.empty()) { __asm__(""); }
 
-		printf("[Localizer] getting command (%lld commands on queue)...\n", (long long)commandQueue.size());
 		Localizer::LocalizerStepCommand command = popCommand();
 
 		// Measure delta time
 		postTS = command.timestamp;
 		dt = std::chrono::duration_cast<std::chrono::milliseconds>(postTS - prevTS).count() / 1000.0;
 		prevTS = postTS;
-
-		printf("[Localizer] dt = %f s", dt);
 
 		for(Localizer::AddApriltag apriltag : command.apriltags)
 		{
@@ -179,7 +176,8 @@ void Localizer::threadMainloop()
 
 		step(dt);
 
-		printf("[Localizer] prediction: position (%f, %f, %f) rotation (%f, %f, %f)", 
+		printf("[Localizer] dt = %f s, prediction: position (%f, %f, %f) rotation (%f, %f, %f)\n", 
+			dt,
 			filter.position.getX(), filter.position.getY(), filter.position.getZ(),
 			filter.rotation.getX(), filter.rotation.getY(), filter.rotation.getZ());
 	}

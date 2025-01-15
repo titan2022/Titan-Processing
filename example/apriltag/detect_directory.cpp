@@ -33,11 +33,12 @@ int main(int argc, char const *argv[])
 
 	// Start the localizer thread
 	std::thread localizerThread(&Localizer::threadMainloop, std::ref(localizer));
-	localizerThread.join();
 
 	Camera cam = config.cameras.at("Arducam");
     ApriltagDetector detector(stream, true, config, cam, localizer);
     detector.detect();
+
+	localizerThread.join();
 
 	return 0;
 }
