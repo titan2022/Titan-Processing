@@ -47,12 +47,19 @@ int main(int argc, char const *argv[])
 		allowedCameras = { argv[1] };
 	}
 
+	// Determine whether we can use imshow
+	char const* DISPLAY = std::getenv("DISPLAY");
+	bool canUseImshow = false;
+	if(DISPLAY != NULL && DISPLAY[0] != '\0') {
+		canUseImshow = true;
+	}
+
 	for (std::string cameraName : allowedCameras)
 	{
 		std::cout << "Starting stream for camera " << cameraName << "..." << std::endl;
 		Camera cam = config.cameras[cameraName];
 		cv::VideoCapture stream(cam.openStream());
-		ApriltagDetector detector(stream, true, config, cam, localizer);
+		ApriltagDetector detector(stream, canUseImshow, config, cam, localizer);
 
 		// Multithread streams
 		std::thread detectorThread(&ApriltagDetector::detect, &detector);
