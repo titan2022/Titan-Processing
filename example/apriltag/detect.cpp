@@ -54,6 +54,10 @@ int main(int argc, char const *argv[])
 		canUseImshow = true;
 	}
 
+	// Start the localizer thread
+	std::thread localizerThread(&Localizer::threadMainloop, std::ref(localizer));
+	localizerThread.join();
+
 	for (std::string cameraName : allowedCameras)
 	{
 		std::cout << "Starting stream for camera " << cameraName << "..." << std::endl;

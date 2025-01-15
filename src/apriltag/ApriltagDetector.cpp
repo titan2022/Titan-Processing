@@ -66,6 +66,8 @@ void ApriltagDetector::detect()
 
 		detector.detectMarkers(gray, markerCorners, ids, rejectedCandidates);
 
+		std::vector<Localizer::AddApriltag> apriltags;
+
 		if (ids.size() > 0)
 		{
             if (this->showWindow) {
@@ -90,7 +92,10 @@ void ApriltagDetector::detect()
 				cv::Vec3d rVec = rVecs[i];
 				cv::Vec3d tVec = tVecs[i];
 
-				localizer.addApriltag(ids[i], cam, tVec, rVec, markerLength, dt);
+				apriltags.push_back({ids[i], cam, tVec, rVec, markerLength});
+
+				// printf is thread-safe, cout is not
+				printf("%s can see apriltag %d...\n", cam.name.c_str(), ids[i]);
 
 				if (this->showWindow)
 				{
@@ -99,7 +104,7 @@ void ApriltagDetector::detect()
 			}
 		}
 
-		localizer.step(dt);
+		localizer.submitStepCommand({apriltags, postTS});
 		if (this->showWindow)
 		{
 			cv::imshow(window, out);

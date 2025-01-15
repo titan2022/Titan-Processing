@@ -47,17 +47,22 @@ int main(int argc, char const *argv[])
 		allowedCameras = { argv[1] };
 	}
 
+	// Start the localizer thread
+	std::thread localizerThread(&Localizer::threadMainloop, std::ref(localizer));
+	localizerThread.join();
+
+
 	// See https://chatgpt.com/share/678743cd-bbf0-8013-a510-c28e38695088
 
 	// We'll create and store these so we can join them all later
-	std::vector<std::thread> threads;
+	std::vector<std::thread> detectorThreads;
 	// If you need to keep each ApriltagDetector alive for the whole run,
 	// you can store them in a vector as well:
 	std::vector<std::unique_ptr<ApriltagDetector>> detectors;
 
 	for (std::string cameraName : allowedCameras)
 	{
-		std::cout << "Starting stream for camera " << cameraName << "..." << std::endl;
+		printf("Starting stream for camera %s...\n", cameraName.c_str());
 		Camera cam = config.cameras[cameraName];
 		cv::VideoCapture stream(cam.openStream());
 
@@ -70,12 +75,12 @@ int main(int argc, char const *argv[])
 		
 		// Now add a new thread that calls ApriltagDetector::detect on this instance
 		// detectors.back().get() returns the raw pointer to the newly created ApriltagDetector
-		threads.emplace_back(&ApriltagDetector::detect, detectors.back().get());
+		detectorThreads.emplace_back(&ApriltagDetector::detect, detectors.back().get());
 	}
 
 	// Once all threads are started, THEN we join them.
 	// This way they all run in parallel, and only after the user is done, we wait on them here.
-	for (auto &t : threads)
+	for (auto &t : detectorThreads)
 	{
 		t.join();
 	}

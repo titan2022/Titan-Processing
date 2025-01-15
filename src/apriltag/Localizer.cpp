@@ -18,7 +18,7 @@ Localizer::Localizer(Config &config, PoseFilter &filter, std::function<void(Vect
 }
 
 // Translates position origin from camera to tag
-Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size)
+Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double size)
 {
 	cv::Mat R(3, 3, CV_64FC1);
 	cv::Rodrigues(rvec, R);
@@ -65,7 +65,7 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 	return {};
 }
 
-void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
+void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, double size, double dt)
 {
 	Apriltag invTag = correctPerspective(id, tvec, rvec, size);
 
@@ -128,3 +128,56 @@ void Localizer::step(double dt)
 {
 	filter.predict(dt);
 }
+
+void Localizer::submitStepCommand(LocalizerStepCommand command)
+{
+	std::unique_lock<std::mutex> lock(commandQueueMutex);
+	printf("Submitting command to queue\n");
+	commandQueue.push(command);
+	// The lock is automatically released when it goes out of scope.
+}
+
+Localizer::LocalizerStepCommand Localizer::popCommand(void)
+{
+	std::unique_lock<std::mutex> lock(commandQueueMutex);
+	Localizer::LocalizerStepCommand retval = commandQueue.front();
+	commandQueue.pop();
+	return retval;
+	// The lock is automatically released when it goes out of scope.
+}
+
+void Localizer::threadMainloop()
+{
+	auto prevTS = std::chrono::steady_clock::now();
+	auto postTS = prevTS;
+	double dt = 0;
+
+	printf("[Localizer] mainloop started\n");
+
+	while (true)
+	{
+		printf("[Localizer] waiting for commands...\n");
+		// Wait for commands to be on the queue
+		while(commandQueue.empty() || commandQueue.size() == 0) { __asm(""); }
+
+		printf("[Localizer] getting command (%lld commands on queue)...\n", (long long)commandQueue.size());
+		Localizer::LocalizerStepCommand command = popCommand();
+
+		// Measure delta time
+		postTS = command.timestamp;
+		dt = std::chrono::duration_cast<std::chrono::milliseconds>(postTS - prevTS).count() / 1000.0;
+		prevTS = postTS;
+
+		for(Localizer::AddApriltag apriltag : command.apriltags)
+		{
+			addApriltag(apriltag.id, apriltag.cam, apriltag.tvec, apriltag.rvec, apriltag.size, dt);
+		}
+
+		step(dt);
+
+		printf("Localizer prediction: position (%f, %f, %f) rotation (%f, %f, %f)", 
+			filter.position.getX(), filter.position.getY(), filter.position.getZ(),
+			filter.rotation.getX(), filter.rotation.getY(), filter.rotation.getZ());
+	}
+}
+
