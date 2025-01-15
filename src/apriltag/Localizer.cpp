@@ -100,6 +100,8 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 	invTag.position.rotateZ(globTag->rotation.getZ());
 
 	// Offsetting by global pose
+    // The Z axis has to be flipped after rotation and before translation for some reason...
+    globTag->position.setZ(-globTag->position.getZ());
 	invTag.position += globTag->position;
 	invTag.rotation -= globTag->rotation;
 
