@@ -36,6 +36,8 @@ void ApriltagDetector::detect()
 	auto postTS = prevTS;
 	double dt = 1.0 / cam.fps;
 
+	std::string window = std::string("Apriltag Detection for ") + cam.name;
+
 	while (stream.isOpened())
 	{
 		// Measure delta time
@@ -100,14 +102,7 @@ void ApriltagDetector::detect()
 		localizer.step(dt);
 		if (this->showWindow)
 		{
-			if (out.cols > 0 && out.rows > 0)
-			{
-				cv::imshow("Apriltag Debug Window", out);
-			}
-			else
-			{
-				std::cout << "[ApriltagDetector] WARNING: Image is " << out.rows << "x" << out.cols << "!" << std::endl;
-			}
+			cv::imshow(window, out);
 
 			if (cv::waitKey(1) == 27)
 			{ // ESC key

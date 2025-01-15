@@ -47,16 +47,37 @@ int main(int argc, char const *argv[])
 		allowedCameras = { argv[1] };
 	}
 
+	// See https://chatgpt.com/share/678743cd-bbf0-8013-a510-c28e38695088
+
+	// We'll create and store these so we can join them all later
+	std::vector<std::thread> threads;
+	// If you need to keep each ApriltagDetector alive for the whole run,
+	// you can store them in a vector as well:
+	std::vector<std::unique_ptr<ApriltagDetector>> detectors;
+
 	for (std::string cameraName : allowedCameras)
 	{
 		std::cout << "Starting stream for camera " << cameraName << "..." << std::endl;
 		Camera cam = config.cameras[cameraName];
 		cv::VideoCapture stream(cam.openStream());
-		ApriltagDetector detector(stream, true, config, cam, localizer);
 
-		// Multithread streams
-		std::thread detectorThread(&ApriltagDetector::detect, &detector);
-		detectorThread.join();
+		// Create each ApriltagDetector on the heap or as an object
+		auto detectorPtr = std::make_unique<ApriltagDetector>(stream, false, config, cam, localizer);
+		// note: GUI must not be used multithreaded
+		
+		// Keep the detector around so it doesn't go out of scope
+		detectors.push_back(std::move(detectorPtr));
+		
+		// Now add a new thread that calls ApriltagDetector::detect on this instance
+		// detectors.back().get() returns the raw pointer to the newly created ApriltagDetector
+		threads.emplace_back(&ApriltagDetector::detect, detectors.back().get());
+	}
+
+	// Once all threads are started, THEN we join them.
+	// This way they all run in parallel, and only after the user is done, we wait on them here.
+	for (auto &t : threads)
+	{
+		t.join();
 	}
 
 	return 0;
