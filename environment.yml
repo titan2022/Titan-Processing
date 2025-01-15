@@ -4,7 +4,7 @@ channels:
   - https://repo.prefix.dev/titan-forge
   - nodefaults
 dependencies:
-  - opencv-titan 4.10.0 h90f2c7a_1
+  - opencv-titan
   - nlohmann_json
   - cmake
   - ninja

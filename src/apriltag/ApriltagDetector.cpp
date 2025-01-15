@@ -55,6 +55,10 @@ void ApriltagDetector::detect()
 		// Convert MJPEG to grayscale
 		cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
+		cv::imshow("Debug Window", gray);
+
+		gray.copyTo(out);
+
 		// std::cout << 1.0 / dt << std::endl;
 
 		std::vector<int> ids;
@@ -92,7 +96,15 @@ void ApriltagDetector::detect()
 		localizer.step(dt);
 		if (this->showWindow)
 		{
-			cv::imshow("Apriltag Debug Window", out);
+			if (out.cols > 0 && out.rows > 0)
+			{
+				cv::imshow("Apriltag Debug Window", out);
+			}
+			else
+			{
+				std::cout << "[ApriltagDetector] WARNING: Image is " << out.rows << "x" << out.cols << "!" << std::endl;
+			}
+
 			if (cv::waitKey(1) == 27)
 			{ // ESC key
 				break;

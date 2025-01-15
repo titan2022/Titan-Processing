@@ -1,0 +1,35 @@
+{
+    "ip": "127.0.0.1",
+    "dashboardIp": "127.0.0.1",
+    "port": 5804,
+    "threads": 4,
+    "quadDecimate": 1,
+    "quadSigma": 2,
+    "decodeSharpening": 0.25,
+    "robotSize": [
+        0.6092,
+        0.1,
+        0.6092
+    ],
+    "cameras": [
+        {
+            "name": "Arducam",
+            "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9281_USB_Camera_UC762-video-index0",
+            "position": [0.2445512, 0.0842264, 0.2952496],
+            "rotation": [-50.5, -16.93, 0],
+            "width": 1280,
+            "height": 800,
+            "fps": 100,
+            "exposure": 10,
+            "focalX": 896.4229265637798,
+            "focalY": 894.7290571208786,
+            "centerX": 632.1511776051311,
+            "centerY": 409.51872727524545,
+            "k1": 0.03504592225172843,
+            "k2": -0.057976090918433074,
+            "p1": 0.005955119626934279,
+            "p2": -0.0031399446166415663,
+            "k3": -0.07455148194441642
+        }
+    ]
+}
