@@ -44,6 +44,8 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+CMakePresets.json
+CMakeUserPresets.json
 
 # IDE
 .vscode
@@ -58,6 +60,8 @@ out
 # clangd
 **/compile_commands.json
 **/.cache
+.clang-format
+.clangd
 
 # Python
 **/__pycache__
