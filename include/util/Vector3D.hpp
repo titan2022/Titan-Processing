@@ -12,6 +12,18 @@ namespace titan
 class Vector3D
 {
   public:
+	struct Quaternion
+	{
+		double w;
+		double x;
+		double y;
+		double z;
+
+		Quaternion operator*(Quaternion);
+		static Quaternion fromAxisAngle(Vector3D axis, double angle);
+		static Quaternion fromWPILibQuaternion(Quaternion quat);
+	};
+
 	Vector3D(double x, double y, double z);
 	Vector3D(cv::Vec3d v);
 	Vector3D(std::vector<double> v);
@@ -32,10 +44,16 @@ class Vector3D
 	cv::Vec<double, 3> toCV();
 	std::array<double, 3> toArray();
     
+	static Vector3D fromWPILibPosition(double x, double y, double z, double fieldLength, double fieldWidth);
+
 	static Vector3D matToVec(double (&mat)[]);
 	static Vector3D fromQuaternion(double w, double x, double y, double z);
+	static Vector3D fromQuaternion(Vector3D::Quaternion quaternion);
+	static Vector3D fromWPILibQuaternion(double w, double x, double y, double z);
+	static Vector3D fromWPILibQuaternion(Vector3D::Quaternion quaternion);
+
 	/// Returns a tuple of (w, x, y, z).
-	std::tuple<double, double, double, double> toQuaternion();
+	Vector3D::Quaternion toQuaternion();
 
 	double setX(const double value);
 	double setY(const double value);

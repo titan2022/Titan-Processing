@@ -170,6 +170,11 @@ std::array<double, 3> Vector3D::toArray()
 	return arr;
 }
 
+Vector3D Vector3D::fromWPILibPosition(double x, double y, double z, double fieldLength, double fieldWidth)
+{
+	return Vector3D(x - fieldLength/2.0, z, -(y - fieldWidth/2.0));
+}
+
 /**
  * @brief Rotates vector using 3x3 rotation matrix
  *
@@ -220,7 +225,69 @@ Vector3D Vector3D::fromQuaternion(double w, double x, double y, double z)
 	Vector3D result(roll, pitch, yaw);
 	return result;
 }
-std::tuple<double, double, double, double> Vector3D::toQuaternion()
+
+Vector3D Vector3D::fromQuaternion(Vector3D::Quaternion quaternion)
+{
+	return fromQuaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+}
+
+Vector3D Vector3D::fromWPILibQuaternion(double w, double x, double y, double z)
+{
+	return fromWPILibQuaternion({w, x, y, z});	
+}
+
+Vector3D Vector3D::fromWPILibQuaternion(Vector3D::Quaternion quat)
+{
+	return fromQuaternion(Vector3D::Quaternion::fromWPILibQuaternion(quat));
+}
+
+Vector3D::Quaternion Vector3D::Quaternion::fromWPILibQuaternion(Vector3D::Quaternion quat)
+{
+	double ninety = M_PI / 2;
+	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety*3); 
+	quat.y = -quat.y;
+	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety); 
+	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(0, 1, 0), ninety); 
+	return quat;
+}
+
+Vector3D::Quaternion Vector3D::Quaternion::operator*(Vector3D::Quaternion b)
+{
+	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L499
+
+	double qax = this->x, qay = this->y, qaz = this->z, qaw = this->w;
+	double qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
+
+	Vector3D::Quaternion retval;
+
+	retval.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+	retval.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+	retval.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+	retval.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+	return retval;
+}
+
+Vector3D::Quaternion Vector3D::Quaternion::fromAxisAngle(Vector3D axis, double angle)
+{
+	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L275
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+
+	// assumes axis is normalized
+	double halfAngle = angle / 2;
+	double s = sin(halfAngle);
+
+	Vector3D::Quaternion quat;
+
+	quat.x = axis.x * s;
+	quat.y = axis.y * s;
+	quat.z = axis.z * s;
+	quat.w = cos(halfAngle);
+
+	return quat;
+}
+
+Vector3D::Quaternion Vector3D::toQuaternion()
 {
 	// code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code
 
@@ -235,8 +302,7 @@ std::tuple<double, double, double, double> Vector3D::toQuaternion()
 	double x = sr * cp * cy - cr * sp * sy;
 	double y = cr * sp * cy + sr * cp * sy;
 	double z = cr * cp * sy - sr * sp * cy;
-	std::tuple<double, double, double, double> q = {w, x, y, z};
-	return q;
+	return {w, x, y, z};
 }
 
 double Vector3D::setX(const double value)
