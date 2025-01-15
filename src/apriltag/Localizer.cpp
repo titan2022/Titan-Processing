@@ -1,6 +1,5 @@
 #include <cmath>
 #include <functional>
-#include <iostream>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
 #include <optional>
@@ -56,7 +55,10 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 	{
 		if (tagPair.second.id == id)
 		{
-			return tagPair.second;
+            // Flip axis
+            Apriltag globalTag = tagPair.second;
+            globalTag.position = Vector3D{globalTag.position.getX(), globalTag.position.getZ(), globalTag.position.getY()};
+			return globalTag;
 		}
 	}
 	return {};
@@ -85,30 +87,41 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 	// relTag.rotation -= config.cameras[camId].rotation;
 	// client.send_tag("tag", id, relTag.position, relTag.rotation);
 
-	// Rotating around tag to fit global position
+    // Offset by field
+    Vector3D fieldOffset(config.fieldLength / 2.0, 0, config.fieldWidth / 2.0);
 	auto globTag = getGlobalTag(id);
+    globTag->position -= fieldOffset;
+    globTag->rotation.setY(globTag->rotation.getY() + M_PI / 2.0);
+
+	// Rotating around tag to fit global position
 	invTag.position.rotateX(globTag->rotation.getX());
 	invTag.position.rotateY(globTag->rotation.getY());
 	invTag.position.rotateZ(globTag->rotation.getZ());
 
 	// Offsetting by global pose
 	invTag.position += globTag->position;
-	invTag.rotation += globTag->rotation;
+	invTag.rotation -= globTag->rotation;
 
 	// Offsetting by camera pose on the robot to get robot pose
-	Vector3D rotOffset = cam.position;
-	rotOffset.rotateY(-invTag.rotation.getY());
-	invTag.position += rotOffset;
-	invTag.rotation.setY(M_PI - invTag.rotation.getY());
+	// Vector3D rotOffset = cam.position;
+	// rotOffset.rotateY(-invTag.rotation.getY());
+	// invTag.position += rotOffset;
+    // this->poseHandler(invTag.position, invTag.rotation);
+	// invTag.rotation.setY(M_PI - invTag.rotation.getY());
+    // this->poseHandler(invTag.position, invTag.rotation);
 
-	std::cout << "robot x: " << invTag.position.getX() << std::endl;
-	std::cout << "robot z: " << invTag.position.getZ() << std::endl;
+    // Hacky camera offset, only works for Y-axis rotationally
+    // Please fix
+    Vector3D camPosOffset = cam.position;
+    camPosOffset.rotateY(-invTag.rotation.getY());
+    invTag.position.setX(invTag.position.getX() + camPosOffset.getX());
+    invTag.position.setZ(invTag.position.getZ() + camPosOffset.getZ());
 
+    this->poseHandler(invTag.position, invTag.rotation);
 	filter.updateTag(invTag, tagDist, dt);
 }
 
 void Localizer::step(double dt)
 {
-	this->poseHandler(filter.position, filter.rotation);
 	filter.predict(dt);
 }
