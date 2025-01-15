@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
 		Camera cam = std::get<1>(cam_tuple);
 		std::cout << "Initializing camera: " << cam.name << std::endl;
 		cv::VideoCapture stream = cam.openStream();
-		ApriltagDetector detector(stream, false, config, localizer);
+		ApriltagDetector detector(stream, false, config, cam, localizer);
 
 		// Multithread streams
 		std::thread detectorThread(&ApriltagDetector::detect, &detector);
