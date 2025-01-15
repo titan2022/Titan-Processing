@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 
 	if (argc == 1)
 	{
-		allowedCameras = config.debug_cameras;
+		allowedCameras = config.debugCameras;
 	}
 	else if (argc > 2 || strcmp(argv[1], "--help") == 0)
 	{
@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
 	}
 	else if (strcmp(argv[1], "production") == 0)
 	{
-		allowedCameras = config.prod_cameras;
+		allowedCameras = config.prodCameras;
 	}
 	else
 	{
