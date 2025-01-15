@@ -12,8 +12,8 @@
 
 namespace titan
 {
-constexpr auto CONFIG_PATH = "./config/config.json";
-constexpr auto TAGS_PATH = "./config/apriltags2025.json";
+constexpr const auto CONFIG_PATH = "./config/config.json";
+constexpr const auto TAGS_PATH = "./config/apriltags2025.json";
 
 /**
  * @brief Interface for apriltags and config.json, contains camera and tag information. See docs for config structure
@@ -55,10 +55,9 @@ class Config
 	Config(std::string_view configPath, std::string_view tagsPath);
 
 	/**
-	 * @brief Writes the main config to `mainConfigPath` and the tags to `tagPath`.
-	 * @return int error code
+	 * @brief Writes the main config to `configPath` and the tags to `tagsPath`.
 	 */
-	int write(std::string_view mainConfigPath, std::string_view tagPath);
+	void write(std::string_view configPath, std::string_view tagsPath) const;
 };
 } // namespace titan
 

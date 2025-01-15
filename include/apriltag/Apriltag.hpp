@@ -8,8 +8,7 @@ namespace titan
 class Apriltag
 {
   public:
-	Apriltag(int id, Vector3D &position, Vector3D &rotation, double size);
-	Apriltag &operator=(const Apriltag &other);
+	Apriltag(int id, const Vector3D &position, const Vector3D &rotation, double size);
 	Vector3D position;
 	Vector3D rotation;
 	double size;

@@ -1,0 +1,18 @@
+CompileFlags:
+  Add: [-Wall, -Wextra]
+Diagnostics:
+  ClangTidy:
+    Add:
+      [
+        bugprone*,
+        cppcoreguidelines*,
+        clang-analyzer*,
+        modernize*,
+        readability*,
+        misc*,
+      ]
+    Remove:
+      [
+        misc-non-private-member-variables-in-classes,
+        readability-identifier-length,
+      ]

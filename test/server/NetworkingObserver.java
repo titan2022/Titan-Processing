@@ -1,4 +1,3 @@
-
 public class NetworkingObserver {
     public String objectName;
     private NetworkingCall call;

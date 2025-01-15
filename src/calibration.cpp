@@ -1,10 +1,8 @@
 #include "util/Camera.hpp"
 #include "util/Config.hpp"
 #include <cassert>
-#include <cstddef>
 #include <exception>
 #include <iostream>
-#include <nlohmann/json.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/objdetect/aruco_board.hpp>
@@ -12,16 +10,15 @@
 #include <opencv2/objdetect/aruco_dictionary.hpp>
 #include <opencv2/objdetect/charuco_detector.hpp>
 #include <opencv2/opencv.hpp>
-#include <optional>
 #include <utility>
 #include <vector>
 
 using namespace titan;
 
-inline constexpr double SQUARE_LENGTH = 0.0254 * 1.5;
-inline constexpr double MARKER_LENGTH = SQUARE_LENGTH * 0.6;
-inline constexpr int SPACE_KEY = 0x20;
-inline constexpr int ESC_KEY = 0x1b;
+constexpr const double SQUARE_LENGTH = 0.0254 * 1.5;
+constexpr const double MARKER_LENGTH = SQUARE_LENGTH * 0.6;
+constexpr const int SPACE_KEY = 0x20;
+constexpr const int ESC_KEY = 0x1b;
 
 void showImage(cv::Mat image)
 {
@@ -31,7 +28,7 @@ void showImage(cv::Mat image)
 /**
  * config file required (the path is hard-coded as seen below).
  */
-int main(int argc, char const *argv[])
+auto main(int argc, char const *argv[]) -> int
 {
 	if (argc != 2)
 	{
@@ -39,7 +36,7 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 
-	auto cam_name = argv[1];
+	const auto *cam_name = argv[1];
 	Config cfg(CONFIG_PATH, TAGS_PATH);
 
 	Camera cam;
@@ -71,7 +68,8 @@ int main(int argc, char const *argv[])
 
 	int imageCounter = 0;
 
-	std::vector<cv::Mat> allCorners, allIds;
+	std::vector<cv::Mat> allCorners;
+	std::vector<cv::Mat> allIds;
 	std::vector<std::vector<cv::Point2f>> allImgPoints;
 	std::vector<std::vector<cv::Point3f>> allObjPoints;
 

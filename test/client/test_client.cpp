@@ -8,9 +8,9 @@
 
 using namespace titan;
 
-void execServerTest(std::string cmd, std::promise<std::string> &&execPromise)
+void execServerTest(std::string cmd, std::promise<std::string> execPromise)
 {
-	std::array<char, 128> buffer;
+	std::array<char, 128> buffer{};
 	std::string result;
 	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(("timeout 5 " + cmd).c_str(), "r"), pclose);
 	if (!pipe)
@@ -35,7 +35,7 @@ TEST(ClientTest, ServerClientAllTypes)
 
 	std::promise<std::string> execPromise;
 	auto execFuture = execPromise.get_future();
-	std::thread serverTestThread(&execServerTest, "java -cp ../bin/test/ServerTest.jar ServerTest",
+	std::thread serverTestThread(&execServerTest, "java -cp ./bin/test/ServerTest.jar ServerTest",
 								 std::move(execPromise));
 	serverTestThread.join();
 	std::string result = execFuture.get();

@@ -3,7 +3,9 @@
 #include <iostream>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <optional>
+#include <utility>
 
 #include "apriltag/Localizer.hpp"
 #include "util/Camera.hpp"
@@ -13,13 +15,13 @@
 
 using namespace titan;
 
-Localizer::Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D &, Vector3D &)> poseHandler)
-	: config(config), filter(filter), poseHandler(poseHandler)
+Localizer::Localizer(const Config &config, PoseFilter filter, std::function<void(Vector3D &, Vector3D &)> poseHandler)
+	: tags(config.tags), filter(std::move(filter)), poseHandler(std::move(poseHandler))
 {
 }
 
 // Translates position origin from camera to tag
-Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size)
+auto correctPerspective(int id, const cv::Vec3d &tvec, const cv::Vec3d &rvec, int size) -> Apriltag
 {
 	cv::Mat R(3, 3, CV_64FC1);
 	cv::Rodrigues(rvec, R);
@@ -41,7 +43,7 @@ Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, int size)
 	return newTag;
 }
 
-Apriltag toGlobalPose(Apriltag &relative, Apriltag &global)
+auto toGlobalPose(Apriltag &relative, Apriltag &global) -> Apriltag
 {
 	Vector3D newPos = global.position - relative.position;
 	Vector3D newRot = global.rotation - relative.rotation;
@@ -50,9 +52,9 @@ Apriltag toGlobalPose(Apriltag &relative, Apriltag &global)
 	return result;
 }
 
-std::optional<Apriltag> Localizer::getGlobalTag(int id)
+auto Localizer::getGlobalTag(int id) const -> std::optional<Apriltag>
 {
-	for (auto tagPair : this->config.tags)
+	for (auto tagPair : tags)
 	{
 		if (tagPair.second.id == id)
 		{
@@ -62,7 +64,8 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 	return {};
 }
 
-void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt)
+void Localizer::addApriltag(int id, const Camera &cam, const cv::Vec3d &tvec, const cv::Vec3d &rvec, int size,
+							double dt)
 {
 	Apriltag invTag = correctPerspective(id, tvec, rvec, size);
 
