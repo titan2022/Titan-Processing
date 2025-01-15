@@ -6,14 +6,14 @@
 
 using namespace titan;
 
-auto main(int argc, char const *argv[]) -> int
+int main(int argc, char const *argv[])
 {
 	std::string ip = "127.0.0.1";
 	int port = 5800;
 	Vector3D v(0, 1, 2);
 
 	NetworkingClient client(ip, port);
-	client.sendVector("test", v, false);
+	client.send_vector("test", v, false);
 
 	std::cout << "Vector " << v.toString() << " sent to " << ip << ":" << port << std::endl;
 

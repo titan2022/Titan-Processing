@@ -22,9 +22,9 @@ class Camera
 	int exposure;
 	cv::Matx<double, 3, 3> cameraMat;
 	cv::Matx<double, 1, 5> distCoeffs;
-	[[nodiscard]] auto openStream() const -> cv::VideoCapture;
-	static auto fromJson(nlohmann::json &json) -> Camera;
-	[[nodiscard]] auto toJson() const -> nlohmann::json;
+	cv::VideoCapture openStream();
+	static Camera fromJson(nlohmann::json json);
+	nlohmann::json toJson();
 };
 } // namespace titan
 

@@ -1,2 +1,4 @@
-BasedOnStyle: Microsoft
-UseTab: Always
+{
+    BasedOnStyle: "Microsoft"
+    UseTab: "Always"
+}

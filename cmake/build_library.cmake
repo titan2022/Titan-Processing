@@ -1,19 +1,17 @@
-file(GLOB SRC
-    CONFIGURE_DEPENDS
+file(GLOB SRC 
     src/apriltag/*.cpp
     src/util/*.cpp
     src/networking/*.cpp
     src/physics/*.cpp
 )
-file(GLOB HEADERS
-    CONFIGURE_DEPENDS
+file(GLOB HEADERS 
     include/apriltag/*.hpp
     include/util/*.hpp
     include/networking/*.hpp
     include/physics/*.hpp
 )
-if(NOT NO_REALSENSE)
-    file(GLOB RS_SRC CONFIGURE_DEPENDS src/realsense/*.cpp)
+if (NOT NO_REALSENSE)
+    file(GLOB RS_SRC src/realsense/*.cpp)
     add_library(TitanProcessing SHARED ${SRC} ${RS_SRC})
     target_include_directories(TitanProcessing PRIVATE ${Realsense_DIR}/include)
 else()
@@ -29,8 +27,8 @@ set_target_properties(TitanProcessing PROPERTIES PUBLIC_HEADER "${HEADERS}")
 #         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/TitanProcessing
 
 install(TARGETS TitanProcessing EXPORT
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/TitanProcessing
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/TitanProcessing
 )
 
 # foreach(file ${HEADERS})

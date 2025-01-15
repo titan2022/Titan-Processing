@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.20.0)
 set(CMAKE_CXX_STANDARD 20)
 project(TitanProcessing VERSION 2.0.0 LANGUAGES C CXX)
 
@@ -20,10 +20,10 @@ find_package(OpenCV 4.8)
 find_package(nlohmann_json CONFIG REQUIRED)
 
 # Shared library compatibility
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 include(GNUInstallDirs)
 
 # Creating the library
@@ -33,12 +33,12 @@ include(${CMAKE_MODULE_PATH}/build_library.cmake)
 include(${CMAKE_MODULE_PATH}/build_service.cmake)
 
 # Building examples
-if(BUILD_EXAMPLES)
+if (BUILD_EXAMPLES)
     include(${CMAKE_MODULE_PATH}/build_examples.cmake)
 endif()
 
 # Testing
-if(TEST)
+if (TEST)
     include(${CMAKE_MODULE_PATH}/build_tests.cmake)
 endif()
 

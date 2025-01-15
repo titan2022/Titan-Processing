@@ -3,8 +3,9 @@
 
 #include "util/Config.hpp"
 
+namespace fs = std::filesystem;
 using namespace titan;
 
-TEST(LocalizationTest, SingleCamera)
-{
+TEST(LocalizationTest, SingleCamera) {
+    
 }

@@ -15,16 +15,16 @@ namespace titan
 class Localizer
 {
   public:
-	Localizer(const Config &config, PoseFilter filter, std::function<void(Vector3D &, Vector3D &)> poseHandler);
-	void addApriltag(int id, const Camera &cam, const cv::Vec3d &tvec, const cv::Vec3d &rvec, int size, double dt);
+	Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D &, Vector3D &)> poseHandler);
+	void addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, int size, double dt);
 	void step(double dt);
 	Vector3D position;
 	Vector3D rotation;
 
   private:
-	[[nodiscard]] auto getGlobalTag(int id) const -> std::optional<Apriltag>;
-	std::map<int, Apriltag> tags;
-	PoseFilter filter;
+	std::optional<Apriltag> getGlobalTag(int id);
+	Config &config;
+	PoseFilter &filter;
 	std::function<void(Vector3D &, Vector3D &)> poseHandler;
 };
 } // namespace titan

@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 
 	auto clientPoseSender = [&](Vector3D &pos, Vector3D &rot) {
         std::cout << "pos: " << pos.toString() << std::endl;
-		dashboardClient.sendPose("pose", pos, rot);
+		dashboardClient.send_pose("pose", pos, rot);
 	};
 
 	PoseFilter filter(config);

@@ -1,39 +1,11 @@
 {
-    "cameras": [
-        {
-            "centerX": 965.2056158758434,
-            "centerY": 556.234800653846,
-            "exposure": 10,
-            "focalX": 1099.8745655521952,
-            "focalY": 1106.3496516438922,
-            "fps": 100,
-            "height": 1080,
-            "k1": 0.06767619794239592,
-            "k2": 0.5579006142014424,
-            "k3": -2.116006899510984,
-            "name": "Arducam",
-            "p1": 0.006961986777371246,
-            "p2": 0.005074169234764547,
-            "position": [
-                0.2445512,
-                0.0842264,
-                0.2952496
-            ],
-            "rotation": [
-                -50.5,
-                -16.93,
-                0.0
-            ],
-            "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9281_USB_Camera_UC762-video-index0",
-            "width": 1920
-        }
-    ],
-    "dashboardIp": "127.0.0.1",
-    "decodeSharpening": 0.25,
     "ip": "127.0.0.1",
+    "dashboardIp": "127.0.0.1",
     "port": 5804,
+    "threads": 4,
     "quadDecimate": 1,
     "quadSigma": 2,
+    "decodeSharpening": 0.25,
     "robotSize": [
         0.6092,
         0.1,
@@ -50,16 +22,8 @@
         {
             "name": "Arducam-UC852",
             "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9782_USB_Camera_UC852-video-index0",
-            "position": [
-                0,
-                0,
-                0
-            ],
-            "rotation": [
-                0,
-                0,
-                0
-            ],
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
             "width": 1280,
             "height": 800,
             "fps": 60,
@@ -77,16 +41,8 @@
         {
             "name": "Arducam-UC762",
             "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9281_USB_Camera_UC762-video-index0",
-            "position": [
-                0.2445512,
-                0.0842264,
-                0.2952496
-            ],
-            "rotation": [
-                -50.5,
-                -16.93,
-                0
-            ],
+            "position": [0.2445512, 0.0842264, 0.2952496],
+            "rotation": [-50.5, -16.93, 0],
             "width": 1280,
             "height": 800,
             "fps": 100,
@@ -101,6 +57,5 @@
             "p2": -0.0031399446166415663,
             "k3": -0.07455148194441642
         }
-    ],
-    "threads": 4
+    ]
 }

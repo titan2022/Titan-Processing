@@ -15,7 +15,7 @@ namespace titan
 class PoseFilter
 {
   public:
-	PoseFilter(const Config &config);
+	PoseFilter(Config &config);
 	void predict(double dt);
 	void step(double dt);
 	void updateTag(Apriltag &tag, double tagDist, double dt);
@@ -28,18 +28,18 @@ class PoseFilter
 	double test2 = 0;
 
   private:
-	std::map<int, Apriltag> tags;
+	Config &config;
 
 	bool init = false;
 
-	cv::Mat x;				  // Previous mean input matrix
+	cv::Mat x;							// Previous mean input matrix
 	std::map<int, cv::Mat> P; // Covariance matrices
-	cv::Mat R;				  // _____
-	cv::Mat Q;				  // _____
-	cv::Mat u;				  // Control input (default is no control)
-	cv::Mat B;				  // Control input model (default is no control)
-	cv::Mat H;				  // Measurement function
-	cv::Mat I;				  // _x_ identity matrix
+	cv::Mat R;							// _____
+	cv::Mat Q;							// _____
+	cv::Mat u;							// Control input (default is no control)
+	cv::Mat B;							// Control input model (default is no control)
+	cv::Mat H;							// Measurement function
+	cv::Mat I;							// _x_ identity matrix
 };
 } // namespace titan
 

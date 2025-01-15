@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <gtest/gtest.h>
+#include <math.h>
 
 #include "../../include/util/Vector3D.hpp"
 
@@ -31,6 +32,25 @@ TEST(VectorTest, VectorConstructor)
 	ASSERT_DOUBLE_EQ(v.getZ(), 7);
 }
 
+TEST(VectorTest, ArrayConstructor)
+{
+	double arrVec[3] = {8, 9, 10};
+	Vector3D v(arrVec);
+	ASSERT_DOUBLE_EQ(v.getX(), 8);
+	ASSERT_DOUBLE_EQ(v.getY(), 9);
+	ASSERT_DOUBLE_EQ(v.getZ(), 10);
+}
+
+TEST(VectorTest, CharConstructor)
+{
+	// TODO: find a way to express in bytes
+	// const char* charVec = ""; // 11, 12, 13
+	// Vector3D v5(charVec);
+	// ASSERT_DOUBLE_EQ(v5.getX(), 11);
+	// ASSERT_DOUBLE_EQ(v5.getY(), 12);
+	// ASSERT_DOUBLE_EQ(v5.getZ(), 13);
+}
+
 // TODO: rotation tests
 TEST(VectorTest, Rotation)
 {
@@ -40,7 +60,8 @@ TEST(VectorTest, Rotation)
 	// ASSERT_DOUBLE_EQ(v1.getX(), rotatedV1.getX());
 }
 
-// TODO: test quaternion to euler angles conversion
+// TODO: test quaternion to euler angles conversion 
 TEST(VectorTest, QuaternionTest)
 {
+
 }

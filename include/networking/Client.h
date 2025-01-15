@@ -35,13 +35,13 @@ class NetworkingClient
 {
   public:
 	NetworkingClient(std::string ip, uint16_t port);
-	auto sendVector(std::string msg, const Vector3D &v, bool withReply) -> Vector3D;
-	void sendPose(std::string msg, const Vector3D &pos, const Vector3D &rot);
-	void sendTag(std::string msg, int id, const Vector3D &pos, const Vector3D &rot);
+	Vector3D send_vector(std::string msg, Vector3D &v, bool withReply);
+	void send_pose(std::string msg, Vector3D &pos, Vector3D &rot);
+	void send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot);
 
-	auto sendVectorC(char *msg, TRBVector3D v, bool withReply) -> TRBVector3D;
-	void sendPoseC(char *msg, TRBVector3D pos, TRBVector3D rot);
-	void sendTagC(char *msg, int id, TRBVector3D pos, TRBVector3D rot);
+	TRBVector3D send_vector_c(char *msg, TRBVector3D v, bool withReply);
+	void send_pose_c(char *msg, TRBVector3D pos, TRBVector3D rot);
+	void send_tag_c(char *msg, int id, TRBVector3D pos, TRBVector3D rot);
 
   private:
 	int sock;
@@ -49,7 +49,7 @@ class NetworkingClient
 };
 } // namespace titan
 
-using TRBNetworkingClientRef = titan::NetworkingClient *;
+typedef titan::NetworkingClient *TRBNetworkingClientRef;
 typedef bool _Bool; // C uses _Bool but C++ uses bool
 #else
 typedef struct TRBNetworkingClient *TRBNetworkingClientRef;
@@ -59,7 +59,6 @@ TRB_BEGIN_EXTERN_C
 
 TRBVector3D TRBVector3DMake(double x, double y, double z);
 TRBNetworkingClientRef TRBNetworkingClientCreate(char *ip, uint16_t port);
-void TRBNetworkingClientDestroy(TRBNetworkingClientRef self);
 TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, _Bool withReply);
 void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char *msg, TRBVector3D pos, TRBVector3D rot);
 void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char *msg, int id, TRBVector3D pos, TRBVector3D rot);

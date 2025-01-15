@@ -1,4 +1,3 @@
-#include <cassert>
 #include <functional>
 #include <string>
 #include <thread>
@@ -16,13 +15,8 @@ using namespace titan;
 /**
  * Stars streams with every camera available
  */
-auto main(int argc, char const *argv[]) -> int
+int main(int argc, char const *argv[])
 {
-	if (argc != 1)
-	{
-		std::cout << "No arguments were expected.\n";
-		return 1;
-	}
 	std::cout << "Starting service..." << std::endl;
 
 	Config config(CONFIG_PATH, TAGS_PATH);
@@ -30,8 +24,8 @@ auto main(int argc, char const *argv[]) -> int
 	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
 	auto clientPoseSender = [&](Vector3D &pos, Vector3D &rot) {
-		client.sendPose("pose", pos, rot);
-		dashboardClient.sendPose("pose", pos, rot);
+		client.send_pose("pose", pos, rot);
+		dashboardClient.send_pose("pose", pos, rot);
 	};
 
 	PoseFilter filter(config);

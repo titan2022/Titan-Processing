@@ -1,6 +1,8 @@
-#include <array>
+#include <bitset>
 #include <climits>
 #include <cstring>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 #include <arpa/inet.h>
@@ -20,46 +22,46 @@ const int NAME_LEN = 15;
 // TODO: test on ARM
 struct VectorData
 {
-	char type{};
-	std::array<char, NAME_LEN> name{};
-	double x{};
-	double y{};
-	double z{};
+	char type;
+	char name[NAME_LEN] = {0};
+	double x;
+	double y;
+	double z;
 };
 
 struct PoseData
 {
-	char type{};
-	std::array<char, NAME_LEN> name{};
-	std::array<double, 3> pos{};
-	std::array<double, 3> rot{};
+	char type;
+	char name[NAME_LEN] = {0};
+	std::array<double, 3> pos;
+	std::array<double, 3> rot;
 };
 
 struct TagData
 {
-	char type{};
-	std::array<char, NAME_LEN> name{};
-	std::array<double, 3> pos{};
-	std::array<double, 3> rot{};
-	int id{};
+	char type;
+	char name[NAME_LEN] = {0};
+	std::array<double, 3> pos;
+	std::array<double, 3> rot;
+	int id;
 };
 
-NetworkingClient::NetworkingClient(std::string ip, uint16_t port) : sock(::socket(AF_INET, SOCK_DGRAM, 0))
+NetworkingClient::NetworkingClient(std::string ip, uint16_t port)
 {
-	struct sockaddr_in dest{};
-	dest.sin_family = AF_INET;
-	dest.sin_port = htons(port);
-	dest.sin_addr = {inet_addr(ip.c_str())};
-	destination = dest;
+	sock = ::socket(AF_INET, SOCK_DGRAM, 0);
+
+	destination.sin_family = AF_INET;
+	destination.sin_port = htons(port);
+	destination.sin_addr.s_addr = inet_addr(ip.c_str());
 }
 
-auto NetworkingClient::sendVector(std::string msg, const Vector3D &v, bool withReply) -> Vector3D
+Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withReply)
 {
 	VectorData data;
 
 	data.type = 'v';
 
-	msg.copy(data.name.begin(), NAME_LEN);
+	strncpy(data.name, msg.c_str(), NAME_LEN);
 	data.x = v.getX();
 	data.y = v.getY();
 	data.z = v.getZ();
@@ -67,45 +69,53 @@ auto NetworkingClient::sendVector(std::string msg, const Vector3D &v, bool withR
 	size_t dataLength = sizeof(data);
 
 	const void *buffer = static_cast<void *>(&data);
-	sendto(sock, buffer, dataLength, 0, reinterpret_cast<const sockaddr *>(&destination), sizeof(destination));
+	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 
 	if (withReply)
 	{
 		// Untested code
-		TRBVector3D replyVec{};
-		recvfrom(sock, &replyVec, sizeof(replyVec), 0, nullptr, nullptr);
-		return replyVec;
+		char replyBuffer[24];
+		::recvfrom(sock, replyBuffer, 24, 0, reinterpret_cast<sockaddr *>(&destination),
+				   (socklen_t *)sizeof(destination));
+		Vector3D replyVector(replyBuffer);
+		return replyVector;
 	}
 
-	return {};
+	return Vector3D();
 }
 
-void NetworkingClient::sendPose(std::string msg, const Vector3D &pos, const Vector3D &rot)
+void NetworkingClient::send_pose(std::string msg, Vector3D &pos, Vector3D &rot)
 {
 	PoseData data;
 
 	data.type = 'p';
-	msg.copy(data.name.begin(), NAME_LEN);
+	strncpy(data.name, msg.c_str(), NAME_LEN);
 	data.pos = pos.toArray();
 	data.rot = rot.toArray();
 
-	sendto(sock, &data, sizeof(data), 0, reinterpret_cast<const sockaddr *>(&destination), sizeof(destination));
+	size_t dataLength = sizeof(data);
+
+	const void *buffer = static_cast<void *>(&data);
+	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 }
 
-void NetworkingClient::sendTag(std::string msg, int id, const Vector3D &pos, const Vector3D &rot)
+void NetworkingClient::send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot)
 {
 	TagData data;
 
 	data.type = 't';
-	msg.copy(data.name.begin(), NAME_LEN);
+	strncpy(data.name, msg.c_str(), NAME_LEN);
 	data.pos = pos.toArray();
 	data.rot = rot.toArray();
 	data.id = id;
 
-	sendto(sock, &data, sizeof(data), 0, reinterpret_cast<const sockaddr *>(&destination), sizeof(destination));
+	size_t dataLength = sizeof(data);
+
+	const void *buffer = static_cast<void *>(&data);
+	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 }
 
-auto TRBVector3DMake(double x, double y, double z) -> TRBVector3D
+TRBVector3D TRBVector3DMake(double x, double y, double z)
 {
 	return (TRBVector3D){
 		.x = x,
@@ -114,37 +124,90 @@ auto TRBVector3DMake(double x, double y, double z) -> TRBVector3D
 	};
 }
 
-auto TRBNetworkingClientCreate(char *ip, uint16_t port) -> TRBNetworkingClientRef
+TRBNetworkingClientRef TRBNetworkingClientCreate(char *ip, uint16_t port)
 {
 	return new NetworkingClient(ip, port);
 }
 
-auto TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, bool withReply) -> TRBVector3D
+TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, bool withReply)
 {
-	return self->sendVectorC(msg, v, withReply);
+	return self->send_vector_c(msg, v, withReply);
 }
 
-auto NetworkingClient::sendVectorC(char *msg, TRBVector3D v, bool withReply) -> TRBVector3D
+TRBVector3D NetworkingClient::send_vector_c(char *msg, TRBVector3D v, bool withReply)
 {
-	return sendVector(std::string(msg), Vector3D(v), withReply).toFfi();
+	VectorData data;
+
+	data.type = 'v';
+	strncpy(data.name, msg, NAME_LEN);
+	data.x = v.x;
+	data.y = v.y;
+	data.z = v.z;
+
+	size_t dataLength = sizeof(data);
+
+	const void *buffer = static_cast<void *>(&data);
+	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+
+	if (withReply)
+	{
+		// Untested code
+		char replyBuffer[24];
+		::recvfrom(sock, replyBuffer, 24, 0, reinterpret_cast<sockaddr *>(&destination),
+				   (socklen_t *)sizeof(destination));
+		TRBVector3D *structVec = reinterpret_cast<TRBVector3D *>(replyBuffer);
+		return *structVec;
+	}
+
+	return (TRBVector3D){0, 0, 0};
+}
+
+std::array<double, 3> trbVectorToArray(TRBVector3D vec)
+{
+	std::array<double, 3> arr;
+	arr[0] = vec.x;
+	arr[1] = vec.y;
+	arr[2] = vec.z;
+	return arr;
 }
 
 void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char *msg, TRBVector3D pos, TRBVector3D rot)
 {
-	self->sendPoseC(msg, pos, rot);
+	self->send_pose_c(msg, pos, rot);
 }
 
-void NetworkingClient::sendPoseC(char *msg, TRBVector3D pos, TRBVector3D rot)
+void NetworkingClient::send_pose_c(char *msg, TRBVector3D pos, TRBVector3D rot)
 {
-	sendPose(std::string(msg), pos, rot);
+	PoseData data;
+
+	data.type = 'p';
+	strncpy(data.name, msg, NAME_LEN);
+	data.pos = trbVectorToArray(pos);
+	data.rot = trbVectorToArray(rot);
+
+	size_t dataLength = sizeof(data);
+
+	const void *buffer = static_cast<void *>(&data);
+	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 }
 
 void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char *msg, int id, TRBVector3D pos, TRBVector3D rot)
 {
-	self->sendTagC(msg, id, pos, rot);
+	self->send_tag_c(msg, id, pos, rot);
 }
 
-void NetworkingClient::sendTagC(char *msg, int id, TRBVector3D pos, TRBVector3D rot)
+void NetworkingClient::send_tag_c(char *msg, int id, TRBVector3D pos, TRBVector3D rot)
 {
-	sendTag(std::string(msg), id, pos, rot);
+	TagData data;
+
+	data.type = 't';
+	strncpy(data.name, msg, NAME_LEN);
+	data.pos = trbVectorToArray(pos);
+	data.rot = trbVectorToArray(rot);
+	data.id = id;
+
+	size_t dataLength = sizeof(data);
+
+	const void *buffer = static_cast<void *>(&data);
+	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
 }

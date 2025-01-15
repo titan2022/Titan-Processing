@@ -2,6 +2,7 @@
 #define APRILTAG_DETECTOR
 
 #include "../apriltag/Localizer.hpp"
+#include "../networking/Client.h"
 #include "../util/Config.hpp"
 #include "util/Camera.hpp"
 #include <opencv2/opencv.hpp>
@@ -11,16 +12,14 @@ namespace titan
 class ApriltagDetector
 {
   public:
-	ApriltagDetector(cv::VideoCapture stream, bool showWindow, const Config &config, Camera &cam, Localizer &localizer);
+	ApriltagDetector(cv::VideoCapture stream, bool showWindow, Config &config, Camera &cam, Localizer &localizer);
 	void detect();
 
   private:
 	cv::VideoCapture stream;
 	Camera cam;
 	bool showWindow;
-	int quadDecimate;
-	int quadSigma;
-
+	Config &config;
 	Localizer &localizer;
 };
 } // namespace titan

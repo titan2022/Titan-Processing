@@ -1,3 +1,4 @@
+
 import types.NetworkingPose;
 import types.NetworkingTag;
 import types.Translation3d;
@@ -14,9 +15,9 @@ public class ServerTest {
     private static int tagCount = 0;
 
     private static boolean countPackets() {
-        return (double) vecCount / PACKETS_SENT >= SUCCESS_RATIO
-                && (double) poseCount / PACKETS_SENT >= SUCCESS_RATIO
-                && (double) tagCount / PACKETS_SENT >= SUCCESS_RATIO;
+        return (double)vecCount / PACKETS_SENT >= SUCCESS_RATIO 
+        && (double)poseCount / PACKETS_SENT >= SUCCESS_RATIO 
+        && (double)tagCount / PACKETS_SENT >= SUCCESS_RATIO;
     }
 
     private static void endCondition(NetworkingServer server) {
@@ -31,8 +32,7 @@ public class ServerTest {
     }
 
     private static boolean expectVec(Translation3d v1, Translation3d v2) {
-        return expectDouble(v1.getX(), v2.getX()) && expectDouble(v1.getY(), v2.getY())
-                && expectDouble(v1.getZ(), v2.getZ());
+        return expectDouble(v1.getX(), v2.getX()) && expectDouble(v1.getY(), v2.getY()) && expectDouble(v1.getZ(), v2.getZ());
     }
 
     public static void main(String[] args) {
@@ -40,24 +40,22 @@ public class ServerTest {
 
         server.start();
 
-        server.subscribe("vec", (NetworkingCall<Translation3d>) (Translation3d vec) -> {
+        server.subscribe("vec", (NetworkingCall<Translation3d>)(Translation3d vec) -> {
             if (expectVec(vec, new Translation3d(0, 1, 2))) {
                 vecCount++;
                 endCondition(server);
             }
         });
 
-        server.subscribe("pose", (NetworkingCall<NetworkingPose>) (NetworkingPose pose) -> {
-            if (expectVec(pose.position, new Translation3d(0, 1, 2))
-                    && expectVec(pose.rotation, new Translation3d(0, 1, 2))) {
+        server.subscribe("pose", (NetworkingCall<NetworkingPose>)(NetworkingPose pose) -> {
+            if (expectVec(pose.position, new Translation3d(0, 1, 2)) && expectVec(pose.rotation, new Translation3d(0, 1, 2))) {
                 poseCount++;
                 endCondition(server);
             }
         });
 
-        server.subscribe("tag", (NetworkingCall<NetworkingTag>) (NetworkingTag tag) -> {
-            if (expectVec(tag.position, new Translation3d(3, 4, 5))
-                    && expectVec(tag.rotation, new Translation3d(6, 7, 8)) && tag.id == 2) {
+        server.subscribe("tag", (NetworkingCall<NetworkingTag>)(NetworkingTag tag) -> {
+            if (expectVec(tag.position, new Translation3d(3, 4, 5)) && expectVec(tag.rotation, new Translation3d(6, 7, 8)) && tag.id == 2) {
                 tagCount++;
                 endCondition(server);
             }
@@ -66,7 +64,7 @@ public class ServerTest {
         // Running the client executable
         server.onStart(() -> {
             try {
-                ProcessBuilder builder = new ProcessBuilder("./bin/test/util/test_client_exec");
+                ProcessBuilder builder = new ProcessBuilder("../bin/test/util/test_client_exec");
                 builder.redirectErrorStream(true);
                 builder.inheritIO();
                 builder.start();

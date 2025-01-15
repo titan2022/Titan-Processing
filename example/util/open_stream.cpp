@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
 		std::cout << "1 argument was expected, " << argc - 1 << " were passed.\n";
 		return 1;
 	}
-	const char *cam_name = argv[1];
+	const auto cam_name = argv[1];
 	Camera cam = config.cameras.at(cam_name);
 	auto stream = cam.openStream();
 

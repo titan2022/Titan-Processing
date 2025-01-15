@@ -1,51 +1,76 @@
 #include <array>
 #include <cmath>
-#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "networking/Client.h"
+
 #include "util/Vector3D.hpp"
 #include <opencv2/core.hpp>
 
+
 using namespace titan;
 
-Vector3D::Vector3D(double x, double y, double z) : x(x), y(y), z(z)
+Vector3D::Vector3D(double x, double y, double z)
 {
+	this->x = x;
+	this->y = y;
+	this->z = z;
 }
 
-Vector3D::Vector3D(const cv::Vec3d &v) : x(v[0]), y(v[1]), z(v[2])
+Vector3D::Vector3D(cv::Vec3d v)
 {
+	x = v[0];
+	y = v[1];
+	z = v[2];
 }
 
-Vector3D::Vector3D(const std::vector<double> &v) : x(v.at(0)), y(v.at(1)), z(v.at(2))
+Vector3D::Vector3D(std::vector<double> v)
 {
+	x = v[0];
+	y = v[1];
+	z = v[2];
 }
 
-Vector3D::Vector3D(const std::array<double, 3> &v) : x(v.at(0)), y(v.at(1)), z(v.at(2))
+Vector3D::Vector3D(double (&v)[])
 {
+	x = v[0];
+	y = v[1];
+	z = v[2];
 }
 
-Vector3D::Vector3D(const TRBVector3D &v) : x(v.x), y(v.y), z(v.z)
+struct StructVector3D
 {
+	double x;
+	double y;
+	double z;
+};
+Vector3D::Vector3D(const char *d)
+{
+	const StructVector3D *structVec = reinterpret_cast<const StructVector3D *>(d);
+	x = structVec->x;
+	y = structVec->y;
+	z = structVec->z;
 }
 
-Vector3D::Vector3D() : x(0), y(0), z(0)
+Vector3D::Vector3D()
 {
+	x = 0;
+	y = 0;
+	z = 0;
 }
 
-auto Vector3D::getX() const -> double
+double Vector3D::getX()
 {
 	return x;
 }
 
-auto Vector3D::getY() const -> double
+double Vector3D::getY()
 {
 	return y;
 }
 
-auto Vector3D::getZ() const -> double
+double Vector3D::getZ()
 {
 	return z;
 }
@@ -56,9 +81,9 @@ auto Vector3D::getZ() const -> double
  * @param angle In Radians
  * @return Vector3D Rotated Vector
  */
-auto Vector3D::getRotatedX(double angle) const -> Vector3D
+Vector3D Vector3D::getRotatedX(double angle)
 {
-	return {x, (y * cos(angle)) - (z * sin(angle)), (y * sin(angle)) + (z * cos(angle))};
+	return Vector3D(x, y * cos(angle) - z * sin(angle), y * sin(angle) + z * cos(angle));
 }
 
 /**
@@ -67,9 +92,9 @@ auto Vector3D::getRotatedX(double angle) const -> Vector3D
  * @param angle In Radians
  * @return Vector3D Rotated Vector
  */
-auto Vector3D::getRotatedY(double angle) const -> Vector3D
+Vector3D Vector3D::getRotatedY(double angle)
 {
-	return {(x * cos(angle)) + (z * sin(angle)), y, (x * -sin(angle)) + (z * cos(angle))};
+	return Vector3D(x * cos(angle) + z * sin(angle), y, x * -sin(angle) + z * cos(angle));
 }
 
 /**
@@ -78,9 +103,9 @@ auto Vector3D::getRotatedY(double angle) const -> Vector3D
  * @param angle In Radians
  * @return Vector3D Rotated Vector
  */
-auto Vector3D::getRotatedZ(double angle) const -> Vector3D
+Vector3D Vector3D::getRotatedZ(double angle)
 {
-	return {(x * cos(angle)) - (y * sin(angle)), (x * sin(angle)) + (y * cos(angle)), z};
+	return Vector3D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle), z);
 }
 
 /**
@@ -91,7 +116,7 @@ auto Vector3D::getRotatedZ(double angle) const -> Vector3D
  * @param zAngle In Radians
  * @return Vector3D Rotated Vector
  */
-auto Vector3D::getRotated(double xAngle, double yAngle, double zAngle) const -> Vector3D
+Vector3D Vector3D::getRotated(double xAngle, double yAngle, double zAngle)
 {
 	return getRotatedZ(zAngle).getRotatedY(yAngle).getRotatedX(xAngle);
 }
@@ -101,9 +126,9 @@ auto Vector3D::getRotated(double xAngle, double yAngle, double zAngle) const -> 
  *
  * @return double
  */
-double Vector3D::getMagnitude() const
+double Vector3D::getMagnitude()
 {
-	return sqrt((x * x) + (y * y) + (z * z));
+	return sqrt(x * x + y * y + z * z);
 }
 
 /**
@@ -111,79 +136,107 @@ double Vector3D::getMagnitude() const
  *
  * @return Vector3D
  */
-auto Vector3D::getNormalized() const -> Vector3D
+Vector3D Vector3D::getNormalized()
 {
 	double mag = getMagnitude();
 	Vector3D normalized(x / mag, y / mag, z / mag);
 	return normalized;
 }
 
-auto Vector3D::toString() const -> std::string
+std::string Vector3D::toString()
 {
 	std::string s = "(";
-	s += std::to_string(getX());
-	s += ", ";
-	s += std::to_string(getY());
-	s += ", ";
-	s += std::to_string(getZ());
+	std::string xStr = std::to_string(getX());
+	std::string yStr = std::to_string(getY());
+	std::string zStr = std::to_string(getZ());
+	s += xStr + ", ";
+	s += yStr + ", ";
+	s += zStr;
 	s += ")";
 	return s;
 }
 
-auto Vector3D::toCV() const -> cv::Vec<double, 3>
+cv::Vec<double, 3> Vector3D::toCV()
 {
 	return cv::Vec<double, 3>{x, y, z};
 }
 
-auto Vector3D::toArray() const -> std::array<double, 3>
+std::array<double, 3> Vector3D::toArray()
 {
-	return {x, y, z};
+	std::array<double, 3> arr;
+	arr[0] = x;
+	arr[1] = y;
+	arr[2] = z;
+	return arr;
 }
 
-auto Vector3D::toFfi() const -> TRBVector3D
+/**
+ * @brief Rotates vector using 3x3 rotation matrix
+ *
+ * @param mat 3x3 rotation matrix
+ * @return Vector3D Rotated vector
+ */
+Vector3D Vector3D::matToVec(double (&mat)[])
 {
-	return {x, y, z};
+	// Source: http://motion.pratt.duke.edu/RoboticSystems/3DRotations.html#Converting-from-a-rotation-matrix
+	// Temporarily copied from: https://github.com/titan2022/Jetson-Vision-2023/blob/apriltags/py/detector_client.py
+	// 3x3 matrices follow row-major order (index = row * 3 + col)
+	double theta = acos((mat[0] + mat[4] + mat[8] - 1) / 2);
+	Vector3D pre(0, 0, 0);
+	if (sin(theta) < 1e-3)
+	{
+		return pre; // TODO: impliment special case of theta == pi
+	}
+
+	double rk = (2 * sin(theta));
+	pre.setX((mat[4] - mat[2]) / rk); // -5, -7
+	pre.setY((mat[8] - mat[6]) / rk); // -1, -3
+	pre.setZ((mat[3] - mat[1]) / rk); // 3, 1
+
+	Vector3D result(pre[0] * theta, pre[1] * theta, pre[2] * theta);
+	return result;
 }
 
-auto Vector3D::fromQuaternion(double w, double x, double y, double z) -> Vector3D
+Vector3D Vector3D::fromQuaternion(double w, double x, double y, double z)
 {
-	// code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code_2
+	//code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code_2
 
-	// x-axis
-	double sinr_cosp = 2 * (w * x + y * z);
-	double cosr_cosp = 1 - (2 * (x * x + y * y));
-	double roll = std::atan2(sinr_cosp, cosr_cosp);
 
-	// y-axis
-	double sinp = std::sqrt(1 + (2 * (w * y - x * z)));
-	double cosp = std::sqrt(1 - (2 * (w * y - x * z)));
-	double pitch = (2 * std::atan2(sinp, cosp)) - M_PI / 2;
+	//x-axis
+	double sinr_cosp = 2*(w*x+y*z);
+    double cosr_cosp = 1-2*(x*x+y*y);
+    double roll = std::atan2(sinr_cosp, cosr_cosp);
 
-	// z-axis
-	double siny_cosp = 2 * (w * z + x * y);
-	double cosy_cosp = 1 - (2 * (y * y + z * z));
-	double yaw = std::atan2(siny_cosp, cosy_cosp);
+	//y-axis
+    double sinp = std::sqrt(1+2*(w*y-x*z));
+    double cosp = std::sqrt(1-2*(w*y-x*z));
+    double pitch = 2 * std::atan2(sinp, cosp) - M_PI / 2;
+
+    //z-axis
+    double siny_cosp = 2*(w*z+x*y);
+    double cosy_cosp = 1-2*(y*y+z*z);
+    double yaw = std::atan2(siny_cosp, cosy_cosp);
 
 	Vector3D result(roll, pitch, yaw);
 	return result;
 }
-auto Vector3D::toQuaternion() const -> std::tuple<double, double, double, double>
+std::tuple<double, double, double, double> Vector3D::toQuaternion()
 {
 	// code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code
 
-	double cr = cos(x / 2);
-	double sr = sin(x / 2);
-	double cp = cos(y / 2);
-	double sp = sin(y / 2);
-	double cy = cos(z / 2);
-	double sy = sin(z / 2);
+	double cr = cos(x * 0.5);
+	double sr = sin(x * 0.5);
+	double cp = cos(y * 0.5);
+	double sp = sin(y * 0.5);
+	double cy = cos(z * 0.5);
+	double sy = sin(z * 0.5);
 
-	double w = (cr * cp * cy) + (sr * sp * sy);
-	double x = (sr * cp * cy) - (cr * sp * sy);
-	double y = (cr * sp * cy) + (sr * cp * sy);
-	double z = (cr * cp * sy) - (sr * sp * cy);
-
-	return {w, x, y, z};
+	double w = cr * cp * cy + sr * sp * sy;
+	double x = sr * cp * cy - cr * sp * sy;
+	double y = cr * sp * cy + sr * cp * sy;
+	double z = cr * cp * sy - sr * sp * cy;
+	std::tuple<double, double, double, double> q = {w, x, y, z};
+	return q;
 }
 
 double Vector3D::setX(const double value)
@@ -234,7 +287,7 @@ void Vector3D::rotateZ(double angle)
 }
 
 /**
- * @brief Rotates vector in order of ZYX, all units are radians
+ * @brief Rotates vector in order of ZYX, all units are raiduans
  *
  * @param xAngle In Radians
  * @param yAngle In Radians
@@ -249,77 +302,89 @@ void Vector3D::rotate(double xAngle, double yAngle, double zAngle)
 }
 
 /**
- * @brief Rotates vector in order of ZYX, all units are radians
+ * @brief Rotates vector in order of ZYX, all units are raiduans
  *
  * @param vec Rotation vector
  * @return Vector3D Rotated Vector
  */
-void Vector3D::rotate(const Vector3D &vec)
+void Vector3D::rotate(Vector3D &vec)
 {
 	rotateZ(vec.getZ());
 	rotateY(vec.getY());
 	rotateX(vec.getX());
 }
 
-auto Vector3D::operator+(const Vector3D &v) const -> Vector3D
+Vector3D &Vector3D::operator=(const Vector3D &v)
 {
-	return {x + v.x, y + v.y, z + v.z};
+	setX(v.x);
+	setY(v.y);
+	setZ(v.z);
+	return *this;
 }
 
-auto Vector3D::operator-(const Vector3D &v) const -> Vector3D
+const Vector3D Vector3D::operator+(const Vector3D &v)
 {
-	return {x - v.x, y - v.y, z - v.z};
+	return Vector3D(x + v.x, y + v.y, z + v.z);
 }
 
-void Vector3D::operator+=(Vector3D const &v)
+const Vector3D Vector3D::operator-(const Vector3D &v)
+{
+	return Vector3D(x - v.x, y - v.y, z - v.z);
+}
+
+Vector3D &Vector3D::operator+=(Vector3D const &v)
 {
 	x += v.x;
 	y += v.y;
 	z += v.z;
+	return *this;
 }
 
-void Vector3D::operator-=(Vector3D const &v)
+Vector3D &Vector3D::operator-=(Vector3D const &v)
 {
 	x -= v.x;
 	y -= v.y;
 	z -= v.z;
+	return *this;
 }
 
-auto Vector3D::operator*(const double s) const -> Vector3D
+Vector3D Vector3D::operator*(const double s)
 {
-	return {x * s, y * s, z * s};
+	return Vector3D(x * s, y * s, z * s);
 }
 
-auto Vector3D::operator/(const double s) const -> Vector3D
+Vector3D Vector3D::operator/(const double s)
 {
-	return {x / s, y / s, z / s};
+	return Vector3D(x / s, y / s, z / s);
 }
 
-void Vector3D::operator*=(const double s)
+Vector3D &Vector3D::operator*=(const double s)
 {
 	x *= s;
 	y *= s;
 	z *= s;
+	return *this;
 }
 
-void Vector3D::operator/=(const double s)
+Vector3D &Vector3D::operator/=(const double s)
 {
 	x /= s;
 	y /= s;
 	z /= s;
+	return *this;
 }
 
-auto Vector3D::operator*(const Vector3D &v) const -> double
+const double Vector3D::operator*(const Vector3D &v)
 {
-	return (x * v.x) + (y * v.y) + (z * v.z);
+	return x * v.x + y * v.y + z * v.z;
 }
 
-auto Vector3D::operator==(const Vector3D &v) const -> bool
+const bool Vector3D::operator==(const Vector3D &v)
 {
 	return x == v.x && y == v.y && z == v.z;
 }
 
-auto Vector3D::operator!=(const Vector3D &v) const -> bool
+const bool Vector3D::operator!=(const Vector3D &v)
 {
 	return !(*this == v);
 }
@@ -330,19 +395,22 @@ auto Vector3D::operator!=(const Vector3D &v) const -> bool
  * @param index From 0 to 2
  * @return const double
  */
-auto Vector3D::operator[](const int index) const -> double
+const double Vector3D::operator[](const int index)
 {
 	switch (index)
 	{
 	case 0:
 		return x;
-
+		break;
 	case 1:
 		return y;
-
+		break;
 	case 2:
 		return z;
+		break;
 	default:
-		throw std::runtime_error("Invalid Vector3D index");
+		break;
 	}
+
+	return 0;
 }

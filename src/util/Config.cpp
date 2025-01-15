@@ -75,7 +75,7 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	}
 }
 
-void Config::write(std::string_view configPath, std::string_view tagsPath) const
+int Config::write(std::string_view configPath, std::string_view tagsPath)
 {
 
 	fs::path fileConfigPathObj((fs::path(configPath)));
@@ -84,7 +84,7 @@ void Config::write(std::string_view configPath, std::string_view tagsPath) const
 	std::ofstream outTag(fileTagPathObj);
 	if (!outConfig || !outTag)
 	{
-		throw std::runtime_error("Error writing config");
+		return 5;
 	}
 
 	std::vector<json> json_cams = {};
@@ -111,7 +111,7 @@ void Config::write(std::string_view configPath, std::string_view tagsPath) const
 	for (auto tag_pair : tags)
 	{
 		auto tag = tag_pair.second;
-		auto quat = tag.rotation.toQuaternion();
+		auto q = tag.rotation.toQuaternion();
 		json json_tag = {
 			{"ID", tag.id},
 			{"pose",
@@ -126,10 +126,10 @@ void Config::write(std::string_view configPath, std::string_view tagsPath) const
 				  {
 					  {"quaternion",
 					   {
-						   {"W", std::get<0>(quat)},
-						   {"X", std::get<1>(quat)},
-						   {"Y", std::get<2>(quat)},
-						   {"Z", std::get<3>(quat)},
+						   {"W", std::get<0>(q)},
+						   {"X", std::get<1>(q)},
+						   {"Y", std::get<2>(q)},
+						   {"Z", std::get<3>(q)},
 					   }},
 				  }},
 			 }},
@@ -146,4 +146,6 @@ void Config::write(std::string_view configPath, std::string_view tagsPath) const
 		 }},
 	};
 	outTag << tagData;
+
+	return 0;
 }

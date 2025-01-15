@@ -10,7 +10,8 @@
 #include <string>
 
 using namespace titan;
-auto Camera::openStream() const -> cv::VideoCapture
+
+cv::VideoCapture Camera::openStream()
 {
 	// Test this using gst-launch-1.0
 	auto cap =
@@ -28,8 +29,9 @@ auto Camera::openStream() const -> cv::VideoCapture
 
 	return cap;
 }
-auto Camera::fromJson(nlohmann::json &json) -> Camera
+Camera Camera::fromJson(nlohmann::json json)
 {
+
 	std::vector<double> posArr = json["position"];
 	std::vector<double> rotArr = json["rotation"];
 	Vector3D pos(posArr);
@@ -53,7 +55,7 @@ auto Camera::fromJson(nlohmann::json &json) -> Camera
 	};
 	return cam;
 }
-auto Camera::toJson() const -> nlohmann::json
+nlohmann::json Camera::toJson()
 {
 	nlohmann::json json = {
 		{"name", name},

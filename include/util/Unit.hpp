@@ -2,19 +2,17 @@
 #define UNIT
 
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 
 namespace titan
 {
-namespace Unit
+class Unit
 {
-// DEG to RAD
-constexpr const double DEG = M_PI / 180.0;
-// RAD to DEG
-constexpr const double RAD = 180.0 / M_PI;
-// IN to M
-constexpr const double INCH = 0.0254;
-}; // namespace Unit
+  public:
+	constexpr static const double DEG = M_PI / 180.0; // DEG to RAD
+	constexpr static const double RAD = 180.0 / M_PI; // RAD to DEG
+	constexpr static const double INCH = 0.0254;	  // IN to M
+};
 } // namespace titan
 
 #endif

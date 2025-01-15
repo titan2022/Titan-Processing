@@ -1,4 +1,4 @@
-file(GLOB_RECURSE EXAMPLE_SRC RELATIVE ${CMAKE_SOURCE_DIR}/example CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/example/*/*.cpp ${CMAKE_SOURCE_DIR}/example/*/*.c)
+file(GLOB_RECURSE EXAMPLE_SRC RELATIVE ${CMAKE_SOURCE_DIR}/example ${CMAKE_SOURCE_DIR}/example/*/*.cpp ${CMAKE_SOURCE_DIR}/example/*/*.c)
 foreach(example ${EXAMPLE_SRC})
     string(REPLACE ".cpp" "" examplename0 ${example})
     string(REPLACE ".c" "" examplename1 ${examplename0})

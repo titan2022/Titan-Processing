@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <map>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
+#include <map>
 
 #include "physics/PoseFilter.hpp"
 #include "util/Config.hpp"
@@ -13,9 +13,7 @@ using namespace titan;
 
 // Source: https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
 
-namespace
-{
-template <typename T> auto to_string_with_precision(const T a_value, const int n = 6) -> std::string
+template <typename T> std::string to_string_with_precision(const T a_value, const int n = 6)
 {
 	std::ostringstream out;
 	out.precision(n);
@@ -23,7 +21,7 @@ template <typename T> auto to_string_with_precision(const T a_value, const int n
 	return std::move(out).str();
 }
 
-static auto pm(cv::Mat &m) -> std::string
+std::string pm(cv::Mat &m)
 {
 	std::string result = "[";
 
@@ -42,12 +40,11 @@ static auto pm(cv::Mat &m) -> std::string
 
 	return result;
 }
-} // namespace
 
-PoseFilter::PoseFilter(const Config &config) : tags(config.tags)
+PoseFilter::PoseFilter(Config &config) : config(config), position(), rotation()
 {
 	// Initialize covariance matrices
-	for (auto &tag : tags)
+	for (auto &tag : config.tags)
 	{
 		P[tag.second.id] = cv::Mat::eye(12, 12, CV_64FC1);
 	}
@@ -111,7 +108,7 @@ void PoseFilter::predict(double dt)
 	rotation.setY(x.at<double>(4, 0));
 	rotation.setZ(x.at<double>(5, 0));
 
-	for (auto &tag : tags)
+	for (auto &tag : config.tags)
 	{
 		// Predicting covariance
 		P[tag.second.id] = F * P[tag.second.id] * F.t() + Q;
