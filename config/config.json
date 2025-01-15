@@ -11,9 +11,17 @@
         0.1,
         0.6092
     ],
+    "debug_cameras": [
+        "Arducam-UC852",
+        "Arducam-UC762"
+    ],
+    "prod_cameras": [
+        "Arducam-UC762",
+        "Arducam-UC852"
+    ],
     "cameras": [
         {
-            "name": "Arducam",
+            "name": "Arducam-UC852",
             "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9782_USB_Camera_UC852-video-index0",
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
@@ -30,6 +38,25 @@
             "p1": 0.013368965698578669,
             "p2": -0.024880499480665952,
             "k3": -0.24749980536005237
+        },
+        {
+            "name": "Arducam-UC762",
+            "usbName": "usb-Arducam_Technology_Co.__Ltd._Arducam_OV9281_USB_Camera_UC762-video-index0",
+            "position": [0.2445512, 0.0842264, 0.2952496],
+            "rotation": [-50.5, -16.93, 0],
+            "width": 1280,
+            "height": 800,
+            "fps": 100,
+            "exposure": 10,
+            "focalX": 896.4229265637798,
+            "focalY": 894.7290571208786,
+            "centerX": 632.1511776051311,
+            "centerY": 409.51872727524545,
+            "k1": 0.03504592225172843,
+            "k2": -0.057976090918433074,
+            "p1": 0.005955119626934279,
+            "p2": -0.0031399446166415663,
+            "k3": -0.07455148194441642
         }
     ]
 }

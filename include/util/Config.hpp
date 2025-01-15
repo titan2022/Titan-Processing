@@ -44,6 +44,9 @@ class Config
 
 	// Stuff from config.json
 	std::map<int, Apriltag> tags;
+
+	std::vector<std::string> debug_cameras;
+	std::vector<std::string> prod_cameras;
 	std::map<std::string, Camera> cameras;
 
 	/**

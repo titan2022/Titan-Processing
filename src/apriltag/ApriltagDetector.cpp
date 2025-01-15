@@ -55,8 +55,6 @@ void ApriltagDetector::detect()
 		// Convert MJPEG to grayscale
 		cv::cvtColor(frame, gray, cv::COLOR_RGB2GRAY);
 
-		cv::imshow("Debug Window", gray);
-
 		gray.copyTo(out);
 
 		// std::cout << 1.0 / dt << std::endl;

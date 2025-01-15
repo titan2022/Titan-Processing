@@ -44,6 +44,9 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	this->decodeSharpening = configData["decodeSharpening"];
 	this->robotSize = configData["robotSize"];
 
+	this->debug_cameras = configData["debug_cameras"];
+	this->prod_cameras = configData["prod_cameras"];
+
 	for (auto &tagObj : configData["cameras"])
 	{
 		Camera cam = Camera::fromJson(tagObj);

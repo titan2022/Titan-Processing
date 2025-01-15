@@ -26,9 +26,30 @@ int main(int argc, char const *argv[])
 	PoseFilter filter(config);
 	Localizer localizer(config, filter, clientPoseSender);
 
-	for (auto cam_tuple : config.cameras)
+	std::vector<std::string> allowedCameras;
+
+	if (argc == 1)
 	{
-		Camera cam = std::get<1>(cam_tuple);
+		allowedCameras = config.debug_cameras;
+	}
+	else if (argc > 2 || strcmp(argv[1], "--help") == 0)
+	{
+		std::cout << "USAGE: ./detect                  (detect using the debug_cameras in ../config/config.json)" << "\n"
+		          << "       ./detect production       (detect using the prod_cameras in ../config/config.json)" << "\n"
+				  << "       ./detect [camera name]    (detect using the named camera)" << std::endl;
+	}
+	else if (strcmp(argv[1], "production") == 0)
+	{
+		allowedCameras = config.prod_cameras;
+	}
+	else
+	{
+		allowedCameras = { argv[1] };
+	}
+
+	for (std::string cameraName : allowedCameras)
+	{
+		Camera cam = config.cameras[cameraName];
 		cv::VideoCapture stream(cam.openStream());
 		ApriltagDetector detector(stream, true, config, localizer);
 
