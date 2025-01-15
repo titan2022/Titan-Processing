@@ -2,4 +2,4 @@
 
 source "$( dirname -- "${BASH_SOURCE[0]}" )/credentials.sh"
 
-ssh "$username@$remote_hostname"
+sshpass -p "$password" ssh -X "$username@$remote_hostname"
