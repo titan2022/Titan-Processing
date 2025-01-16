@@ -57,8 +57,8 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 		{
             // Flip axis
             Apriltag globalTag = tagPair.second;
-            globalTag.position = Vector3D{globalTag.position.getX(), globalTag.position.getZ(), globalTag.position.getY()};
-            globalTag.rotation = Vector3D{globalTag.rotation.getX(), globalTag.rotation.getZ(), globalTag.rotation.getY()};
+            globalTag.position = Vector3D{globalTag.position.getX(), globalTag.position.getY(), globalTag.position.getZ()};
+            globalTag.rotation = Vector3D{globalTag.rotation.getX(), globalTag.rotation.getY(), globalTag.rotation.getZ()};
 			return globalTag;
 		}
 	}
@@ -71,12 +71,14 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 
 	// Apriltag cameraToTag_Apriltag = correctPerspective(id, tvec, rvec, size);
 	// cv::Mat cameraToTag = Vector3D::makeTransform(cameraToTag_Apriltag.position, cameraToTag_Apriltag.rotation);
-	cv::Mat tagToCamera = Vector3D::makeTransform(tvec, Vector3D::fromQuaternion(Vector3D::Quaternion::fromAxisAngle(Vector3D(rvec).getNormalized(), cv::norm(rvec))));
+	Vector3D::Quaternion tagToCamera_orientation = Vector3D::Quaternion::fromAxisAngle(Vector3D(rvec).getNormalized(), cv::norm(rvec));
+	tagToCamera_orientation = tagToCamera_orientation * Vector3D::Quaternion::fromAxisAngle(Vector3D(0, 1, 0), M_PI);
+	cv::Mat tagToCamera = Vector3D::makeTransform(tvec, Vector3D::fromQuaternion(tagToCamera_orientation));
 	Apriltag tagToField_Apriltag = getGlobalTag(id).value();
 	cv::Mat tagToField = Vector3D::makeTransform(tagToField_Apriltag.position, tagToField_Apriltag.rotation);
-	// cv::Mat robotToCamera = Vector3D::makeTransform(cam.position, cam.rotation);
+	cv::Mat robotToCamera = Vector3D::makeTransform(cam.position, cam.rotation);
 
-	cv::Mat fieldToRobot = tagToField * tagToCamera.inv(); // * robotToCamera.inv();
+	cv::Mat fieldToRobot = tagToField * tagToCamera.inv() * robotToCamera.inv();
 	Apriltag fieldToRobot_Apriltag = Apriltag(id, Vector3D::positionFromTransform(fieldToRobot), Vector3D::orientationFromTransform(fieldToRobot), size);
 	
 	// double tagDist = cameraToTag_Apriltag.position.getMagnitude();

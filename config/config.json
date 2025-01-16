@@ -80,7 +80,7 @@
             "name": "Lifecam2",
             "cameraPath": "/dev/v4l/by-path/pci-0000:65:00.3-usb-0:2:1.0-video-index0",
             "position": [0, 0, -0.09],
-            "rotation": [0, 0, 180],
+            "rotation": [0, 180, 0],
             "width": 1280,
             "height": 800,
             "fps": 30,
