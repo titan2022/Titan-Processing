@@ -243,6 +243,7 @@ Vector3D Vector3D::fromWPILibQuaternion(Vector3D::Quaternion quat)
 
 Vector3D::Quaternion Vector3D::Quaternion::fromWPILibQuaternion(Vector3D::Quaternion quat)
 {
+	// FIXME: For some reason this doesn't work for barge even though the equivalent code in Titan-Dashboard does
 	double ninety = M_PI / 2;
 	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety*3); 
 	quat.y = -quat.y;
@@ -303,6 +304,111 @@ Vector3D::Quaternion Vector3D::toQuaternion()
 	double y = cr * sp * cy + sr * cp * sy;
 	double z = cr * cp * sy - sr * sp * cy;
 	return {w, x, y, z};
+}
+
+cv::Mat Vector3D::toRotationMatrix()
+{
+    // https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+
+	// Precompute sines and cosines
+    double cx = std::cos(x);
+    double sx = std::sin(x);
+    double cy = std::cos(y);
+    double sy = std::sin(y);
+    double cz = std::cos(z);
+    double sz = std::sin(z);
+
+    // Rotation about X-axis (roll)
+    cv::Mat Rx = (cv::Mat_<double>(3, 3) << 
+        1,    0,    0,
+        0,   cx,  -sx,
+        0,   sx,   cx
+    );
+
+    // Rotation about Y-axis (pitch)
+    cv::Mat Ry = (cv::Mat_<double>(3, 3) << 
+         cz,   0,   sz,
+          0,   1,    0,
+        -sz,   0,   cz
+    );
+
+    // Rotation about Z-axis (yaw)
+    cv::Mat Rz = (cv::Mat_<double>(3, 3) << 
+        cy,  -sy,   0,
+        sy,   cy,   0,
+         0,    0,   1
+    );
+
+    // The combined rotation: Rz * Ry * Rx
+    cv::Mat R = Rz * Ry * Rx;
+    return R;
+}
+
+Vector3D Vector3D::fromRotationMatrix(const cv::Mat &R)
+{
+	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+	// see also https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+
+    // Sanity check: must be 3x3 and double
+	// Actually don't do this so we can apply this to transforms too
+    // CV_Assert(R.rows == 3 && R.cols == 3 && R.type() == CV_64F);
+
+    // Extract elements for clarity
+    double r00 = R.at<double>(0,0);
+    double r01 = R.at<double>(0,1);
+    double r02 = R.at<double>(0,2);
+    double r10 = R.at<double>(1,0);
+    double r11 = R.at<double>(1,1);
+    double r12 = R.at<double>(1,2);
+    double r20 = R.at<double>(2,0);
+    double r21 = R.at<double>(2,1);
+    double r22 = R.at<double>(2,2);
+
+    // 1) pitch = -asin(r20)
+    double pitch = -std::asin(r20);
+
+    // 2) roll = atan2(r21, r22)
+    double roll  = std::atan2(r21, r22);
+
+    // 3) yaw = atan2(r10, r00)
+    double yaw   = std::atan2(r10, r00);
+
+    return Vector3D(roll, yaw, pitch);
+}
+
+cv::Mat Vector3D::makeTransform(Vector3D position, Vector3D orientation)
+{
+	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+
+	// 1) Compute 3x3 rotation
+    cv::Mat R = orientation.toRotationMatrix();
+
+    // 2) Construct 4x4 homogeneous matrix (initialize to identity)
+    cv::Mat T = cv::Mat::eye(4, 4, CV_64F);
+
+    // 3) Copy rotation block into the top-left
+    R.copyTo(T(cv::Rect(0, 0, 3, 3)));  // Region of interest: columns 0..2, rows 0..2
+
+    // 4) Set translation in the top-right
+    T.at<double>(0, 3) = position.x;
+    T.at<double>(1, 3) = position.y;
+    T.at<double>(2, 3) = position.z;
+
+    return T;
+}
+
+Vector3D Vector3D::positionFromTransform(const cv::Mat &T)
+{
+	double x = T.at<double>(0, 3);
+	double y = T.at<double>(1, 3);
+	double z = T.at<double>(2, 3);
+
+	return Vector3D(x, y, z);
+}
+
+Vector3D Vector3D::orientationFromTransform(const cv::Mat &T)
+{
+	return fromRotationMatrix(T); // the rotation matrix is the top left corner of the transform
 }
 
 double Vector3D::setX(const double value)

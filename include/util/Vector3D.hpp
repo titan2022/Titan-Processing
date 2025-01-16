@@ -55,6 +55,12 @@ class Vector3D
 	/// Returns a tuple of (w, x, y, z).
 	Vector3D::Quaternion toQuaternion();
 
+	cv::Mat toRotationMatrix();
+	static Vector3D fromRotationMatrix(const cv::Mat &R);
+	static cv::Mat makeTransform(Vector3D position, Vector3D orientation);
+	static Vector3D positionFromTransform(const cv::Mat &T);
+	static Vector3D orientationFromTransform(const cv::Mat &T);
+
 	double setX(const double value);
 	double setY(const double value);
 	double setZ(const double value);

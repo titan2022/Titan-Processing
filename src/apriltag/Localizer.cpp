@@ -67,6 +67,31 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 
 void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, double size, double dt)
 {
+	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+	// Basic idea: convert the positions+orientations into 4x4 transforms, 
+	// then apply the formula
+	//     fieldToRobot = fieldToTag * cameraToTag.inv() * robotToCamera.inv()
+	// which is equivalent to
+	//     fieldToRobot = fieldToTag * tagToCamera * cameraToRobot
+	// (where * means matmul).
+
+	Apriltag cameraToTag_Apriltag = correctPerspective(id, tvec, rvec, size);
+	cv::Mat cameraToTag = Vector3D::makeTransform(cameraToTag_Apriltag.position, cameraToTag_Apriltag.rotation);
+	Apriltag fieldToTag_Apriltag = getGlobalTag(id).value();
+	cv::Mat fieldToTag = Vector3D::makeTransform(fieldToTag_Apriltag.position, fieldToTag_Apriltag.rotation);
+	cv::Mat robotToCamera = Vector3D::makeTransform(cam.position, cam.rotation);
+
+	cv::Mat fieldToRobot = fieldToTag * cameraToTag.inv() * robotToCamera.inv();
+	Apriltag fieldToRobot_Apriltag = Apriltag(id, Vector3D::positionFromTransform(fieldToRobot), Vector3D::orientationFromTransform(fieldToRobot), size);
+	
+	double tagDist = cameraToTag_Apriltag.position.getMagnitude();
+	filter.updateTag(fieldToRobot_Apriltag, tagDist, dt);
+}
+
+// Old localization code which also tried to deal with converting between WPILib and three.js coordinate systems
+#if 0
+void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, double size, double dt)
+{
 	Apriltag invTag = correctPerspective(id, tvec, rvec, size);
 
 	// Inverting tag position
@@ -123,6 +148,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
     // this->poseHandler(invTag.position, invTag.rotation);
 	filter.updateTag(invTag, tagDist, dt);
 }
+#endif
 
 void Localizer::step(double dt)
 {
