@@ -68,25 +68,19 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, double size, double dt)
 {
 	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
-	// Basic idea: convert the positions+orientations into 4x4 transforms, 
-	// then apply the formula
-	//     fieldToRobot = fieldToTag * cameraToTag.inv() * robotToCamera.inv()
-	// which is equivalent to
-	//     fieldToRobot = fieldToTag * tagToCamera * cameraToRobot
-	// (where * means matmul).
 
 	// Apriltag cameraToTag_Apriltag = correctPerspective(id, tvec, rvec, size);
 	// cv::Mat cameraToTag = Vector3D::makeTransform(cameraToTag_Apriltag.position, cameraToTag_Apriltag.rotation);
-	cv::Mat tagToCamera = Vector3D::makeTransform(tvec, rvec);
-	Apriltag fieldToTag_Apriltag = getGlobalTag(id).value();
-	cv::Mat fieldToTag = Vector3D::makeTransform(fieldToTag_Apriltag.position, fieldToTag_Apriltag.rotation);
-	cv::Mat robotToCamera = Vector3D::makeTransform(cam.position, cam.rotation);
+	cv::Mat tagToCamera = Vector3D::makeTransform(tvec, Vector3D::fromQuaternion(Vector3D::Quaternion::fromAxisAngle(Vector3D(rvec).getNormalized(), cv::norm(rvec))));
+	Apriltag tagToField_Apriltag = getGlobalTag(id).value();
+	cv::Mat tagToField = Vector3D::makeTransform(tagToField_Apriltag.position, tagToField_Apriltag.rotation);
+	// cv::Mat robotToCamera = Vector3D::makeTransform(cam.position, cam.rotation);
 
-	cv::Mat fieldToRobot = fieldToTag * tagToCamera * robotToCamera.inv();
+	cv::Mat fieldToRobot = tagToField * tagToCamera.inv(); // * robotToCamera.inv();
 	Apriltag fieldToRobot_Apriltag = Apriltag(id, Vector3D::positionFromTransform(fieldToRobot), Vector3D::orientationFromTransform(fieldToRobot), size);
 	
 	// double tagDist = cameraToTag_Apriltag.position.getMagnitude();
-	double tagDist = Vector3D(rvec).getMagnitude();
+	double tagDist = cv::norm(tvec);
 	filter.updateTag(fieldToRobot_Apriltag, tagDist, dt);
 }
 
