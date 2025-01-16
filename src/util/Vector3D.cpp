@@ -269,12 +269,12 @@ Vector3D::Quaternion Vector3D::Quaternion::operator*(Vector3D::Quaternion b)
 	return retval;
 }
 
-double Vector3D::Quaternion::dotProduct(Quaternion &other)
+double Vector3D::Quaternion::dotProduct(Quaternion other)
 {
 	return this->w * other.w + this->x * other.x + this->y * other.y + this->z * other.z;
 }
 
-bool Vector3D::Quaternion::isEquivalent(Quaternion &other)
+bool Vector3D::Quaternion::isEquivalent(Quaternion other)
 {
 	constexpr double TOLERANCE = 0.00001;
 	double dot = dotProduct(other);
