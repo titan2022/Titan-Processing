@@ -1,8 +1,5 @@
-#include <bitset>
 #include <climits>
 #include <cstring>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 #include <arpa/inet.h>
@@ -136,40 +133,19 @@ TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg
 
 TRBVector3D NetworkingClient::send_vector_c(char *msg, TRBVector3D v, bool withReply)
 {
-	VectorData data;
-
-	data.type = 'v';
-	strncpy(data.name, msg, NAME_LEN);
-	data.x = v.x;
-	data.y = v.y;
-	data.z = v.z;
-
-	size_t dataLength = sizeof(data);
-
-	const void *buffer = static_cast<void *>(&data);
-	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
-
-	if (withReply)
-	{
-		// Untested code
-		char replyBuffer[24];
-		::recvfrom(sock, replyBuffer, 24, 0, reinterpret_cast<sockaddr *>(&destination),
-				   (socklen_t *)sizeof(destination));
-		TRBVector3D *structVec = reinterpret_cast<TRBVector3D *>(replyBuffer);
-		return *structVec;
-	}
-
-	return (TRBVector3D){0, 0, 0};
+	Vector3D v_ = Vector3D{v.x, v.y, v.z};
+	Vector3D reply = send_vector(std::string(msg), v_, withReply);
+	return TRBVector3D{reply.getX(), reply.getY(), reply.getZ()};
 }
 
-std::array<double, 3> trbVectorToArray(TRBVector3D vec)
-{
-	std::array<double, 3> arr;
-	arr[0] = vec.x;
-	arr[1] = vec.y;
-	arr[2] = vec.z;
-	return arr;
-}
+// std::array<double, 3> trbVectorToArray(TRBVector3D vec)
+// {
+// 	std::array<double, 3> arr;
+// 	arr[0] = vec.x;
+// 	arr[1] = vec.y;
+// 	arr[2] = vec.z;
+// 	return arr;
+// }
 
 void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char *msg, TRBVector3D pos, TRBVector3D rot)
 {
@@ -178,17 +154,9 @@ void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char *msg, TRBVect
 
 void NetworkingClient::send_pose_c(char *msg, TRBVector3D pos, TRBVector3D rot)
 {
-	PoseData data;
-
-	data.type = 'p';
-	strncpy(data.name, msg, NAME_LEN);
-	data.pos = trbVectorToArray(pos);
-	data.rot = trbVectorToArray(rot);
-
-	size_t dataLength = sizeof(data);
-
-	const void *buffer = static_cast<void *>(&data);
-	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+	Vector3D pos_ = Vector3D{pos.x, pos.y, pos.z};
+	Vector3D rot_ = Vector3D{rot.x, rot.y, rot.z};
+	send_pose(std::string(msg), pos_, rot_);
 }
 
 void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char *msg, int id, TRBVector3D pos, TRBVector3D rot)
@@ -198,16 +166,7 @@ void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char *msg, int id, 
 
 void NetworkingClient::send_tag_c(char *msg, int id, TRBVector3D pos, TRBVector3D rot)
 {
-	TagData data;
-
-	data.type = 't';
-	strncpy(data.name, msg, NAME_LEN);
-	data.pos = trbVectorToArray(pos);
-	data.rot = trbVectorToArray(rot);
-	data.id = id;
-
-	size_t dataLength = sizeof(data);
-
-	const void *buffer = static_cast<void *>(&data);
-	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+	Vector3D pos_ = Vector3D{pos.x, pos.y, pos.z};
+	Vector3D rot_ = Vector3D{rot.x, rot.y, rot.z};
+	send_tag(std::string(msg), id, pos_, rot_);
 }
