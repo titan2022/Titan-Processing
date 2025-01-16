@@ -63,7 +63,7 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 	return {};
 }
 
-void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, double size, double dt)
+void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec, double size, double dt)
 {
 	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
 
