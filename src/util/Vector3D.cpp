@@ -435,8 +435,7 @@ cv::Mat Vector3D::makeTransform(Vector3D position, Vector3D orientation)
     T.at<double>(1, 3) = position.y;
     T.at<double>(2, 3) = position.z;
 
-	// 5) Bottom right of a transform is a 1
-	T.at<double>(3, 3) = 1;
+	// Because it's an identity matrix the bottom-right is already a 1
 
     return T;
 }
