@@ -18,6 +18,7 @@ Localizer::Localizer(Config &config, PoseFilter &filter, std::function<void(Vect
 }
 
 // Translates position origin from camera to tag
+// UNUSED - Determine whether this is still useful...
 Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double size)
 {
 	cv::Mat R(3, 3, CV_64FC1);
@@ -55,10 +56,7 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 	{
 		if (tagPair.second.id == id)
 		{
-            // Flip axis
             Apriltag globalTag = tagPair.second;
-            globalTag.position = Vector3D{globalTag.position.getX(), globalTag.position.getY(), globalTag.position.getZ()};
-            globalTag.rotation = Vector3D{globalTag.rotation.getX(), globalTag.rotation.getY(), globalTag.rotation.getZ()};
 			return globalTag;
 		}
 	}
@@ -88,6 +86,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 		fieldToRobot_Apriltag.position.getX(), fieldToRobot_Apriltag.position.getY(), fieldToRobot_Apriltag.position.getZ(),
 		fieldToRobot_Apriltag.rotation.getX(), fieldToRobot_Apriltag.rotation.getY(), fieldToRobot_Apriltag.rotation.getZ());
 	filter.updateTag(fieldToRobot_Apriltag, tagDist, dt);
+	// this->poseHandler(fieldToRobot_Apriltag.position, fieldToRobot_Apriltag.rotation);
 }
 
 // Old localization code which also tried to deal with converting between WPILib and three.js coordinate systems
@@ -154,8 +153,8 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 
 void Localizer::step(double dt)
 {
-	this->poseHandler(filter.position, filter.rotation);
 	filter.predict(dt);
+	this->poseHandler(filter.position, filter.rotation);
 }
 
 void Localizer::submitStepCommand(LocalizerStepCommand command)
