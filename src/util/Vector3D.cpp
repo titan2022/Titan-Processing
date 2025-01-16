@@ -318,21 +318,21 @@ cv::Mat Vector3D::toRotationMatrix()
     double cz = std::cos(z);
     double sz = std::sin(z);
 
-    // Rotation about X-axis (roll)
+    // Rotation about X-axis (pitch)
     cv::Mat Rx = (cv::Mat_<double>(3, 3) << 
         1,    0,    0,
         0,   cx,  -sx,
         0,   sx,   cx
     );
 
-    // Rotation about Y-axis (pitch)
+    // Rotation about Y-axis (yaw)
     cv::Mat Ry = (cv::Mat_<double>(3, 3) << 
          cz,   0,   sz,
           0,   1,    0,
         -sz,   0,   cz
     );
 
-    // Rotation about Z-axis (yaw)
+    // Rotation about Z-axis (roll)
     cv::Mat Rz = (cv::Mat_<double>(3, 3) << 
         cy,  -sy,   0,
         sy,   cy,   0,
@@ -349,31 +349,72 @@ Vector3D Vector3D::fromRotationMatrix(const cv::Mat &R)
 	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
 	// see also https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
 
+	// chatgpt's stuff looks incorrect, just following https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+
     // Sanity check: must be 3x3 and double
 	// Actually don't do this so we can apply this to transforms too
     // CV_Assert(R.rows == 3 && R.cols == 3 && R.type() == CV_64F);
 
     // Extract elements for clarity
-    double r00 = R.at<double>(0,0);
-    double r01 = R.at<double>(0,1);
-    double r02 = R.at<double>(0,2);
-    double r10 = R.at<double>(1,0);
-    double r11 = R.at<double>(1,1);
-    double r12 = R.at<double>(1,2);
-    double r20 = R.at<double>(2,0);
-    double r21 = R.at<double>(2,1);
-    double r22 = R.at<double>(2,2);
+    double r11 = R.at<double>(0,0);
+    double r12 = R.at<double>(0,1);
+    double r13 = R.at<double>(0,2);
+    double r21 = R.at<double>(1,0);
+    double r22 = R.at<double>(1,1);
+    double r23 = R.at<double>(1,2);
+    double r31 = R.at<double>(2,0);
+    double r32 = R.at<double>(2,1);
+    double r33 = R.at<double>(2,2);
 
-    // 1) pitch = -asin(r20)
-    double pitch = -std::asin(r20);
+	// phi = pitch = x
+	// theta = yaw = y
+    // psi = roll = z
 
-    // 2) roll = atan2(r21, r22)
-    double roll  = std::atan2(r21, r22);
+	//   row      col:1                                     2                                                3
+	//     1 [cos yaw cos pitch, sin roll sin yaw cos pitch - cos roll sin pitch, cos roll sin yaw cos pitch + sin roll sin pitch]
+	// R = 2 [cos yaw sin pitch, sin roll sin yaw sin pitch + cos roll cos pitch, cos roll sin yaw sin pitch - sin roll cos pitch]
+	//     3 [- sin yaw,         sin pitch cos yaw,                                cos roll cos yaw                              ]
+    
+	double roll, yaw, pitch;
 
-    // 3) yaw = atan2(r10, r00)
-    double yaw   = std::atan2(r10, r00);
+	// theta = yaw = y
+	// r20 = - sin yaw
+	yaw = -std::asin(r31);
 
-    return Vector3D(roll, yaw, pitch);
+	if(r31 != 1 && r31 != -1) { // if cos(yaw) != 0
+		double cosyaw = std::cos(yaw);
+
+		// psi = roll = x
+		// r32 / r33 = psi
+		// Naively, psi = arctan(r32 / r33)
+		// But "One must be careful in interpreting Equation 2. If cos(θ) > 0, then ψ =
+		//      atan2(R32, R33). However, when cos(θ) < 0, ψ = atan2(−R32, −R33)."
+		roll  = std::atan2(r32 / cosyaw, r33 / cosyaw);
+
+		// phi = pitch = z
+		// r21 / r11 = phi
+		// Naively, phi = arctan (r21 / r11)
+		// But similarly we need to use atan2 and divide the arguments by cosyaw
+		pitch   = std::atan2(r21 / cosyaw, r11 / cosyaw);
+	} else if (r31 == 1) { // if yaw = -pi/2
+		// arbitrarily let pitch = 0
+		pitch = 0;
+
+		// roll - pitch = atan2(r12, r13)
+		// => roll = pitch + atan2(r12, r13)
+		// and pitch = 0
+		roll = std::atan2(r12, r13);
+	} else { // r31 = -1, so yaw = pi/2
+		// arbitrarily let pitch = 0
+		pitch = 0;
+
+		// roll + pitch = atan2(-r12, -r13)
+		// => roll = -pitch + atan2(-r12, -r13)
+		// and pitch = 0
+		roll = std::atan2(-r12, -r13);
+	}
+
+    return Vector3D(pitch, yaw, roll);
 }
 
 cv::Mat Vector3D::makeTransform(Vector3D position, Vector3D orientation)
@@ -393,6 +434,9 @@ cv::Mat Vector3D::makeTransform(Vector3D position, Vector3D orientation)
     T.at<double>(0, 3) = position.x;
     T.at<double>(1, 3) = position.y;
     T.at<double>(2, 3) = position.z;
+
+	// 5) Bottom right of a transform is a 1
+	T.at<double>(3, 3) = 1;
 
     return T;
 }
