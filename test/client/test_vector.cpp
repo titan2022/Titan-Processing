@@ -65,3 +65,8 @@ TEST(VectorTest, QuaternionTest)
 {
 
 }
+
+TEST(VectorTest, RotationMatrixTest)
+{
+	
+}

@@ -269,6 +269,18 @@ Vector3D::Quaternion Vector3D::Quaternion::operator*(Vector3D::Quaternion b)
 	return retval;
 }
 
+double Vector3D::Quaternion::dotProduct(Quaternion &other)
+{
+	return this->w * other.w + this->x * other.x + this->y * other.y + this->z * other.z;
+}
+
+bool Vector3D::Quaternion::isEquivalent(Quaternion &other)
+{
+	constexpr double TOLERANCE = 0.00001;
+	double dot = dotProduct(other);
+	return (1 - dot < TOLERANCE) || (-1 - dot < TOLERANCE); // Dot product is approximately -1 or 1
+}
+
 Vector3D::Quaternion Vector3D::Quaternion::fromAxisAngle(Vector3D axis, double angle)
 {
 	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L275
@@ -327,15 +339,15 @@ cv::Mat Vector3D::toRotationMatrix()
 
     // Rotation about Y-axis (yaw)
     cv::Mat Ry = (cv::Mat_<double>(3, 3) << 
-         cz,   0,   sz,
+         cy,   0,   sy,
           0,   1,    0,
-        -sz,   0,   cz
+        -sy,   0,   cy
     );
 
     // Rotation about Z-axis (roll)
     cv::Mat Rz = (cv::Mat_<double>(3, 3) << 
-        cy,  -sy,   0,
-        sy,   cy,   0,
+        cz,  -sz,   0,
+        sz,   cz,   0,
          0,    0,   1
     );
 

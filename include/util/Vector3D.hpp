@@ -22,6 +22,8 @@ class Vector3D
 		Quaternion operator*(Quaternion);
 		static Quaternion fromAxisAngle(Vector3D axis, double angle);
 		static Quaternion fromWPILibQuaternion(Quaternion quat);
+		double dotProduct(Quaternion &other);
+		bool isEquivalent(Quaternion &other);
 	};
 
 	Vector3D(double x, double y, double z);
