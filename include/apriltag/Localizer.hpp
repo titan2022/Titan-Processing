@@ -21,8 +21,8 @@ class Localizer
 	{
 		int id;
 		Camera &cam;
-		cv::Vec3d &tvec;
-		cv::Vec3d &rvec;
+		cv::Vec3d tvec;
+		cv::Vec3d rvec;
 		double size;
 	};
 	struct LocalizerStepCommand

@@ -72,7 +72,6 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 	// Apriltag cameraToTag_Apriltag = correctPerspective(id, tvec, rvec, size);
 	// cv::Mat cameraToTag = Vector3D::makeTransform(cameraToTag_Apriltag.position, cameraToTag_Apriltag.rotation);
 	Vector3D::Quaternion tagToCamera_orientation = Vector3D::Quaternion::fromAxisAngle(Vector3D(rvec).getNormalized(), cv::norm(rvec));
-	tagToCamera_orientation = tagToCamera_orientation * Vector3D::Quaternion::fromAxisAngle(Vector3D(0, 1, 0), M_PI);
 	cv::Mat tagToCamera = Vector3D::makeTransform(tvec, Vector3D::fromQuaternion(tagToCamera_orientation));
 	Apriltag tagToField_Apriltag = getGlobalTag(id).value();
 	cv::Mat tagToField = Vector3D::makeTransform(tagToField_Apriltag.position, tagToField_Apriltag.rotation);
@@ -83,6 +82,11 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 	
 	// double tagDist = cameraToTag_Apriltag.position.getMagnitude();
 	double tagDist = cv::norm(tvec);
+
+	printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
+		cam.name.c_str(), id,
+		fieldToRobot_Apriltag.position.getX(), fieldToRobot_Apriltag.position.getY(), fieldToRobot_Apriltag.position.getZ(),
+		fieldToRobot_Apriltag.rotation.getX(), fieldToRobot_Apriltag.rotation.getY(), fieldToRobot_Apriltag.rotation.getZ());
 	filter.updateTag(fieldToRobot_Apriltag, tagDist, dt);
 }
 
