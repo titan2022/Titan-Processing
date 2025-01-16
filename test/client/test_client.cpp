@@ -29,8 +29,8 @@ void execServerTest(std::string cmd, std::promise<std::string> &&execPromise)
 TEST(ClientTest, ServerClientAllTypes)
 {
 	// std::cout << "bruh" << std::endl;
-	Config config(CONFIG_PATH, TAGS_PATH);
-
+	Config config((std::filesystem::current_path().parent_path() / CONFIG_PATH).string(),
+				  (std::filesystem::current_path().parent_path() / TAGS_PATH).string());
 	NetworkingClient client(config.ip, config.port);
 
 	std::promise<std::string> execPromise;
