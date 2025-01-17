@@ -70,45 +70,66 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 
 void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec, double size, double dt)
 {
-	RotationMatrix pitch180 = EulerAngles(M_PI, 0, 0).toRotationMatrix();
-	RotationMatrix yaw180 = EulerAngles(0, M_PI, 0).toRotationMatrix();
+    // Step 1: Convert rotation vector to rotation matrix in OPENCV coordinate system
+    RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
 
-	RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
-	// // The tag needs to be yawed 180 degrees in order to do calculations from an 
-	// // observer looking at the tag rather than the tag looking at the robot.
-	// 	* yaw180;
-	Transform tagInCameraFrame = Transform(
-		Translation(tvec, CoordinateSystem::OPENCV).convertToCoordinateSystem(CoordinateSystem::THREEJS), 
-		tagInCameraFrame_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS));
+    // Step 2: Convert translation and rotation to THREEJS coordinate system with compensation
+    Translation tagTranslation_OPENCV(tvec, CoordinateSystem::OPENCV);
+    Translation tagTranslation_THREEJS = tagTranslation_OPENCV.convertToCoordinateSystem(CoordinateSystem::THREEJS);
 
-	Apriltag tagInFieldFrame_Apriltag = getGlobalTag(id).value();
-	RotationMatrix tagInFieldFrame_orientation = tagInFieldFrame_Apriltag.rotation.toRotationMatrix();
-	// // The tag needs to be yawed 180 degrees in order to do calculations from an 
-	// // observer looking at the tag rather than the tag looking at the robot.
-	// 	* yaw180;
-	Transform tagInFieldFrame = Transform(tagInFieldFrame_Apriltag.position, tagInFieldFrame_orientation);
-	
-	Transform cameraInRobotFrame = Transform(cam.position, cam.rotation.toRotationMatrix());
+    RotationMatrix tagRotation_THREEJS = tagInCameraFrame_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS);
 
-	Transform robotInFieldFrame = tagInFieldFrame * tagInCameraFrame.inv() * cameraInRobotFrame.inv();
+    Transform tagInCameraFrame = Transform(tagTranslation_THREEJS, tagRotation_THREEJS);
 
-	Translation robotPosition = robotInFieldFrame.getPosition();
+    // Step 3: Retrieve AprilTag pose in field frame
+    Apriltag tagInFieldFrame_Apriltag = getGlobalTag(id).value();
+    Transform tagInFieldFrame = Transform(tagInFieldFrame_Apriltag.position, tagInFieldFrame_Apriltag.rotation.toRotationMatrix());
 
-	// We need to pitch the predicted robot 180 degrees, then yaw the predicted robot 180 degrees, to make it face the AprilTag if 
-	// the front camera is looking at the AprilTag.
-	// RotationMatrix robotOrientation = ((robotInFieldFrame.getOrientation() * pitch180) * yaw180);
-	RotationMatrix robotOrientation = robotInFieldFrame.getOrientation();
+    // Step 4: Retrieve camera pose in robot frame
+    Transform cameraInRobotFrame = Transform(cam.position, cam.rotation.toRotationMatrix());
 
-	Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotOrientation.toEulerAngles(), size);
-	
-	double tagDist = cv::norm(tvec);
+    // Step 5: Compute robot pose in field frame
+    Transform robotInFieldFrame = tagInFieldFrame * tagInCameraFrame.inv() * cameraInRobotFrame.inv();
 
-	printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
-		cam.name.c_str(), id,
-		robotInFieldFrame_Apriltag.position.getX(), robotInFieldFrame_Apriltag.position.getY(), robotInFieldFrame_Apriltag.position.getZ(),
-		robotInFieldFrame_Apriltag.rotation.x, robotInFieldFrame_Apriltag.rotation.y, robotInFieldFrame_Apriltag.rotation.z);
-	filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
-	this->poseHandler(robotInFieldFrame_Apriltag.position, robotInFieldFrame_Apriltag.rotation.coerceToVector3D());
+    // Step 6: Extract robot position and orientation
+    Translation robotPosition = robotInFieldFrame.getPosition();
+    RotationMatrix robotOrientation = robotInFieldFrame.getOrientation();
+
+    // Step 7: Apply Flipping to Position and Orientation
+
+    // Define the flipping matrix S to invert Y and Z axes
+    const cv::Mat flippingMatrix = (cv::Mat_<double>(3,3) << 
+        1,  0,  0,
+        0, -1,  0,
+        0,  0, -1);
+
+    // Flip the robot's position across the vertical and horizontal planes
+    robotPosition.x = robotPosition.x; // No change
+    robotPosition.y = -robotPosition.y; // Invert Y-axis
+    robotPosition.z = -robotPosition.z; // Invert Z-axis
+
+    // Flip the robot's orientation (Rotation Matrix)
+    cv::Mat R = robotOrientation.data; // Original rotation matrix
+    cv::Mat R_flipped = flippingMatrix * R * flippingMatrix; // Apply S * R * S
+
+    RotationMatrix robotOrientation_flipped = RotationMatrix(R_flipped, CoordinateSystem::THREEJS);
+
+    // Step 8: Convert robot orientation to Euler angles
+    EulerAngles robotEuler = robotOrientation_flipped.toEulerAngles();
+
+    // Step 9: Create Apriltag representation in field frame
+    Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotEuler, size);
+
+    // Step 10: Calculate tag distance
+    double tagDist = cv::norm(tvec);
+
+    // Step 11: Output and update
+    printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
+        cam.name.c_str(), id,
+        robotInFieldFrame_Apriltag.position.getX(), robotInFieldFrame_Apriltag.position.getY(), robotInFieldFrame_Apriltag.position.getZ(),
+        robotInFieldFrame_Apriltag.rotation.x, robotInFieldFrame_Apriltag.rotation.y, robotInFieldFrame_Apriltag.rotation.z);
+    filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
+    this->poseHandler(robotInFieldFrame_Apriltag.position, robotInFieldFrame_Apriltag.rotation.coerceToVector3D());
 }
 
 // Old localization code which also tried to deal with converting between WPILib and three.js coordinate systems
