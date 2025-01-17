@@ -457,16 +457,25 @@ RotationMatrix RotationMatrix::convertToCoordinateSystem(CoordinateSystem target
 {
 	if (coordinateSystem == CoordinateSystem::OPENCV && target == CoordinateSystem::THREEJS)
     {
-        // Define the 180-degree rotation around Z-axis
+        // Flip x and y axes
         cv::Mat S = (cv::Mat_<double>(3,3) << 
             -1,  0,  0,
              0, -1,  0,
              0,  0,  1);
 
-        // Perform the conversion: R_threejs = S * R_opencv * S
-        cv::Mat converted_rotation = S * data * S;
+        // Apply axis flipping to the rotation matrix
+        cv::Mat flipped_rotation = data * S;
 
-        return RotationMatrix(converted_rotation, target);
+        // Define a compensation matrix to negate pitch and roll
+        cv::Mat compensation = (cv::Mat_<double>(3,3) << 
+            1,  0,  0,
+            0, -1,  0,
+            0,  0, -1);
+
+        // Apply compensation
+        cv::Mat compensated_rotation = flipped_rotation * compensation;
+
+        return RotationMatrix(compensated_rotation, target);
     }
 	else
 	{
