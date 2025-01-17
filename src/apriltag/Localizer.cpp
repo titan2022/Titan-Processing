@@ -90,18 +90,14 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 	RotationMatrix yaw180 = EulerAngles(0, M_PI, 0).toRotationMatrix();
 	RotationMatrix robotOrientation = (robotInFieldFrame.getOrientation() * pitch180) * yaw180;
 
-	// EulerAngles robotAngles = robotInFieldFrame.getOrientation().toEulerAngles();
-	// // // Modify the pitch by 180 degrees
-	// // robotAngles.x += M_PI;
+	EulerAngles robotAngles = robotOrientation.toEulerAngles();
 
-	// // // Normalize the pitch angle to stay within [-π, π]
-	// // if (robotAngles.x > M_PI) {
-	// // 	robotAngles.x -= 2 * M_PI;
-	// // } else if (robotAngles.x < -M_PI) {
-	// // 	robotAngles.x += 2 * M_PI;
-	// // }
+	// We need to flip the pitch of the robot across the horizontal plane.
+	robotAngles.x = -robotAngles.x;
+	// We need to flip the roll of the robot.
+	robotAngles.z = -robotAngles.z;
 
-	Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotOrientation.toEulerAngles(), size);
+	Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotAngles, size);
 	
 	double tagDist = cv::norm(tvec);
 
