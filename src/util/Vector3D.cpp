@@ -1,5 +1,6 @@
 #include <array>
 #include <cmath>
+#include <opencv2/calib3d.hpp>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -18,11 +19,27 @@ Vector3D::Vector3D(double x, double y, double z)
 	this->z = z;
 }
 
+Vector3D::Vector3D(double x, double y, double z, CoordinateSystem coordinateSystem)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->coordinateSystem = coordinateSystem;
+}
+
 Vector3D::Vector3D(cv::Vec3d v)
 {
 	x = v[0];
 	y = v[1];
 	z = v[2];
+}
+
+Vector3D::Vector3D(cv::Vec3d v, CoordinateSystem _coordinateSystem)
+{
+	x = v[0];
+	y = v[1];
+	z = v[2];
+	coordinateSystem = _coordinateSystem;
 }
 
 Vector3D::Vector3D(std::vector<double> v)
@@ -32,11 +49,27 @@ Vector3D::Vector3D(std::vector<double> v)
 	z = v[2];
 }
 
+Vector3D::Vector3D(std::vector<double> v, CoordinateSystem _coordinateSystem)
+{
+	x = v[0];
+	y = v[1];
+	z = v[2];
+	coordinateSystem = _coordinateSystem;
+}
+
 Vector3D::Vector3D(double (&v)[])
 {
 	x = v[0];
 	y = v[1];
 	z = v[2];
+}
+
+Vector3D::Vector3D(double (&v)[], CoordinateSystem _coordinateSystem)
+{
+	x = v[0];
+	y = v[1];
+	z = v[2];
+	coordinateSystem = _coordinateSystem;
 }
 
 struct StructVector3D
@@ -172,7 +205,7 @@ std::array<double, 3> Vector3D::toArray()
 
 Vector3D Vector3D::fromWPILibPosition(double x, double y, double z, double fieldLength, double fieldWidth)
 {
-	return Vector3D(x - fieldLength/2.0, z, -(y - fieldWidth/2.0));
+	return Vector3D(x - fieldLength/2.0, z, -(y - fieldWidth/2.0), CoordinateSystem::THREEJS);
 }
 
 /**
@@ -200,270 +233,6 @@ Vector3D Vector3D::matToVec(double (&mat)[])
 
 	Vector3D result(pre[0] * theta, pre[1] * theta, pre[2] * theta);
 	return result;
-}
-
-Vector3D Vector3D::fromQuaternion(double w, double x, double y, double z)
-{
-	//code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code_2
-
-
-	//x-axis
-	double sinr_cosp = 2*(w*x+y*z);
-    double cosr_cosp = 1-2*(x*x+y*y);
-    double roll = std::atan2(sinr_cosp, cosr_cosp);
-
-	//y-axis
-    double sinp = std::sqrt(1+2*(w*y-x*z));
-    double cosp = std::sqrt(1-2*(w*y-x*z));
-    double pitch = 2 * std::atan2(sinp, cosp) - M_PI / 2;
-
-    //z-axis
-    double siny_cosp = 2*(w*z+x*y);
-    double cosy_cosp = 1-2*(y*y+z*z);
-    double yaw = std::atan2(siny_cosp, cosy_cosp);
-
-	Vector3D result(roll, pitch, yaw);
-	return result;
-}
-
-Vector3D Vector3D::fromQuaternion(Vector3D::Quaternion quaternion)
-{
-	return fromQuaternion(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-}
-
-Vector3D Vector3D::fromWPILibQuaternion(double w, double x, double y, double z)
-{
-	return fromWPILibQuaternion({w, x, y, z});	
-}
-
-Vector3D Vector3D::fromWPILibQuaternion(Vector3D::Quaternion quat)
-{
-	return fromQuaternion(Vector3D::Quaternion::fromWPILibQuaternion(quat));
-}
-
-Vector3D::Quaternion Vector3D::Quaternion::fromWPILibQuaternion(Vector3D::Quaternion quat)
-{
-	// FIXME: For some reason this doesn't work for barge even though the equivalent code in Titan-Dashboard does
-	double ninety = M_PI / 2;
-	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety*3); 
-	quat.y = -quat.y;
-	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety); 
-	quat = quat * Vector3D::Quaternion::fromAxisAngle(Vector3D(0, 1, 0), ninety); 
-	return quat;
-}
-
-Vector3D::Quaternion Vector3D::Quaternion::operator*(Vector3D::Quaternion b)
-{
-	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L499
-
-	double qax = this->x, qay = this->y, qaz = this->z, qaw = this->w;
-	double qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
-
-	Vector3D::Quaternion retval;
-
-	retval.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
-	retval.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
-	retval.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
-	retval.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
-
-	return retval;
-}
-
-double Vector3D::Quaternion::dotProduct(Quaternion other)
-{
-	return this->w * other.w + this->x * other.x + this->y * other.y + this->z * other.z;
-}
-
-bool Vector3D::Quaternion::isEquivalent(Quaternion other)
-{
-	constexpr double TOLERANCE = 0.00001;
-	double dot = dotProduct(other);
-	return (1 - dot < TOLERANCE) || (-1 - dot < TOLERANCE); // Dot product is approximately -1 or 1
-}
-
-Vector3D::Quaternion Vector3D::Quaternion::fromAxisAngle(Vector3D axis, double angle)
-{
-	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L275
-	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
-
-	// assumes axis is normalized
-	double halfAngle = angle / 2;
-	double s = sin(halfAngle);
-
-	Vector3D::Quaternion quat;
-
-	quat.x = axis.x * s;
-	quat.y = axis.y * s;
-	quat.z = axis.z * s;
-	quat.w = cos(halfAngle);
-
-	return quat;
-}
-
-Vector3D::Quaternion Vector3D::toQuaternion()
-{
-	// code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code
-
-	double cr = cos(x * 0.5);
-	double sr = sin(x * 0.5);
-	double cp = cos(y * 0.5);
-	double sp = sin(y * 0.5);
-	double cy = cos(z * 0.5);
-	double sy = sin(z * 0.5);
-
-	double w = cr * cp * cy + sr * sp * sy;
-	double x = sr * cp * cy - cr * sp * sy;
-	double y = cr * sp * cy + sr * cp * sy;
-	double z = cr * cp * sy - sr * sp * cy;
-	return {w, x, y, z};
-}
-
-cv::Mat Vector3D::toRotationMatrix()
-{
-    // https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
-
-	// Precompute sines and cosines
-    double cx = std::cos(x);
-    double sx = std::sin(x);
-    double cy = std::cos(y);
-    double sy = std::sin(y);
-    double cz = std::cos(z);
-    double sz = std::sin(z);
-
-    // Rotation about X-axis (pitch)
-    cv::Mat Rx = (cv::Mat_<double>(3, 3) << 
-        1,    0,    0,
-        0,   cx,  -sx,
-        0,   sx,   cx
-    );
-
-    // Rotation about Y-axis (yaw)
-    cv::Mat Ry = (cv::Mat_<double>(3, 3) << 
-         cy,   0,   sy,
-          0,   1,    0,
-        -sy,   0,   cy
-    );
-
-    // Rotation about Z-axis (roll)
-    cv::Mat Rz = (cv::Mat_<double>(3, 3) << 
-        cz,  -sz,   0,
-        sz,   cz,   0,
-         0,    0,   1
-    );
-
-    // The combined rotation: Rz * Ry * Rx
-    cv::Mat R = Rz * Ry * Rx;
-    return R;
-}
-
-Vector3D Vector3D::fromRotationMatrix(const cv::Mat &R)
-{
-	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
-	// see also https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
-
-	// chatgpt's stuff looks incorrect, just following https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
-
-    // Sanity check: must be 3x3 and double
-	// Actually don't do this so we can apply this to transforms too
-    // CV_Assert(R.rows == 3 && R.cols == 3 && R.type() == CV_64F);
-
-    // Extract elements for clarity
-    double r11 = R.at<double>(0,0);
-    double r12 = R.at<double>(0,1);
-    double r13 = R.at<double>(0,2);
-    double r21 = R.at<double>(1,0);
-    double r22 = R.at<double>(1,1);
-    double r23 = R.at<double>(1,2);
-    double r31 = R.at<double>(2,0);
-    double r32 = R.at<double>(2,1);
-    double r33 = R.at<double>(2,2);
-
-	// phi = pitch = x
-	// theta = yaw = y
-    // psi = roll = z
-
-	//   row      col:1                                     2                                                3
-	//     1 [cos yaw cos pitch, sin roll sin yaw cos pitch - cos roll sin pitch, cos roll sin yaw cos pitch + sin roll sin pitch]
-	// R = 2 [cos yaw sin pitch, sin roll sin yaw sin pitch + cos roll cos pitch, cos roll sin yaw sin pitch - sin roll cos pitch]
-	//     3 [- sin yaw,         sin pitch cos yaw,                                cos roll cos yaw                              ]
-    
-	double roll, yaw, pitch;
-
-	// theta = yaw = y
-	// r20 = - sin yaw
-	yaw = -std::asin(r31);
-
-	if(r31 != 1 && r31 != -1) { // if cos(yaw) != 0
-		double cosyaw = std::cos(yaw);
-
-		// psi = roll = x
-		// r32 / r33 = psi
-		// Naively, psi = arctan(r32 / r33)
-		// But "One must be careful in interpreting Equation 2. If cos(θ) > 0, then ψ =
-		//      atan2(R32, R33). However, when cos(θ) < 0, ψ = atan2(−R32, −R33)."
-		roll  = std::atan2(r32 / cosyaw, r33 / cosyaw);
-
-		// phi = pitch = z
-		// r21 / r11 = phi
-		// Naively, phi = arctan (r21 / r11)
-		// But similarly we need to use atan2 and divide the arguments by cosyaw
-		pitch   = std::atan2(r21 / cosyaw, r11 / cosyaw);
-	} else if (r31 == 1) { // if yaw = -pi/2
-		// arbitrarily let pitch = 0
-		pitch = 0;
-
-		// roll - pitch = atan2(r12, r13)
-		// => roll = pitch + atan2(r12, r13)
-		// and pitch = 0
-		roll = std::atan2(r12, r13);
-	} else { // r31 = -1, so yaw = pi/2
-		// arbitrarily let pitch = 0
-		pitch = 0;
-
-		// roll + pitch = atan2(-r12, -r13)
-		// => roll = -pitch + atan2(-r12, -r13)
-		// and pitch = 0
-		roll = std::atan2(-r12, -r13);
-	}
-
-    return Vector3D(pitch, yaw, roll);
-}
-
-cv::Mat Vector3D::makeTransform(Vector3D position, Vector3D orientation)
-{
-	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
-
-	// 1) Compute 3x3 rotation
-    cv::Mat R = orientation.toRotationMatrix();
-
-    // 2) Construct 4x4 homogeneous matrix (initialize to identity)
-    cv::Mat T = cv::Mat::eye(4, 4, CV_64F);
-
-    // 3) Copy rotation block into the top-left
-    R.copyTo(T(cv::Rect(0, 0, 3, 3)));  // Region of interest: columns 0..2, rows 0..2
-
-    // 4) Set translation in the top-right
-    T.at<double>(0, 3) = position.x;
-    T.at<double>(1, 3) = position.y;
-    T.at<double>(2, 3) = position.z;
-
-	// Because it's an identity matrix the bottom-right is already a 1
-
-    return T;
-}
-
-Vector3D Vector3D::positionFromTransform(const cv::Mat &T)
-{
-	double x = T.at<double>(0, 3);
-	double y = T.at<double>(1, 3);
-	double z = T.at<double>(2, 3);
-
-	return Vector3D(x, y, z);
-}
-
-Vector3D Vector3D::orientationFromTransform(const cv::Mat &T)
-{
-	return fromRotationMatrix(T); // the rotation matrix is the top left corner of the transform
 }
 
 double Vector3D::setX(const double value)
@@ -640,4 +409,369 @@ const double Vector3D::operator[](const int index)
 	}
 
 	return 0;
+}
+
+///// Coordinate system /////
+
+std::string titan::nameOfCoordinateSystem(CoordinateSystem coordinateSystem)
+{
+	switch(coordinateSystem) {
+		case UNKNOWN: return "UNKNOWN";
+		case THREEJS: return "THREEJS";
+		case OPENCV: return "OPENCV";
+		case WPILIB: return "WPILIB";
+	}
+}
+
+///// Incorrect use of Vector3D for euler angles /////
+
+EulerAngles Vector3D::coerceToEulerAngles()
+{
+	return {x, y, z, coordinateSystem};
+}
+
+Vector3D EulerAngles::coerceToVector3D()
+{
+	return {x, y, z, coordinateSystem};
+}
+
+///// Translations /////
+
+Translation Translation::convertToCoordinateSystem(CoordinateSystem target)
+{
+	if (coordinateSystem == CoordinateSystem::OPENCV && target == CoordinateSystem::THREEJS)
+	{
+		return {-x, -y, z, target};
+	}
+	else
+	{
+		throw std::domain_error(std::string("conversion between translations of ") + nameOfCoordinateSystem(coordinateSystem) 
+			+ " coordinate system and " + nameOfCoordinateSystem(target)
+			+ " coordinate system is not yet supported.");
+	}
+}
+
+///// Rotation matrix /////
+
+RotationMatrix RotationMatrix::convertToCoordinateSystem(CoordinateSystem target)
+{
+	cv::Mat S;
+	if (coordinateSystem == CoordinateSystem::OPENCV && target == CoordinateSystem::THREEJS)
+	{
+		// Flip x, flip y, keep z the same
+		S = (cv::Mat_<double>(3,3) << 
+             -1,  0,  0,
+              0, -1,  0,
+              0,  0,  1);
+	}
+	else
+	{
+		throw std::domain_error(std::string("conversion between rotation matrices of ") + nameOfCoordinateSystem(coordinateSystem) 
+			+ " coordinate system and " + nameOfCoordinateSystem(target)
+			+ " coordinate system is not yet supported.");
+	}
+
+	return RotationMatrix(data * S, target);
+}
+
+RotationMatrix RotationMatrix::fromRotationVector(cv::Vec3d rvec, CoordinateSystem coordinateSystem)
+{
+	cv::Mat data;
+	cv::Rodrigues(rvec, data);
+	return RotationMatrix(data, coordinateSystem);
+}
+
+///// Rotation quaternions /////
+
+RotationQuaternion RotationQuaternion::convertToCoordinateSystem(CoordinateSystem target)
+{
+	RotationQuaternion quat = *this;
+
+	if (coordinateSystem == CoordinateSystem::WPILIB && target == CoordinateSystem::THREEJS)
+	{
+		double ninety = M_PI / 2;
+		quat = quat * RotationQuaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety*3); 
+		quat.y = -quat.y;
+		quat = quat * RotationQuaternion::fromAxisAngle(Vector3D(1, 0, 0), ninety); 
+		quat = quat * RotationQuaternion::fromAxisAngle(Vector3D(0, 1, 0), ninety); 
+	}
+	else
+	{
+		throw std::domain_error(std::string("conversion between rotation quaternions of ") + nameOfCoordinateSystem(coordinateSystem) 
+			+ " coordinate system and " + nameOfCoordinateSystem(target)
+			+ " coordinate system is not yet supported.");
+	}
+
+	return quat;
+}
+
+RotationQuaternion RotationQuaternion::operator*(RotationQuaternion b)
+{
+	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L499
+
+	double qax = this->x, qay = this->y, qaz = this->z, qaw = this->w;
+	double qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
+
+	RotationQuaternion retval;
+
+	retval.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+	retval.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+	retval.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+	retval.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+	return retval;
+}
+
+double RotationQuaternion::dotProduct(RotationQuaternion other)
+{
+	return this->w * other.w + this->x * other.x + this->y * other.y + this->z * other.z;
+}
+
+bool RotationQuaternion::isEquivalent(RotationQuaternion other)
+{
+	constexpr double TOLERANCE = 0.00001;
+	double dot = dotProduct(other);
+	return (1 - dot < TOLERANCE) || (-1 - dot < TOLERANCE); // Dot product is approximately -1 or 1
+}
+
+RotationQuaternion RotationQuaternion::fromAxisAngle(Vector3D axis, double angle)
+{
+	// https://github.com/mrdoob/three.js/blob/d9ca4dc0104b05c6421e22d30346abafd66894c4/src/math/Quaternion.js#L275
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+
+	// assumes axis is normalized
+	double halfAngle = angle / 2;
+	double s = sin(halfAngle);
+
+	RotationQuaternion quat;
+
+	quat.x = axis.getX() * s;
+	quat.y = axis.getY() * s;
+	quat.z = axis.getZ() * s;
+	quat.w = cos(halfAngle);
+
+	return quat;
+}
+
+///// Euler angles /////
+
+EulerAngles EulerAngles::convertToCoordinateSystem(CoordinateSystem target)
+{
+	EulerAngles angles = *this;
+
+	if (0) { }
+	else
+	{
+		throw std::domain_error(std::string("conversion between euler angles of ") + nameOfCoordinateSystem(coordinateSystem) 
+			+ " coordinate system and " + nameOfCoordinateSystem(target)
+			+ " coordinate system is not yet supported.");
+	}
+
+	return angles;
+}
+
+///// Transforms /////
+
+Transform::Transform(Translation position, RotationMatrix orientation)
+{
+	cv::Mat R = orientation.data;
+
+    // 2) Construct 4x4 homogeneous matrix (initialize to identity)
+    cv::Mat T = cv::Mat::eye(4, 4, CV_64F);
+
+    // 3) Copy rotation block into the top-left
+    R.copyTo(T(cv::Rect(0, 0, 3, 3)));  // Region of interest: columns 0..2, rows 0..2
+
+    // 4) Set translation in the top-right
+    T.at<double>(0, 3) = position.getX();
+    T.at<double>(1, 3) = position.getY();
+    T.at<double>(2, 3) = position.getZ();
+
+	// Because it's an identity matrix the bottom-right is already a 1
+
+    data = T;
+	coordinateSystem = orientation.coordinateSystem;
+}
+
+Transform::Transform(cv::Mat data, CoordinateSystem coordinateSystem)
+	: data(data), coordinateSystem(coordinateSystem)
+{ }
+
+Translation Transform::getPosition()
+{
+	double x = data.at<double>(0, 3);
+	double y = data.at<double>(1, 3);
+	double z = data.at<double>(2, 3);
+
+	return Translation(x, y, z, coordinateSystem);
+}
+
+RotationMatrix Transform::getOrientation()
+{
+	return {data(cv::Rect(0, 0, 3, 3)).clone(), coordinateSystem}; // the rotation matrix is the top left corner of the transform
+}
+
+Transform Transform::inv()
+{
+	return {data.inv(), coordinateSystem};
+}
+
+Transform Transform::operator*(Transform other)
+{
+	return {data * other.data, coordinateSystem};
+}
+
+///// Euler angles <-> Rotation matrix /////
+
+RotationMatrix EulerAngles::toRotationMatrix()
+{
+    // https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+
+	// Precompute sines and cosines
+    double cx = std::cos(x);
+    double sx = std::sin(x);
+    double cy = std::cos(y);
+    double sy = std::sin(y);
+    double cz = std::cos(z);
+    double sz = std::sin(z);
+
+    // Rotation about X-axis (pitch)
+    cv::Mat Rx = (cv::Mat_<double>(3, 3) << 
+        1,    0,    0,
+        0,   cx,  -sx,
+        0,   sx,   cx
+    );
+
+    // Rotation about Y-axis (yaw)
+    cv::Mat Ry = (cv::Mat_<double>(3, 3) << 
+         cy,   0,   sy,
+          0,   1,    0,
+        -sy,   0,   cy
+    );
+
+    // Rotation about Z-axis (roll)
+    cv::Mat Rz = (cv::Mat_<double>(3, 3) << 
+        cz,  -sz,   0,
+        sz,   cz,   0,
+         0,    0,   1
+    );
+
+    // The combined rotation: Rz * Ry * Rx
+    cv::Mat R = Rz * Ry * Rx;
+    return {R, coordinateSystem};
+}
+
+EulerAngles RotationMatrix::toEulerAngles()
+{
+	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+	// see also https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+
+	// chatgpt's stuff looks incorrect, just following https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+
+    // Sanity check: must be 3x3 and double
+	// Actually don't do this so we can apply this to transforms too
+    // CV_Assert(R.rows == 3 && R.cols == 3 && R.type() == CV_64F);
+
+    // Extract elements for clarity
+    double r11 = data.at<double>(0,0);
+    double r12 = data.at<double>(0,1);
+    double r13 = data.at<double>(0,2);
+    double r21 = data.at<double>(1,0);
+    double r22 = data.at<double>(1,1);
+    double r23 = data.at<double>(1,2);
+    double r31 = data.at<double>(2,0);
+    double r32 = data.at<double>(2,1);
+    double r33 = data.at<double>(2,2);
+
+	// phi = pitch = x
+	// theta = yaw = y
+    // psi = roll = z
+
+	//   row      col:1                                     2                                                3
+	//     1 [cos yaw cos pitch, sin roll sin yaw cos pitch - cos roll sin pitch, cos roll sin yaw cos pitch + sin roll sin pitch]
+	// R = 2 [cos yaw sin pitch, sin roll sin yaw sin pitch + cos roll cos pitch, cos roll sin yaw sin pitch - sin roll cos pitch]
+	//     3 [- sin yaw,         sin pitch cos yaw,                                cos roll cos yaw                              ]
+    
+	double roll, yaw, pitch;
+
+	// theta = yaw = y
+	// r20 = - sin yaw
+	yaw = -std::asin(r31);
+
+	if(r31 != 1 && r31 != -1) { // if cos(yaw) != 0
+		double cosyaw = std::cos(yaw);
+
+		// psi = roll = x
+		// r32 / r33 = psi
+		// Naively, psi = arctan(r32 / r33)
+		// But "One must be careful in interpreting Equation 2. If cos(θ) > 0, then ψ =
+		//      atan2(R32, R33). However, when cos(θ) < 0, ψ = atan2(−R32, −R33)."
+		roll  = std::atan2(r32 / cosyaw, r33 / cosyaw);
+
+		// phi = pitch = z
+		// r21 / r11 = phi
+		// Naively, phi = arctan (r21 / r11)
+		// But similarly we need to use atan2 and divide the arguments by cosyaw
+		pitch   = std::atan2(r21 / cosyaw, r11 / cosyaw);
+	} else if (r31 == 1) { // if yaw = -pi/2
+		// arbitrarily let pitch = 0
+		pitch = 0;
+
+		// roll - pitch = atan2(r12, r13)
+		// => roll = pitch + atan2(r12, r13)
+		// and pitch = 0
+		roll = std::atan2(r12, r13);
+	} else { // r31 = -1, so yaw = pi/2
+		// arbitrarily let pitch = 0
+		pitch = 0;
+
+		// roll + pitch = atan2(-r12, -r13)
+		// => roll = -pitch + atan2(-r12, -r13)
+		// and pitch = 0
+		roll = std::atan2(-r12, -r13);
+	}
+
+    return {pitch, yaw, roll, coordinateSystem};
+}
+
+///// Euler angles <-> Rotation quaternion /////
+
+EulerAngles RotationQuaternion::toEulerAngles()
+{
+	//code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code_2
+
+	//x-axis
+	double sinr_cosp = 2*(w*x+y*z);
+    double cosr_cosp = 1-2*(x*x+y*y);
+    double pitch_x = std::atan2(sinr_cosp, cosr_cosp);
+
+	//y-axis
+    double sinp = std::sqrt(1+2*(w*y-x*z));
+    double cosp = std::sqrt(1-2*(w*y-x*z));
+    double yaw_y = 2 * std::atan2(sinp, cosp) - M_PI / 2;
+
+    //z-axis
+    double siny_cosp = 2*(w*z+x*y);
+    double cosy_cosp = 1-2*(y*y+z*z);
+    double roll_z = std::atan2(siny_cosp, cosy_cosp);
+
+	return {pitch_x, yaw_y, roll_z, coordinateSystem};
+}
+
+RotationQuaternion EulerAngles::toRotationQuaternion()
+{
+	// code from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_code
+
+	double cr = cos(x * 0.5);
+	double sr = sin(x * 0.5);
+	double cp = cos(y * 0.5);
+	double sp = sin(y * 0.5);
+	double cy = cos(z * 0.5);
+	double sy = sin(z * 0.5);
+
+	double w = cr * cp * cy + sr * sp * sy;
+	double x = sr * cp * cy - cr * sp * sy;
+	double y = cr * sp * cy + sr * cp * sy;
+	double z = cr * cp * sy - sr * sp * cy;
+	return {w, x, y, z, coordinateSystem};
 }

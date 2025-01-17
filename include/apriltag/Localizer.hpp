@@ -30,7 +30,8 @@ class Localizer
 		std::vector<AddApriltag> apriltags;
 		std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>> timestamp;
 	};
-	Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D &, Vector3D &)> poseHandler);
+	Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D, Vector3D)> poseHandler);
+
 	void addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec, double size, double dt);
 	void step(double dt);
 	Vector3D position;
@@ -43,7 +44,7 @@ class Localizer
 	std::optional<Apriltag> getGlobalTag(int id);
 	Config &config;
 	PoseFilter &filter;
-	std::function<void(Vector3D &, Vector3D &)> poseHandler;
+	std::function<void(Vector3D, Vector3D)> poseHandler;
 
 	std::queue<LocalizerStepCommand> commandQueue;
 	std::condition_variable commandQueueCondition;

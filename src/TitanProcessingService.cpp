@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
 	NetworkingClient client(config.ip, config.port);
 	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
-	auto clientPoseSender = [&](Vector3D &pos, Vector3D &rot) {
+	auto clientPoseSender = [&](Vector3D pos, Vector3D rot) {
 		client.send_pose("pose", pos, rot);
 		dashboardClient.send_pose("pose", pos, rot);
 	};

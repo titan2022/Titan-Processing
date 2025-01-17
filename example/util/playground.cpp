@@ -12,12 +12,12 @@ int main(int argc, char const *argv[])
     // Transform tests
     #if 1
     srand( (unsigned)time(NULL) );
-    Vector3D startpos = {0, 0, 0};
-    cv::Mat start = Vector3D::makeTransform(startpos, {0, 0, 0});
+    Translation startpos = {0, 0, 0};
+    Transform start = Transform(startpos, EulerAngles(0, 0, 0).toRotationMatrix());
     Vector3D translation = {rand() * ((2 * M_PI) / RAND_MAX), rand() * ((2 * M_PI) / RAND_MAX), rand() * ((2 * M_PI) / RAND_MAX)};
-    cv::Mat transform = Vector3D::makeTransform(translation, {0, 0, 0});
-    cv::Mat end = start * transform;
-    Vector3D endpos = Vector3D::positionFromTransform(transform);
+    Transform transform = Transform(translation, EulerAngles(0, 0, 0).toRotationMatrix());
+    Transform end = start * transform;
+    Translation endpos = transform.getPosition();
     if(endpos == translation)
     {
         printf("Yay, transform works! (dx = %f, dy = %f, dz = %f)\n", translation.getX(), translation.getY(), translation.getZ());
@@ -27,16 +27,16 @@ int main(int argc, char const *argv[])
     #endif
 
     // Rotation matrix tests
-    #if 0
+    #if 1
 	srand( (unsigned)time(NULL) );
-    Vector3D vec = {rand() * ((2 * M_PI) / RAND_MAX), rand() * ((2 * M_PI) / RAND_MAX), rand() * ((2 * M_PI) / RAND_MAX)};
-    cv::Mat mat = vec.toRotationMatrix();
-    Vector3D vecprime = Vector3D::fromRotationMatrix(mat);
-    if(vec.toQuaternion().isEquivalent(vecprime.toQuaternion()))
+    EulerAngles vec = {rand() * ((2 * M_PI) / RAND_MAX), rand() * ((2 * M_PI) / RAND_MAX), rand() * ((2 * M_PI) / RAND_MAX)};
+    RotationMatrix mat = vec.toRotationMatrix();
+    EulerAngles vecprime = mat.toEulerAngles();
+    if(vec.toRotationQuaternion().isEquivalent(vecprime.toRotationQuaternion()))
     {
-        printf("Yay, rotation matrix conversion works! (pitch = %f, yaw = %f, roll = %f)\n", vec.getX(), vec.getY(), vec.getZ());
+        printf("Yay, rotation matrix conversion works! (pitch = %f, yaw = %f, roll = %f)\n", vec.x, vec.y, vec.z);
     } else {
-        printf("Rotation matrix conversion failed! (pitch = %f, yaw = %f, roll = %f)\n", vec.getX(), vec.getY(), vec.getZ());
+        printf("Rotation matrix conversion failed! (pitch = %f, yaw = %f, roll = %f)\n", vec.x, vec.y, vec.z);
     }
     #endif
     return 0;

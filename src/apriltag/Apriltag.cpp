@@ -9,21 +9,23 @@ using namespace titan;
 // 	size = -1;
 // }
 
-Apriltag::Apriltag(int id, Vector3D position, Vector3D rotation, double size)
+Apriltag::Apriltag(int id, Translation position, EulerAngles rotation, double size)
 	: id(id), position(position), rotation(rotation), size(size)
 {
 	size = -1;
 }
 
-Apriltag &Apriltag::operator=(const Apriltag &other)
-{
-	if (this != &other)
-	{
-		id = other.id;
-		position = other.position;
-		position = other.rotation;
-		size = other.size;
-	}
+// Buggy operator= which is unnecessary
 
-	return *this;
-}
+// Apriltag &Apriltag::operator=(const Apriltag &other)
+// {
+// 	if (this != &other)
+// 	{
+// 		id = other.id;
+// 		position = other.position;
+// 		rotation = other.rotation;
+// 		size = other.size;
+// 	}
+
+// 	return *this;
+// }

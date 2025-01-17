@@ -12,13 +12,14 @@
 
 using namespace titan;
 
-Localizer::Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D &, Vector3D &)> poseHandler)
+Localizer::Localizer(Config &config, PoseFilter &filter, std::function<void(Vector3D, Vector3D)> poseHandler)
 	: config(config), filter(filter), poseHandler(poseHandler)
 {
 }
 
 // Translates position origin from camera to tag
 // UNUSED - Determine whether this is still useful...
+# if 0
 Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double size)
 {
 	cv::Mat R(3, 3, CV_64FC1);
@@ -40,7 +41,10 @@ Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double siz
 
 	return newTag;
 }
+#endif
 
+// FIXME - What is this for? Is it really valid to subtract Euler angles?
+#if 0
 Apriltag toGlobalPose(Apriltag &relative, Apriltag &global)
 {
 	Vector3D newPos = global.position - relative.position;
@@ -49,6 +53,7 @@ Apriltag toGlobalPose(Apriltag &relative, Apriltag &global)
 	Apriltag result(relative.id, newPos, newRot, relative.size);
 	return result;
 }
+#endif
 
 std::optional<Apriltag> Localizer::getGlobalTag(int id)
 {
@@ -69,14 +74,16 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 
 	// Apriltag cameraToTag_Apriltag = correctPerspective(id, tvec, rvec, size);
 	// cv::Mat cameraToTag = Vector3D::makeTransform(cameraToTag_Apriltag.position, cameraToTag_Apriltag.rotation);
-	Vector3D::Quaternion tagToCamera_orientation = Vector3D::Quaternion::fromAxisAngle(Vector3D(rvec).getNormalized(), cv::norm(rvec));
-	cv::Mat tagToCamera = Vector3D::makeTransform(tvec, Vector3D::fromQuaternion(tagToCamera_orientation));
+	RotationMatrix tagToCamera_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
+	Transform tagToCamera = Transform(
+		Translation(tvec, CoordinateSystem::OPENCV).convertToCoordinateSystem(CoordinateSystem::THREEJS), 
+		tagToCamera_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS));
 	Apriltag tagToField_Apriltag = getGlobalTag(id).value();
-	cv::Mat tagToField = Vector3D::makeTransform(tagToField_Apriltag.position, tagToField_Apriltag.rotation);
-	cv::Mat robotToCamera = Vector3D::makeTransform(cam.position, cam.rotation);
+	Transform tagToField = Transform(tagToField_Apriltag.position, tagToField_Apriltag.rotation.toRotationMatrix());
+	Transform robotToCamera = Transform(cam.position, cam.rotation.toRotationMatrix());
 
-	cv::Mat fieldToRobot = tagToField * tagToCamera.inv() * robotToCamera.inv();
-	Apriltag fieldToRobot_Apriltag = Apriltag(id, Vector3D::positionFromTransform(fieldToRobot), Vector3D::orientationFromTransform(fieldToRobot), size);
+	Transform fieldToRobot = tagToField * tagToCamera.inv() * robotToCamera.inv();
+	Apriltag fieldToRobot_Apriltag = Apriltag(id, fieldToRobot.getPosition(), fieldToRobot.getOrientation().toEulerAngles(), size);
 	
 	// double tagDist = cameraToTag_Apriltag.position.getMagnitude();
 	double tagDist = cv::norm(tvec);
@@ -84,7 +91,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 	printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
 		cam.name.c_str(), id,
 		fieldToRobot_Apriltag.position.getX(), fieldToRobot_Apriltag.position.getY(), fieldToRobot_Apriltag.position.getZ(),
-		fieldToRobot_Apriltag.rotation.getX(), fieldToRobot_Apriltag.rotation.getY(), fieldToRobot_Apriltag.rotation.getZ());
+		fieldToRobot_Apriltag.rotation.x, fieldToRobot_Apriltag.rotation.y, fieldToRobot_Apriltag.rotation.z);
 	filter.updateTag(fieldToRobot_Apriltag, tagDist, dt);
 	// this->poseHandler(fieldToRobot_Apriltag.position, fieldToRobot_Apriltag.rotation);
 }
@@ -154,7 +161,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 void Localizer::step(double dt)
 {
 	filter.predict(dt);
-	this->poseHandler(filter.position, filter.rotation);
+	this->poseHandler(filter.position, filter.rotation.coerceToVector3D());
 }
 
 void Localizer::submitStepCommand(LocalizerStepCommand command)
@@ -206,7 +213,7 @@ void Localizer::threadMainloop()
 		printf("[Localizer] dt = %f s, prediction: position (%f, %f, %f) rotation (%f, %f, %f)\n", 
 			dt,
 			filter.position.getX(), filter.position.getY(), filter.position.getZ(),
-			filter.rotation.getX(), filter.rotation.getY(), filter.rotation.getZ());
+			filter.rotation.x, filter.rotation.y, filter.rotation.z);
 	}
 }
 

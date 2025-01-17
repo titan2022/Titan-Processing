@@ -14,8 +14,8 @@ class Camera
   public:
 	std::string name;
 	std::string cameraPath;
-	Vector3D position;
-	Vector3D rotation;
+	Translation position;
+	EulerAngles rotation;
 	int width;
 	int height;
 	int fps;

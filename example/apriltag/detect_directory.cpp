@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
 
     cv::VideoCapture stream(IMAGE_PATH);
 
-	auto clientPoseSender = [&](Vector3D &pos, Vector3D &rot) {
+	auto clientPoseSender = [&](Vector3D pos, Vector3D rot) {
         std::cout << "pos: " << pos.toString() << std::endl;
 		dashboardClient.send_pose("pose", pos, rot);
 	};

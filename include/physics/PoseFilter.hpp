@@ -21,8 +21,8 @@ class PoseFilter
 	void updateTag(Apriltag &tag, double tagDist, double dt);
 	void addControlInput(double x_vel, double y_vel, double rot_vel);
 
-	Vector3D position;
-	Vector3D rotation;
+	Translation position;
+	EulerAngles rotation;
 
 	double test1 = 0;
 	double test2 = 0;

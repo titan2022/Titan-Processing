@@ -9,10 +9,10 @@ class Apriltag
 {
   public:
 	// Apriltag(int id, Vector3D &position, Vector3D &rotation, double size);
-	Apriltag(int id, Vector3D position, Vector3D rotation, double size);
-	Apriltag &operator=(const Apriltag &other);
-	Vector3D position;
-	Vector3D rotation;
+	Apriltag(int id, Translation position, EulerAngles rotation, double size);
+	// Apriltag &operator=(const Apriltag &other); // buggy and unnecessary
+	Translation position;
+	EulerAngles rotation;
 	double size;
 	int id;
 };
