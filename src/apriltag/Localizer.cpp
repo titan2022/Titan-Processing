@@ -73,17 +73,20 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 	RotationMatrix pitch180 = EulerAngles(M_PI, 0, 0).toRotationMatrix();
 	RotationMatrix yaw180 = EulerAngles(0, M_PI, 0).toRotationMatrix();
 
-	RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV)
-	// The tag needs to be yawed 180 degrees in order to do calculations from an 
-	// observer looking at the tag rather than the tag looking at the robot.
-		// * yaw180;
-		;
+	RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
+	// // The tag needs to be yawed 180 degrees in order to do calculations from an 
+	// // observer looking at the tag rather than the tag looking at the robot.
+	// 	* yaw180;
 	Transform tagInCameraFrame = Transform(
 		Translation(tvec, CoordinateSystem::OPENCV).convertToCoordinateSystem(CoordinateSystem::THREEJS), 
 		tagInCameraFrame_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS));
 
 	Apriltag tagInFieldFrame_Apriltag = getGlobalTag(id).value();
-	Transform tagInFieldFrame = Transform(tagInFieldFrame_Apriltag.position, tagInFieldFrame_Apriltag.rotation.toRotationMatrix());
+	RotationMatrix tagInFieldFrame_orientation = tagInFieldFrame_Apriltag.rotation.toRotationMatrix();
+	// // The tag needs to be yawed 180 degrees in order to do calculations from an 
+	// // observer looking at the tag rather than the tag looking at the robot.
+	// 	* yaw180;
+	Transform tagInFieldFrame = Transform(tagInFieldFrame_Apriltag.position, tagInFieldFrame_orientation);
 	
 	Transform cameraInRobotFrame = Transform(cam.position, cam.rotation.toRotationMatrix());
 
