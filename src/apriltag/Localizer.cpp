@@ -70,7 +70,14 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 
 void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec, double size, double dt)
 {
-	RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
+	RotationMatrix pitch180 = EulerAngles(M_PI, 0, 0).toRotationMatrix();
+	RotationMatrix yaw180 = EulerAngles(0, M_PI, 0).toRotationMatrix();
+
+	RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV)
+	// The tag needs to be yawed 180 degrees in order to do calculations from an 
+	// observer looking at the tag rather than the tag looking at the robot.
+		// * yaw180;
+		;
 	Transform tagInCameraFrame = Transform(
 		Translation(tvec, CoordinateSystem::OPENCV).convertToCoordinateSystem(CoordinateSystem::THREEJS), 
 		tagInCameraFrame_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS));
@@ -86,20 +93,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 
 	// We need to pitch the predicted robot 180 degrees, then yaw the predicted robot 180 degrees, to make it face the AprilTag if 
 	// the front camera is looking at the AprilTag.
-	RotationMatrix pitch180 = EulerAngles(M_PI, 0, 0).toRotationMatrix();
-	RotationMatrix yaw180 = EulerAngles(0, M_PI, 0).toRotationMatrix();
-	RotationMatrix robotOrientation = (robotInFieldFrame.getOrientation() * pitch180) * yaw180;
-
-	// EulerAngles robotAngles = robotInFieldFrame.getOrientation().toEulerAngles();
-	// // // Modify the pitch by 180 degrees
-	// // robotAngles.x += M_PI;
-
-	// // // Normalize the pitch angle to stay within [-π, π]
-	// // if (robotAngles.x > M_PI) {
-	// // 	robotAngles.x -= 2 * M_PI;
-	// // } else if (robotAngles.x < -M_PI) {
-	// // 	robotAngles.x += 2 * M_PI;
-	// // }
+	RotationMatrix robotOrientation = ((robotInFieldFrame.getOrientation() * pitch180) * yaw180);
 
 	Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotOrientation.toEulerAngles(), size);
 	
