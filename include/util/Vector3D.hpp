@@ -126,6 +126,9 @@ struct RotationMatrix
 	cv::Mat data;
 	CoordinateSystem coordinateSystem = UNKNOWN;
 
+	RotationMatrix operator*(RotationMatrix other);
+	RotationMatrix operator*(cv::Mat other);
+
 	RotationMatrix convertToCoordinateSystem(CoordinateSystem target);
 	static RotationMatrix fromRotationVector(cv::Vec3d rvec, CoordinateSystem coordinateSystem);
 	EulerAngles toEulerAngles();

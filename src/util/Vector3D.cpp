@@ -626,6 +626,7 @@ Transform Transform::operator*(Transform other)
 RotationMatrix EulerAngles::toRotationMatrix()
 {
     // https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
+	// https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
 
 	// Precompute sines and cosines
     double cx = std::cos(x);
@@ -663,10 +664,40 @@ RotationMatrix EulerAngles::toRotationMatrix()
 
 EulerAngles RotationMatrix::toEulerAngles()
 {
-	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
-	// see also https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+	// https://chatgpt.com/share/6789d1b4-3930-8013-9c9e-19e2dfb30754
+    double roll, pitch, yaw;
 
-	// chatgpt's stuff looks incorrect, just following https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+    // Check for gimbal lock
+    if (fabs(data.at<double>(2,0)) != 1)
+    {
+        yaw = -asin(data.at<double>(2,0));
+        double cos_yaw = cos(yaw);
+        pitch = atan2(data.at<double>(2,1) / cos_yaw, data.at<double>(2,2) / cos_yaw);
+        roll = atan2(data.at<double>(1,0) / cos_yaw, data.at<double>(0,0) / cos_yaw);
+    }
+    else
+    {
+        // Gimbal lock occurs
+        roll = 0;
+        if (data.at<double>(2,0) == -1)
+        {
+            yaw = M_PI / 2;
+            pitch = roll + atan2(data.at<double>(0,1), data.at<double>(0,2));
+        }
+        else
+        {
+            yaw = -M_PI / 2;
+            pitch = -roll + atan2(-data.at<double>(0,1), -data.at<double>(0,2));
+        }
+    }
+
+    return {pitch, yaw, roll, coordinateSystem};
+}
+
+#if 0
+EulerAngles RotationMatrix::toEulerAngles()
+{
+	// https://www.eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
 
     // Sanity check: must be 3x3 and double
 	// Actually don't do this so we can apply this to transforms too
@@ -732,6 +763,17 @@ EulerAngles RotationMatrix::toEulerAngles()
 	}
 
     return {pitch, yaw, roll, coordinateSystem};
+}
+#endif
+
+RotationMatrix RotationMatrix::operator*(RotationMatrix other)
+{
+	return {data * other.data, coordinateSystem};
+}
+
+RotationMatrix RotationMatrix::operator*(cv::Mat other)
+{
+	return {data * other, coordinateSystem};
 }
 
 ///// Euler angles <-> Rotation quaternion /////

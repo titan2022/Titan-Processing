@@ -70,30 +70,47 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 
 void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec, double size, double dt)
 {
-	// https://chatgpt.com/share/67884caa-0790-8013-a1d1-d7d813321c8c
-
-	// Apriltag cameraToTag_Apriltag = correctPerspective(id, tvec, rvec, size);
-	// cv::Mat cameraToTag = Vector3D::makeTransform(cameraToTag_Apriltag.position, cameraToTag_Apriltag.rotation);
-	RotationMatrix tagToCamera_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
-	Transform tagToCamera = Transform(
+	RotationMatrix tagInCameraFrame_orientation = RotationMatrix::fromRotationVector(rvec, CoordinateSystem::OPENCV);
+	Transform tagInCameraFrame = Transform(
 		Translation(tvec, CoordinateSystem::OPENCV).convertToCoordinateSystem(CoordinateSystem::THREEJS), 
-		tagToCamera_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS));
-	Apriltag tagToField_Apriltag = getGlobalTag(id).value();
-	Transform tagToField = Transform(tagToField_Apriltag.position, tagToField_Apriltag.rotation.toRotationMatrix());
-	Transform robotToCamera = Transform(cam.position, cam.rotation.toRotationMatrix());
+		tagInCameraFrame_orientation.convertToCoordinateSystem(CoordinateSystem::THREEJS));
 
-	Transform fieldToRobot = tagToField * tagToCamera.inv() * robotToCamera.inv();
-	Apriltag fieldToRobot_Apriltag = Apriltag(id, fieldToRobot.getPosition(), fieldToRobot.getOrientation().toEulerAngles(), size);
+	Apriltag tagInFieldFrame_Apriltag = getGlobalTag(id).value();
+	Transform tagInFieldFrame = Transform(tagInFieldFrame_Apriltag.position, tagInFieldFrame_Apriltag.rotation.toRotationMatrix());
 	
-	// double tagDist = cameraToTag_Apriltag.position.getMagnitude();
+	Transform cameraInRobotFrame = Transform(cam.position, cam.rotation.toRotationMatrix());
+
+	Transform robotInFieldFrame = tagInFieldFrame * tagInCameraFrame.inv() * cameraInRobotFrame.inv();
+
+	Translation robotPosition = robotInFieldFrame.getPosition();
+
+	// We need to pitch the predicted robot 180 degrees, then yaw the predicted robot 180 degrees, to make it face the AprilTag if 
+	// the front camera is looking at the AprilTag.
+	RotationMatrix pitch180 = EulerAngles(M_PI, 0, 0).toRotationMatrix();
+	RotationMatrix yaw180 = EulerAngles(0, M_PI, 0).toRotationMatrix();
+	RotationMatrix robotOrientation = (robotInFieldFrame.getOrientation() * pitch180) * yaw180;
+
+	// EulerAngles robotAngles = robotInFieldFrame.getOrientation().toEulerAngles();
+	// // // Modify the pitch by 180 degrees
+	// // robotAngles.x += M_PI;
+
+	// // // Normalize the pitch angle to stay within [-π, π]
+	// // if (robotAngles.x > M_PI) {
+	// // 	robotAngles.x -= 2 * M_PI;
+	// // } else if (robotAngles.x < -M_PI) {
+	// // 	robotAngles.x += 2 * M_PI;
+	// // }
+
+	Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotOrientation.toEulerAngles(), size);
+	
 	double tagDist = cv::norm(tvec);
 
 	printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
 		cam.name.c_str(), id,
-		fieldToRobot_Apriltag.position.getX(), fieldToRobot_Apriltag.position.getY(), fieldToRobot_Apriltag.position.getZ(),
-		fieldToRobot_Apriltag.rotation.x, fieldToRobot_Apriltag.rotation.y, fieldToRobot_Apriltag.rotation.z);
-	filter.updateTag(fieldToRobot_Apriltag, tagDist, dt);
-	// this->poseHandler(fieldToRobot_Apriltag.position, fieldToRobot_Apriltag.rotation);
+		robotInFieldFrame_Apriltag.position.getX(), robotInFieldFrame_Apriltag.position.getY(), robotInFieldFrame_Apriltag.position.getZ(),
+		robotInFieldFrame_Apriltag.rotation.x, robotInFieldFrame_Apriltag.rotation.y, robotInFieldFrame_Apriltag.rotation.z);
+	filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
+	this->poseHandler(robotInFieldFrame_Apriltag.position, robotInFieldFrame_Apriltag.rotation.coerceToVector3D());
 }
 
 // Old localization code which also tried to deal with converting between WPILib and three.js coordinate systems
@@ -161,7 +178,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rve
 void Localizer::step(double dt)
 {
 	filter.predict(dt);
-	this->poseHandler(filter.position, filter.rotation.coerceToVector3D());
+	// this->poseHandler(filter.position, filter.rotation.coerceToVector3D());
 }
 
 void Localizer::submitStepCommand(LocalizerStepCommand command)
