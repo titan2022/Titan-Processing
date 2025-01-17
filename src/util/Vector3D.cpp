@@ -463,25 +463,19 @@ RotationMatrix RotationMatrix::convertToCoordinateSystem(CoordinateSystem target
              0, -1,  0,
              0,  0,  1);
 
-        // Define 180-degree rotation around X-axis to negate pitch
-        cv::Mat Rx180 = (cv::Mat_<double>(3,3) << 
+        // Apply axis flipping to the rotation matrix
+        cv::Mat flipped_rotation = data * S;
+
+        // Define a compensation matrix to negate pitch and roll
+        cv::Mat compensation = (cv::Mat_<double>(3,3) << 
             1,  0,  0,
             0, -1,  0,
             0,  0, -1);
 
-        // Define 180-degree rotation around Z-axis to negate roll
-        cv::Mat Rz180 = (cv::Mat_<double>(3,3) << 
-           -1,  0,  0,
-            0, -1,  0,
-            0,  0,  1);
+        // Apply compensation
+        cv::Mat compensated_rotation = flipped_rotation * compensation;
 
-        // Apply axis flipping and negations
-        cv::Mat compensated_rotation = S * Rx180 * Rz180;
-
-        // Combine with the original rotation matrix
-        cv::Mat result = data * compensated_rotation;
-
-        return RotationMatrix(result, target);
+        return RotationMatrix(compensated_rotation, target);
     }
 	else
 	{

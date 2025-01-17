@@ -96,7 +96,8 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 
 	// We need to pitch the predicted robot 180 degrees, then yaw the predicted robot 180 degrees, to make it face the AprilTag if 
 	// the front camera is looking at the AprilTag.
-	RotationMatrix robotOrientation = ((robotInFieldFrame.getOrientation() * pitch180) * yaw180);
+	// RotationMatrix robotOrientation = ((robotInFieldFrame.getOrientation() * pitch180) * yaw180);
+	RotationMatrix robotOrientation = robotInFieldFrame.getOrientation();
 
 	Apriltag robotInFieldFrame_Apriltag = Apriltag(id, robotPosition, robotOrientation.toEulerAngles(), size);
 	
