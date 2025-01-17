@@ -455,34 +455,23 @@ Translation Translation::convertToCoordinateSystem(CoordinateSystem target)
 
 RotationMatrix RotationMatrix::convertToCoordinateSystem(CoordinateSystem target)
 {
+	cv::Mat S;
 	if (coordinateSystem == CoordinateSystem::OPENCV && target == CoordinateSystem::THREEJS)
-    {
-        // Flip x and y axes
-        cv::Mat S = (cv::Mat_<double>(3,3) << 
-            -1,  0,  0,
-             0, -1,  0,
-             0,  0,  1);
-
-        // Apply axis flipping to the rotation matrix
-        cv::Mat flipped_rotation = data * S;
-
-        // Define a compensation matrix to negate pitch and roll
-        cv::Mat compensation = (cv::Mat_<double>(3,3) << 
-            1,  0,  0,
-            0, -1,  0,
-            0,  0, -1);
-
-        // Apply compensation
-        cv::Mat compensated_rotation = flipped_rotation * compensation;
-
-        return RotationMatrix(compensated_rotation, target);
-    }
+	{
+		// Flip x, flip y, keep z the same
+		S = (cv::Mat_<double>(3,3) << 
+             -1,  0,  0,
+              0, -1,  0,
+              0,  0,  1);
+	}
 	else
 	{
 		throw std::domain_error(std::string("conversion between rotation matrices of ") + nameOfCoordinateSystem(coordinateSystem) 
 			+ " coordinate system and " + nameOfCoordinateSystem(target)
 			+ " coordinate system is not yet supported.");
 	}
+
+	return RotationMatrix(data * S, target);
 }
 
 RotationMatrix RotationMatrix::fromRotationVector(cv::Vec3d rvec, CoordinateSystem coordinateSystem)
