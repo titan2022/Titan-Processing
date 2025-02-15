@@ -23,9 +23,37 @@ int main(int argc, char const *argv[])
 	NetworkingClient client(config.ip, config.port);
 	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
-	auto clientPoseSender = [&](Vector3D pos, Vector3D rot) {
-		client.send_pose("pose", pos, rot);
-		dashboardClient.send_pose("pose", pos, rot);
+	auto clientPoseSender = [&](Transform3d pose) {
+		Vector3D pos_wpilib {
+			CoordinateSystem::Convert(
+				pose.Translation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::WPILib()
+			)
+		};
+		Vector3D rot_wpilib {
+			CoordinateSystem::Convert(
+				pose.Rotation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::WPILib()
+			)
+		};
+		client.send_pose("pose", pos_wpilib, rot_wpilib);
+		Vector3D pos_threejs {
+			CoordinateSystem::Convert(
+				pose.Translation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::THREEjs()
+			)
+		};
+		Vector3D rot_threejs {
+			CoordinateSystem::Convert(
+				pose.Rotation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::THREEjs()
+			)
+		};
+		dashboardClient.send_pose("pose", pos_threejs, rot_threejs);
 	};
 
 	PoseFilter filter(config);
