@@ -36,5 +36,5 @@ int main(int argc, char const *argv[])
 	}
 
 	Apriltag tag = config.tags.at(tagNumber);
-    clientPoseSender(tag.position, tag.rotation.coerceToVector3D());
+    clientPoseSender(tag.position, tag.rotation);
 }

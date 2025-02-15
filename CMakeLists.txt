@@ -24,7 +24,7 @@ include(FetchContent)
 fetchcontent_declare(
     wpilib
     GIT_REPOSITORY https://github.com/wpilibsuite/allwpilib.git
-    GIT_TAG main
+    GIT_TAG v2025.3.1
 )
 fetchcontent_getproperties(wpilib)
 if(NOT wpilib_POPULATED)

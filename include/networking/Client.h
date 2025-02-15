@@ -3,6 +3,7 @@
 
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
 // All C APIs are prefixed with TRB, which stands for Titan RoBotics
 
@@ -50,7 +51,6 @@ class NetworkingClient
 } // namespace titan
 
 typedef titan::NetworkingClient *TRBNetworkingClientRef;
-typedef bool _Bool; // C uses _Bool but C++ uses bool
 #else
 typedef struct TRBNetworkingClient *TRBNetworkingClientRef;
 #endif // __cplusplus
@@ -59,7 +59,7 @@ TRB_BEGIN_EXTERN_C
 
 TRBVector3D TRBVector3DMake(double x, double y, double z);
 TRBNetworkingClientRef TRBNetworkingClientCreate(char *ip, uint16_t port);
-TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, _Bool withReply);
+TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, bool withReply);
 void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char *msg, TRBVector3D pos, TRBVector3D rot);
 void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char *msg, int id, TRBVector3D pos, TRBVector3D rot);
 

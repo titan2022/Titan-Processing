@@ -65,13 +65,16 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 		double size = 0.1651;
 		int id = tagObj["ID"];
 
-		Translation pos = Translation::fromWPILibPosition(trans["x"], trans["y"], trans["z"], this->fieldLength, this->fieldWidth);
+		Translation3d pos = Translation3d{
+			units::meter_t{trans["x"]},
+			units::meter_t{trans["y"]},
+			units::meter_t{trans["z"]}
+		};
 
 		auto quat = pose["rotation"]["quaternion"];
-		EulerAngles rot = 
-			RotationQuaternion(quat["W"], quat["X"], quat["Y"], quat["Z"], CoordinateSystem::WPILIB)
-			.convertToCoordinateSystem(CoordinateSystem::THREEJS)
-			.toEulerAngles();
+		Rotation3d rot = Rotation3d{
+			Quaternion{quat["W"], quat["X"], quat["Y"], quat["Z"]}
+		};
 
 		Apriltag tag(id, pos, rot, size);
 		this->tags.insert({id, tag});
@@ -114,25 +117,25 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 	for (auto tag_pair : tags)
 	{
 		auto tag = tag_pair.second;
-		RotationQuaternion q = tag.rotation.toRotationQuaternion();
+		Quaternion q = tag.rotation.GetQuaternion();
 		json json_tag = {
 			{"ID", tag.id},
 			{"pose",
 			 {
 				 {"translation",
 				  {
-					  {"x", tag.position.getX()},
-					  {"y", tag.position.getY()},
-					  {"z", tag.position.getZ()},
+					  {"x", tag.position.X().value()},
+					  {"y", tag.position.Y().value()},
+					  {"z", tag.position.Z().value()},
 				  }},
 				 {"rotation",
 				  {
 					  {"quaternion",
 					   {
-						   {"W", q.w},
-						   {"X", q.x},
-						   {"Y", q.y},
-						   {"Z", q.z},
+						   {"W", q.W()},
+						   {"X", q.X()},
+						   {"Y", q.Y()},
+						   {"Z", q.Z()},
 					   }},
 				  }},
 			 }},
