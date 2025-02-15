@@ -1,11 +1,12 @@
 #ifndef CAMERA
 #define CAMERA
 
-#include "./Vector3D.hpp"
 #include <nlohmann/json.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <string>
+
+#include "Vector3D.hpp"
 
 namespace titan
 {

@@ -2,13 +2,18 @@ cmake_minimum_required(VERSION 3.20.0)
 set(CMAKE_CXX_STANDARD 20)
 project(TitanProcessing VERSION 2.0.0 LANGUAGES C CXX)
 
+# Generate compile_commands.json by default
+if(NOT CMAKE_EXPORT_COMPILE_COMMANDS)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS "YES" CACHE STRING "" FORCE)
+endif()
+
 option(TEST "Build all tests." OFF)
 option(BUILD_EXAMPLES "Build all examples." OFF)
 option(NO_REALSENSE "Ignores RealSense components." OFF)
 
 # Directories
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 # OpenCV linking
@@ -21,24 +26,20 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 # Add wpimath and ntcore
 include(FetchContent)
+set(WITH_CSCORE OFF CACHE INTERNAL "With CSCore")
+set(WITH_GUI OFF CACHE INTERNAL "With GUI")
+set(WITH_JAVA OFF CACHE INTERNAL "With Java")
+set(WITH_NTCORE ON CACHE INTERNAL "With NTCore")
+set(WITH_SIMULATION_MODULES OFF CACHE INTERNAL "With Simulation Modules")
+set(WITH_TESTS OFF CACHE INTERNAL "With Tests")
+set(WITH_WPIMATH ON CACHE INTERNAL "With WPIMath")
+set(WITH_WPILIB OFF CACHE INTERNAL "With WPILib")
 fetchcontent_declare(
     wpilib
     GIT_REPOSITORY https://github.com/wpilibsuite/allwpilib.git
     GIT_TAG v2025.3.1
 )
-fetchcontent_getproperties(wpilib)
-if(NOT wpilib_POPULATED)
-    fetchcontent_populate(wpilib)
-    set(WITH_CSCORE OFF CACHE INTERNAL "With CSCore")
-    set(WITH_GUI OFF CACHE INTERNAL "With GUI")
-    set(WITH_JAVA OFF CACHE INTERNAL "With Java")
-    set(WITH_NTCORE ON CACHE INTERNAL "With NTCore")
-    set(WITH_SIMULATION_MODULES OFF CACHE INTERNAL "With Simulation Modules")
-    set(WITH_TESTS OFF CACHE INTERNAL "With Tests")
-    set(WITH_WPIMATH ON CACHE INTERNAL "With WPIMath")
-    set(WITH_WPILIB OFF CACHE INTERNAL "With WPILib")
-    add_subdirectory(${wpilib_SOURCE_DIR} ${wpilib_BINARY_DIR})
-endif()
+fetchcontent_makeavailable(wpilib)
 
 # Shared library compatibility
 SET(CMAKE_SKIP_BUILD_RPATH FALSE)

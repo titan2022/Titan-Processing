@@ -27,8 +27,9 @@ typedef struct TRBVector3D
 TRB_END_EXTERN_C
 
 #if __cplusplus
-#include "../util/Vector3D.hpp"
 #include <string>
+
+#include "util/Vector3D.hpp"
 
 namespace titan
 {

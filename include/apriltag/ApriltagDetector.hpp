@@ -1,11 +1,12 @@
 #ifndef APRILTAG_DETECTOR
 #define APRILTAG_DETECTOR
 
-#include "../apriltag/Localizer.hpp"
-#include "../networking/Client.h"
-#include "../util/Config.hpp"
-#include "util/Camera.hpp"
 #include <opencv2/opencv.hpp>
+
+#include "apriltag/Localizer.hpp"
+#include "networking/Client.h"
+#include "util/Camera.hpp"
+#include "util/Config.hpp"
 
 namespace titan
 {

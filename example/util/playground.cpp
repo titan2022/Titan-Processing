@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "../../include/util/Vector3D.hpp"
+#include "util/Vector3D.hpp"
 
 using namespace titan;
 

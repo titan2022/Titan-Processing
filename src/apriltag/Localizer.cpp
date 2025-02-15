@@ -72,8 +72,8 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 {
 	Transform3d tagInCameraFrame = CoordinateSystem::Convert(
 		Transform3d{
-			Translation3d{Eigen::Vector3d{tvec}},
-			Rotation3d{Eigen::Vector3d{rvec}}
+			Translation3d{Eigen::Vector3d{tvec[0], tvec[1], tvec[2]}},
+			Rotation3d{Eigen::Vector3d{rvec[0], rvec[1], rvec[2]}}
 		},
 		CoordinateSystems::OpenCV(),
 		CoordinateSystems::standard()

@@ -1,7 +1,7 @@
 #ifndef APRILTAG
 #define APRILTAG
 
-#include "../util/Vector3D.hpp"
+#include "util/Vector3D.hpp"
 
 namespace titan
 {

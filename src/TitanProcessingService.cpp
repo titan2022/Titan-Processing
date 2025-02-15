@@ -2,13 +2,13 @@
 #include <string>
 #include <thread>
 
-#include "../include/apriltag/ApriltagDetector.hpp"
-#include "../include/apriltag/Localizer.hpp"
-#include "../include/networking/Client.h"
-#include "../include/physics/PoseFilter.hpp"
-#include "../include/util/Config.hpp"
+#include "apriltag/Apriltag.hpp"
+#include "apriltag/ApriltagDetector.hpp"
+#include "apriltag/Localizer.hpp"
+#include "networking/Client.h"
+#include "physics/PoseFilter.hpp"
+#include "util/Config.hpp"
 #include "util/Vector3D.hpp"
-#include <../include/apriltag/Apriltag.hpp>
 
 using namespace titan;
 

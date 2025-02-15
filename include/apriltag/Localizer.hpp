@@ -3,14 +3,14 @@
 
 #include <condition_variable>
 #include <functional>
-
-#include "../physics/PoseFilter.hpp"
-#include "../util/Config.hpp"
-#include "../util/Vector3D.hpp"
-#include "./Apriltag.hpp"
-#include "util/Camera.hpp"
 #include <optional>
 #include <queue>
+
+#include "Apriltag.hpp"
+#include "physics/PoseFilter.hpp"
+#include "util/Camera.hpp"
+#include "util/Config.hpp"
+#include "util/Vector3D.hpp"
 
 namespace titan
 {

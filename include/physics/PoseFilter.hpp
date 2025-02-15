@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include "../apriltag/Apriltag.hpp"
-#include "../util/Config.hpp"
-#include "../util/Vector3D.hpp"
+#include "apriltag/Apriltag.hpp"
+#include "util/Config.hpp"
+#include "util/Vector3D.hpp"
 
 namespace titan
 {

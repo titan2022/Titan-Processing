@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../../include/util/Config.hpp"
+#include "util/Config.hpp"
 
 namespace fs = std::filesystem;
 using namespace titan;

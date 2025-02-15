@@ -7,8 +7,8 @@
 #include <string>
 #include <string_view>
 
-#include "../apriltag/Apriltag.hpp"
-#include "Camera.hpp"
+#include "apriltag/Apriltag.hpp"
+#include "util/Camera.hpp"
 
 namespace titan
 {
