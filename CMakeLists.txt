@@ -25,21 +25,7 @@ find_package(OpenCV 4.8)
 find_package(nlohmann_json CONFIG REQUIRED)
 
 # Add wpimath and ntcore
-include(FetchContent)
-set(WITH_CSCORE OFF CACHE INTERNAL "With CSCore")
-set(WITH_GUI OFF CACHE INTERNAL "With GUI")
-set(WITH_JAVA OFF CACHE INTERNAL "With Java")
-set(WITH_NTCORE ON CACHE INTERNAL "With NTCore")
-set(WITH_SIMULATION_MODULES OFF CACHE INTERNAL "With Simulation Modules")
-set(WITH_TESTS OFF CACHE INTERNAL "With Tests")
-set(WITH_WPIMATH ON CACHE INTERNAL "With WPIMath")
-set(WITH_WPILIB OFF CACHE INTERNAL "With WPILib")
-fetchcontent_declare(
-    wpilib
-    GIT_REPOSITORY https://github.com/wpilibsuite/allwpilib.git
-    GIT_TAG v2025.3.1
-)
-fetchcontent_makeavailable(wpilib)
+find_package(wpilib REQUIRED)
 
 # Shared library compatibility
 SET(CMAKE_SKIP_BUILD_RPATH FALSE)
