@@ -65,10 +65,13 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 		double size = 0.1651;
 		int id = tagObj["ID"];
 
-		Vector3D pos = Vector3D::fromWPILibPosition(trans["x"], trans["y"], trans["z"], this->fieldLength, this->fieldWidth);
+		Translation pos = Translation::fromWPILibPosition(trans["x"], trans["y"], trans["z"], this->fieldLength, this->fieldWidth);
 
 		auto quat = pose["rotation"]["quaternion"];
-		Vector3D rot = Vector3D::fromWPILibQuaternion(quat["W"], quat["X"], quat["Y"], quat["Z"]);
+		EulerAngles rot = 
+			RotationQuaternion(quat["W"], quat["X"], quat["Y"], quat["Z"], CoordinateSystem::WPILIB)
+			.convertToCoordinateSystem(CoordinateSystem::THREEJS)
+			.toEulerAngles();
 
 		Apriltag tag(id, pos, rot, size);
 		this->tags.insert({id, tag});
@@ -111,7 +114,7 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 	for (auto tag_pair : tags)
 	{
 		auto tag = tag_pair.second;
-		Vector3D::Quaternion q = tag.rotation.toQuaternion();
+		RotationQuaternion q = tag.rotation.toRotationQuaternion();
 		json json_tag = {
 			{"ID", tag.id},
 			{"pose",

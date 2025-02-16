@@ -34,9 +34,13 @@ Camera Camera::fromJson(nlohmann::json json)
 
 	std::vector<double> posArr = json["position"];
 	std::vector<double> rotArr = json["rotation"];
-	Vector3D pos(posArr);
-	Vector3D rot(rotArr);
-	rot *= Unit::DEG;
+	Translation pos(posArr);
+	Vector3D rot_vec3d(rotArr);
+	rot_vec3d *= Unit::DEG;
+	EulerAngles rot = rot_vec3d.coerceToEulerAngles();
+
+	pos.coordinateSystem = CoordinateSystem::THREEJS;
+	rot.coordinateSystem = CoordinateSystem::THREEJS;
 
 	cv::Matx<double, 3, 3> cameraMat(json["focalX"], 0, json["centerX"], 0, json["focalY"], json["centerY"], 0, 0, 1);
 	cv::Matx<double, 1, 5> distCoeffs(json["k1"], json["k2"], json["p1"], json["p2"], json["k3"]);
@@ -68,9 +72,9 @@ nlohmann::json Camera::toJson()
 		 }},
 		{"rotation",
 		 {
-			 rotation.getX() * Unit::RAD,
-			 rotation.getY() * Unit::RAD,
-			 rotation.getZ() * Unit::RAD,
+			 rotation.x * Unit::RAD,
+			 rotation.y * Unit::RAD,
+			 rotation.z * Unit::RAD,
 		 }},
 		{"width", width},
 		{"height", height},
