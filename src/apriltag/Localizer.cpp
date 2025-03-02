@@ -17,44 +17,6 @@ Localizer::Localizer(Config &config, PoseFilter &filter, PoseHandler poseHandler
 {
 }
 
-// Translates position origin from camera to tag
-// UNUSED - Determine whether this is still useful...
-# if 0
-Apriltag correctPerspective(int id, cv::Vec3d &tvec, cv::Vec3d &rvec, double size)
-{
-	cv::Mat R(3, 3, CV_64FC1);
-	cv::Rodrigues(rvec, R);
-
-	cv::Mat R_T = R.t();
-	cv::Mat posMat = R_T * -tvec;
-	cv::Vec3d posVec = posMat;
-
-	cv::Mat rpyMat;
-	cv::Mat placeholder; // OpenCV really wants me to keep this...
-	cv::Vec3d rotVec = cv::RQDecomp3x3(R_T, rpyMat, placeholder);
-
-	Vector3D pos(posVec);
-	Vector3D rot(rotVec);
-	rot *= Unit::DEG;
-
-	Apriltag newTag(id, pos, rot, size);
-
-	return newTag;
-}
-#endif
-
-// FIXME - What is this for? Is it really valid to subtract Euler angles?
-#if 0
-Apriltag toGlobalPose(Apriltag &relative, Apriltag &global)
-{
-	Vector3D newPos = global.position - relative.position;
-	Vector3D newRot = global.rotation - relative.rotation;
-
-	Apriltag result(relative.id, newPos, newRot, relative.size);
-	return result;
-}
-#endif
-
 std::optional<Apriltag> Localizer::getGlobalTag(int id)
 {
 	for (auto tagPair : this->config.tags)
@@ -101,68 +63,6 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 	filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
 	this->poseHandler(robotInFieldFrame);
 }
-
-// Old localization code which also tried to deal with converting between WPILib and three.js coordinate systems
-#if 0
-void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d &tvec, cv::Vec3d &rvec, double size, double dt)
-{
-	Apriltag invTag = correctPerspective(id, tvec, rvec, size);
-
-	// Inverting tag position
-	invTag.position *= -1;
-	invTag.position.setZ(-invTag.position.getZ());
-	invTag.rotation.setY(-invTag.rotation.getY());
-	double tagDist = invTag.position.getMagnitude();
-
-	// Reject tags over a certain distance (too much noise)
-	// if (tagDist > 5)
-	// {
-	// 	return;
-	// }
-
-	// TODO: check if robot offsetting works for relative tag poses
-	// Send relative tag (no Kalman filter)
-	// Apriltag relTag = invTag;
-	// relTag.position -= config.cameras[camId].position; // Offsetting by camera pose on the robot to get robot pose
-	// relTag.rotation -= config.cameras[camId].rotation;
-	// client.send_tag("tag", id, relTag.position, relTag.rotation);
-
-    // Offset by field
-    Vector3D fieldOffset(config.fieldLength / 2.0, 0, config.fieldWidth / 2.0);
-	auto globTag = getGlobalTag(id);
-    globTag->position -= fieldOffset;
-    globTag->rotation.setY(globTag->rotation.getY() + M_PI / 2.0);
-
-	// Rotating around tag to fit global position
-	invTag.position.rotateX(globTag->rotation.getX());
-	invTag.position.rotateY(globTag->rotation.getY());
-	invTag.position.rotateZ(globTag->rotation.getZ());
-
-	// Offsetting by global pose
-    // The Z axis has to be flipped after rotation and before translation for some reason...
-    globTag->position.setZ(-globTag->position.getZ());
-	invTag.position += globTag->position;
-	invTag.rotation -= globTag->rotation;
-
-	// Offsetting by camera pose on the robot to get robot pose
-	// Vector3D rotOffset = cam.position;
-	// rotOffset.rotateY(-invTag.rotation.getY());
-	// invTag.position += rotOffset;
-    // this->poseHandler(invTag.position, invTag.rotation);
-	// invTag.rotation.setY(M_PI - invTag.rotation.getY());
-    // this->poseHandler(invTag.position, invTag.rotation);
-
-    // Hacky camera offset, only works for Y-axis rotationally
-    // Please fix
-    Vector3D camPosOffset = cam.position;
-    camPosOffset.rotateY(-invTag.rotation.getY());
-    invTag.position.setX(invTag.position.getX() + camPosOffset.getX());
-    invTag.position.setZ(invTag.position.getZ() + camPosOffset.getZ());
-
-    // this->poseHandler(invTag.position, invTag.rotation);
-	filter.updateTag(invTag, tagDist, dt);
-}
-#endif
 
 void Localizer::step(double dt)
 {
