@@ -9,11 +9,13 @@
 
 #include "apriltag/Apriltag.hpp"
 #include "util/Camera.hpp"
+#include "util/Vector3D.hpp"
 
 namespace titan
 {
 constexpr auto CONFIG_PATH = "./config/config.json";
 constexpr auto TAGS_PATH = "./config/apriltags2025.json";
+constexpr auto TAGS_THREEJS_PATH = "./config/apriltags2025_threejs.json";
 
 /**
  * @brief Interface for apriltags and config.json, contains camera and tag information. See docs for config structure
@@ -59,6 +61,18 @@ class Config
 	 * @return int error code
 	 */
 	int write(std::string_view mainConfigPath, std::string_view tagPath);
+
+	/**
+	 * @brief Writes the main config to `mainConfigPath`.
+	 * @return int error code
+	 */
+	int writeConfig(std::string_view mainConfigPath);
+
+	/**
+	 * @brief Writes the tags to `tagPath`.
+	 * @return int error code
+	 */
+	int writeTagsConverted(std::string_view tagPath, CoordinateSystem coordinateSystem);
 };
 } // namespace titan
 

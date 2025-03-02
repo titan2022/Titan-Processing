@@ -83,12 +83,17 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 
 int Config::write(std::string_view configPath, std::string_view tagsPath)
 {
+	int retval_config = writeConfig(configPath);
+	int retval_tags = writeTagsConverted(tagsPath, CoordinateSystems::WPILib());
 
+	return std::max(retval_tags, retval_config);
+}
+
+int Config::writeConfig(std::string_view configPath)
+{
 	fs::path fileConfigPathObj((fs::path(configPath)));
-	fs::path fileTagPathObj((fs::path(tagsPath)));
 	std::ofstream outConfig(fileConfigPathObj);
-	std::ofstream outTag(fileTagPathObj);
-	if (!outConfig || !outTag)
+	if (!outConfig)
 	{
 		return 5;
 	}
@@ -113,20 +118,36 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 	};
 	outConfig << configData;
 
+	return 0;
+}
+
+int Config::writeTagsConverted(std::string_view tagsPath, CoordinateSystem coordinateSystem)
+{
+	fs::path fileTagPathObj((fs::path(tagsPath)));
+	std::ofstream outTag(fileTagPathObj);
+	if (!outTag)
+	{
+		return 5;
+	}
+
 	std::vector<json> json_tags = {};
 	for (auto tag_pair : tags)
 	{
-		auto tag = tag_pair.second;
-		Quaternion q = tag.rotation.GetQuaternion();
+		auto tag_raw = tag_pair.second;
+		Transform3d pose = CoordinateSystem::Convert(
+			Transform3d{tag_raw.position, tag_raw.rotation},
+			CoordinateSystems::standard(),
+			coordinateSystem);
+		Quaternion q = pose.Rotation().GetQuaternion();
 		json json_tag = {
-			{"ID", tag.id},
+			{"ID", tag_raw.id},
 			{"pose",
 			 {
 				 {"translation",
 				  {
-					  {"x", tag.position.X().value()},
-					  {"y", tag.position.Y().value()},
-					  {"z", tag.position.Z().value()},
+					  {"x", pose.Translation().X().value()},
+					  {"y", pose.Translation().Y().value()},
+					  {"z", pose.Translation().Z().value()},
 				  }},
 				 {"rotation",
 				  {
