@@ -1,6 +1,6 @@
 {
     "ip": "10.20.22.1",
-    "dashboardIp": "10.42.0.1",
+    "dashboardIp": "10.20.22.202",
     "port": 5804,
     "threads": 4,
     "quadDecimate": 1,
@@ -12,11 +12,11 @@
         0.6092
     ],
     "debugCameras": [
-        "Arducam-UC852"
-    ],
-    "prodCameras": [
         "Lifecam1-opi1",
         "Lifecam2-opi1"
+    ],
+    "prodCameras": [
+        "Arducam-UC852"
     ],
     "cameras": [
         {
