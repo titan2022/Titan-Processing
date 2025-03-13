@@ -14,9 +14,9 @@ After=network.target
 StartLimitInterval=0
 
 [Service]
-User=titan
+User=$USER
 Type=simple
-ExecStart=/home/titan/Projects/Titan-Processing/scripts/orangepi/titan2022-apriltag-service.sh
+ExecStart=$HOME/Projects/Titan-Processing/scripts/orangepi/titan2022-apriltag-service.sh
 Restart=always
 RestartSec=1
 KillMode=process
