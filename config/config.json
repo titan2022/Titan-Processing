@@ -1,6 +1,6 @@
 {
-    "ip": "127.0.0.1",
-    "dashboardIp": "127.0.0.1",
+    "ip": "10.20.22.1",
+    "dashboardIp": "10.20.22.202",
     "port": 5804,
     "threads": 4,
     "quadDecimate": 1,
@@ -12,11 +12,11 @@
         0.6092
     ],
     "debugCameras": [
-        "Arducam-UC852"
+        "video0",
+        "video2"
     ],
     "prodCameras": [
-        "Lifecam1",
-        "Lifecam2"
+        "Arducam-UC852"
     ],
     "cameras": [
         {
@@ -98,9 +98,27 @@
         {
             "name": "video0",
             "cameraPath": "/dev/video0",
-            "comment": "TODO: Calibrate the camera",
-            "position": [0, 0, 0],
+            "position": [0, 0, 0.09],
             "rotation": [0, 0, 0],
+            "width": 1280,
+            "height": 800,
+            "fps": 30,
+            "exposure": 10,
+            "focalX": 896.4229265637798,
+            "focalY": 894.7290571208786,
+            "centerX": 632.1511776051311,
+            "centerY": 409.51872727524545,
+            "k1": 0.03504592225172843,
+            "k2": -0.057976090918433074,
+            "p1": 0.005955119626934279,
+            "p2": -0.0031399446166415663,
+            "k3": -0.07455148194441642
+        },
+        {
+            "name": "video2",
+            "cameraPath": "/dev/video2",
+            "position": [0, 0, -0.09],
+            "rotation": [0, 180, 0],
             "width": 1280,
             "height": 800,
             "fps": 30,
