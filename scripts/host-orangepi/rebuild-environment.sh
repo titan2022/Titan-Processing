@@ -7,8 +7,7 @@ source ~/miniforge3/etc/profile.d/conda.sh
 cd /home/$username/Projects/Titan-Processing
 
 echo "Removing old environment..."
-# FIXME: this part will ask for user input
-conda remove -n Titan-Processing --all
+conda remove -n Titan-Processing --all --yes
 
 echo "Rebuilding environment..."
 conda env create -f environment.yml
