@@ -20,7 +20,7 @@ constexpr auto IMAGE_PATH = "/media/windows/files/github/Titan-Processing-1/test
 int main(int argc, char const *argv[])
 {
 	Config config(CONFIG_PATH, TAGS_PATH);
-	NetworkingClient dashboardClient(config.dashboardIp, config.port);
+	NetworkingClient dashboardClient(config.udp_dashboard_ip, config.udp_port);
 
     cv::VideoCapture stream(IMAGE_PATH);
 

@@ -25,9 +25,12 @@ class Config
 {
   public:
 	// Networking
-	std::string ip;
-	std::string dashboardIp;
-	int port;
+	std::string udp_roborio_ip;
+	std::string udp_dashboard_ip;
+	int udp_port;
+
+	std::string nt_dashboard_ip;
+	int nt_port;
 
 	// Performance
 	int threads;

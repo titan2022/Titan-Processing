@@ -15,8 +15,8 @@ using namespace titan;
 int main(int argc, char const *argv[])
 {
 	Config config(CONFIG_PATH, TAGS_PATH);
-	NetworkingClient client(config.ip, config.port);
-	NetworkingClient dashboardClient(config.dashboardIp, config.port);
+	NetworkingClient client(config.udp_roborio_ip, config.udp_port);
+	NetworkingClient dashboardClient(config.udp_dashboard_ip, config.udp_port);
 
 	auto clientPoseSender = [&](Transform3d pose) {
 		Vector3D pos_wpilib {

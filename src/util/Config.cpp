@@ -35,9 +35,11 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	json configData = json::parse(inConfig);
 	json tagData = json::parse(inTag);
 
-	this->ip = configData["ip"];
-	this->dashboardIp = configData["dashboardIp"];
-	this->port = configData["port"];
+	this->udp_roborio_ip = configData["udp_roborio_ip"];
+	this->udp_dashboard_ip = configData["udp_dashboard_ip"];
+	this->udp_port = configData["udp_port"];
+	this->nt_dashboard_ip = configData["udp_dashboard_ip"];
+	this->nt_port = configData["udp_port"];
 	this->threads = configData["threads"];
 	this->quadDecimate = configData["quadDecimate"];
 	this->quadSigma = configData["quadSigma"];
@@ -106,9 +108,9 @@ int Config::writeConfig(std::string_view configPath)
 	}
 
 	json configData = {
-		{"ip", ip},
-		{"dashboardIp", dashboardIp},
-		{"port", port},
+		{"udp_roborio_ip", udp_roborio_ip},
+		{"udp_dashboard_ip", udp_dashboard_ip},
+		{"udp_port", udp_port},
 		{"threads", threads},
 		{"quadDecimate", quadDecimate},
 		{"quadSigma", quadSigma},
