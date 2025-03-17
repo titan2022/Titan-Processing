@@ -15,8 +15,6 @@ using namespace titan;
 int main(int argc, char const *argv[])
 {
 	Config config(CONFIG_PATH, TAGS_PATH);
-	NetworkingClient client(config.ip, config.port);
-	NetworkingClient dashboardClient(config.dashboardIp, config.port);
 
 	config.writeTagsConverted(TAGS_THREEJS_PATH, CoordinateSystems::THREEjs());
 	return 0;

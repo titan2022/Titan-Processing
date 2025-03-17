@@ -29,7 +29,7 @@ class Config
 	std::string udp_dashboard_ip;
 	int udp_port;
 
-	std::string nt_dashboard_ip;
+	std::string nt_server_ip;
 	int nt_port;
 
 	// Performance

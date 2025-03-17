@@ -38,8 +38,8 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	this->udp_roborio_ip = configData["udp_roborio_ip"];
 	this->udp_dashboard_ip = configData["udp_dashboard_ip"];
 	this->udp_port = configData["udp_port"];
-	this->nt_dashboard_ip = configData["udp_dashboard_ip"];
-	this->nt_port = configData["udp_port"];
+	this->nt_server_ip = configData["nt_server_ip"];
+	this->nt_port = configData["nt_port"];
 	this->threads = configData["threads"];
 	this->quadDecimate = configData["quadDecimate"];
 	this->quadSigma = configData["quadSigma"];
@@ -111,6 +111,8 @@ int Config::writeConfig(std::string_view configPath)
 		{"udp_roborio_ip", udp_roborio_ip},
 		{"udp_dashboard_ip", udp_dashboard_ip},
 		{"udp_port", udp_port},
+		{"nt_server_ip", nt_server_ip},
+		{"nt_port", nt_port},
 		{"threads", threads},
 		{"quadDecimate", quadDecimate},
 		{"quadSigma", quadSigma},

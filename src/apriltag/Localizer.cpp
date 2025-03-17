@@ -124,10 +124,10 @@ void Localizer::threadMainloop()
 
 		step(dt);
 
-		printf("[Localizer] dt = %f s, prediction: position (%f, %f, %f) rotation (%f, %f, %f)\n", 
-			dt,
-			filter.position.getX(), filter.position.getY(), filter.position.getZ(),
-			filter.rotation.x, filter.rotation.y, filter.rotation.z);
+		// printf("[Localizer] dt = %f s, prediction: position (%f, %f, %f) rotation (%f, %f, %f)\n", 
+		// 	dt,
+		// 	filter.position.getX(), filter.position.getY(), filter.position.getZ(),
+		// 	filter.rotation.x, filter.rotation.y, filter.rotation.z);
 	}
 }
 

@@ -2,7 +2,7 @@
     "udp_roborio_ip": "10.20.22.1",
     "udp_dashboard_ip": "10.20.22.202",
     "udp_port": 5804,
-    "nt_dashboard_ip": "127.0.0.1",
+    "nt_server_ip": "127.0.0.1",
     "nt_port": 5810,
     "threads": 4,
     "quadDecimate": 1,
@@ -14,8 +14,8 @@
         0.6092
     ],
     "debugCameras": [
-        "video0",
-        "video2"
+        "video0-front",
+        "video2-back"
     ],
     "prodCameras": [
         "Arducam-UC852"
@@ -79,6 +79,25 @@
             "k3": -0.07455148194441642
         },
         {
+            "name": "Lifecam",
+            "cameraPath": "/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0",
+            "position": [0, 0, 0.09],
+            "rotation": [0, 0, 0],
+            "width": 1280,
+            "height": 800,
+            "fps": 30,
+            "exposure": 10,
+            "focalX": 896.4229265637798,
+            "focalY": 894.7290571208786,
+            "centerX": 632.1511776051311,
+            "centerY": 409.51872727524545,
+            "k1": 0.03504592225172843,
+            "k2": -0.057976090918433074,
+            "p1": 0.005955119626934279,
+            "p2": -0.0031399446166415663,
+            "k3": -0.07455148194441642
+        },
+        {
             "name": "Lifecam2",
             "cameraPath": "/dev/v4l/by-path/pci-0000:65:00.3-usb-0:2:1.0-video-index0",
             "position": [0, 0, -0.09],
@@ -100,6 +119,25 @@
         {
             "name": "video0",
             "cameraPath": "/dev/video0",
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "width": 1280,
+            "height": 800,
+            "fps": 30,
+            "exposure": 10,
+            "focalX": 896.4229265637798,
+            "focalY": 894.7290571208786,
+            "centerX": 632.1511776051311,
+            "centerY": 409.51872727524545,
+            "k1": 0.03504592225172843,
+            "k2": -0.057976090918433074,
+            "p1": 0.005955119626934279,
+            "p2": -0.0031399446166415663,
+            "k3": -0.07455148194441642
+        },
+        {
+            "name": "video0-front",
+            "cameraPath": "/dev/video0",
             "position": [0, 0, 0.09],
             "rotation": [0, 0, 0],
             "width": 1280,
@@ -117,7 +155,7 @@
             "k3": -0.07455148194441642
         },
         {
-            "name": "video2",
+            "name": "video2-back",
             "cameraPath": "/dev/video2",
             "position": [0, 0, -0.09],
             "rotation": [0, 180, 0],
