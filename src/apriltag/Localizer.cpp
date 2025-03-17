@@ -32,10 +32,18 @@ std::optional<Apriltag> Localizer::getGlobalTag(int id)
 
 void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec, double size, double dt)
 {
+	cv::Mat rmat_cv;
+	cv::Rodrigues(rvec, rmat_cv);
+	Eigen::Matrix3d rmat_eigen = (Eigen::Matrix3d() <<
+		rmat_cv.at<double>(0,0), rmat_cv.at<double>(0,1), rmat_cv.at<double>(0,2),
+		rmat_cv.at<double>(1,0), rmat_cv.at<double>(1,1), rmat_cv.at<double>(1,2),
+		rmat_cv.at<double>(2,0), rmat_cv.at<double>(2,1), rmat_cv.at<double>(2,2)
+	).finished();
+
 	Transform3d tagInCameraFrame = CoordinateSystem::Convert(
 		Transform3d{
 			Translation3d{Eigen::Vector3d{tvec[0], tvec[1], tvec[2]}},
-			Rotation3d{Eigen::Vector3d{rvec[0], rvec[1], rvec[2]}}
+			Rotation3d{rmat_eigen}
 		},
 		CoordinateSystems::OpenCV(),
 		CoordinateSystems::standard()
