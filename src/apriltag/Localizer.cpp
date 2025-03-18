@@ -60,14 +60,14 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 	
 	double tagDist = cv::norm(tvec);
 
-	printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
-		cam.name.c_str(), id,
-		robotInFieldFrame.Translation().X().value(), 
-		robotInFieldFrame.Translation().Y().value(), 
-		robotInFieldFrame.Translation().Z().value(),
-		units::degree_t{robotInFieldFrame.Rotation().X()}.value(),
-		units::degree_t{robotInFieldFrame.Rotation().Y()}.value(),
-		units::degree_t{robotInFieldFrame.Rotation().Z()}.value());
+	// printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
+	// 	cam.name.c_str(), id,
+	// 	robotInFieldFrame.Translation().X().value(), 
+	// 	robotInFieldFrame.Translation().Y().value(), 
+	// 	robotInFieldFrame.Translation().Z().value(),
+	// 	units::degree_t{robotInFieldFrame.Rotation().X()}.value(),
+	// 	units::degree_t{robotInFieldFrame.Rotation().Y()}.value(),
+	// 	units::degree_t{robotInFieldFrame.Rotation().Z()}.value());
 	filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
 	this->poseHandler(robotInFieldFrame);
 }
