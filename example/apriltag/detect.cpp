@@ -30,6 +30,7 @@ int main(int argc, char const *argv[])
 	ntInstance.StartClient4("Titan-Processing");
 	// connect to a specific host/port
 	ntInstance.SetServer(config.nt_server_ip, config.nt_port);
+    ntInstance.SetServerTeam(2022);
 
 	// Get the table
 	std::shared_ptr<nt::NetworkTable> networkTable = ntInstance.GetTable("TitanProcessing");
