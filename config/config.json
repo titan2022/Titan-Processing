@@ -24,8 +24,8 @@
         {
             "name": "Arducam-UC852",
             "cameraPath": "/dev/v4l/by-id/usb-Arducam_Technology_Co.__Ltd._Arducam_OV9782_USB_Camera_UC852-video-index0",
-            "position": [0.2445512, 0.0842264, 0.2952496],
-            "rotation": [23.64, 0, 10.75],
+            "position": [0.13044678, -0.34055558, 0.16956278],
+            "rotation": [0, -23.64, 10.75],
             "width": 1280,
             "height": 800,
             "fps": 60,
