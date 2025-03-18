@@ -1,8 +1,8 @@
 {
-    "udp_roborio_ip": "10.20.22.1",
-    "udp_dashboard_ip": "10.20.22.202",
+    "udp_roborio_ip": "10.20.22.2",
+    "udp_dashboard_ip": "10.42.0.1",
     "udp_port": 5804,
-    "nt_server_ip": "10.20.22.1",
+    "nt_server_ip": "10.20.22.2",
     "nt_port": 5810,
     "threads": 4,
     "quadDecimate": 1,
