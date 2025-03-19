@@ -25,7 +25,7 @@
     "cameras": [
         {
             "name": "testRight",
-            "cameraPath": "/dev/video0",
+            "cameraPath": "/dev/v4l/by-id/usb-Arducam_Technology_Co.__Ltd._Arducam_OV9782_USB_Camera_UC852-video-index0",
             "position": [0.13044678, -0.34055558, 0.16956278],
             "rotation": [0, -23.64, 10.75],
             "width": 1280,
@@ -44,7 +44,7 @@
         },
         {
             "name": "testLeft",
-            "cameraPath": "/dev/video2",
+            "cameraPath": "/dev/v4l/by-id/usb-Arducam_Technology_Co.__Ltd._Arducam_OV9782_USB_Camera_UC852-video-index1",
             "position": [0.13044678, 0.34055558, 0.16956278],
             "rotation": [0, -23.64, -10.75],
             "width": 1280,
