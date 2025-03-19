@@ -55,7 +55,7 @@ int main(int argc, char const *argv[])
 				CoordinateSystems::WPILib()
 			)
 		};
-		client.send_pose("args.pose", pos_wpilib, rot_wpilib, args.distanceToTag);
+		client.send_pose("pose", pos_wpilib, rot_wpilib, args.distanceToTag);
 		Vector3D pos_threejs {
 			CoordinateSystem::Convert(
 				args.pose.Translation(),
@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
 				CoordinateSystems::THREEjs()
 			)
 		};
-		dashboardClient.send_pose("args.pose", pos_threejs, rot_threejs, args.distanceToTag);
+		dashboardClient.send_pose("pose", pos_threejs, rot_threejs, args.distanceToTag);
 
 		posePublisher.Set(Pose3d{args.pose.Translation(), args.pose.Rotation()});
 	};

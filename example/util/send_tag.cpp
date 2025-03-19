@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
 				CoordinateSystems::THREEjs()
 			)
 		};
-		dashboardClient.send_pose("args.pose", pos_threejs, rot_threejs);
+		dashboardClient.send_pose("pose", pos_threejs, rot_threejs);
 	};
 
     int tagNumber;
