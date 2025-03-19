@@ -70,6 +70,15 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 		units::degree_t{robotInFieldFrame.Rotation().X()}.value(),
 		units::degree_t{robotInFieldFrame.Rotation().Y()}.value(),
 		units::degree_t{robotInFieldFrame.Rotation().Z()}.value());
+
+    if (tagDist > this->config.rejectDistance) {
+        printf("[Localizer] Tag %d rejected since distance of %f m was greater than %f m",
+            id,
+            tagDist,
+            this->config.rejectDistance);
+        return;
+    }
+
 	filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
 	this->poseHandler(robotInFieldFrame);
 }

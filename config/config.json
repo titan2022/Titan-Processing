@@ -8,6 +8,7 @@
     "quadDecimate": 1,
     "quadSigma": 2,
     "decodeSharpening": 0.25,
+    "rejectDistance": 2.0,
     "robotSize": [
         0.6092,
         0.1,

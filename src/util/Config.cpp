@@ -44,6 +44,7 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	this->quadDecimate = configData["quadDecimate"];
 	this->quadSigma = configData["quadSigma"];
 	this->decodeSharpening = configData["decodeSharpening"];
+    this->rejectDistance = configData["rejectDistance"];
 	this->robotSize = configData["robotSize"];
 
 	this->debugCameras = configData["debugCameras"];
@@ -117,6 +118,7 @@ int Config::writeConfig(std::string_view configPath)
 		{"quadDecimate", quadDecimate},
 		{"quadSigma", quadSigma},
 		{"decodeSharpening", decodeSharpening},
+        {"rejectDistance", rejectDistance},
 		{"cameras", json_cams},
 		{"robotSize", robotSize},
 	};

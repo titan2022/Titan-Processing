@@ -40,6 +40,9 @@ class Config
 	int quadSigma;
 	double decodeSharpening;
 
+    // Reject tags further than this distance in meters
+    double rejectDistance;
+
 	// Field
 	double fieldLength;
 	double fieldWidth;
