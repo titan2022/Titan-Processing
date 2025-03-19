@@ -21,6 +21,8 @@ class PoseFilter
 	void updateTag(Apriltag &tag, double tagDist, double dt);
 	void addControlInput(double x_vel, double y_vel, double rot_vel);
 
+	Transform3d getPose();
+
 	Vector3D position;
 	Vector3D rotation;
 

@@ -59,6 +59,14 @@ class Vector3D
 	Vector3D(Rotation3d rotation);
 	Vector3D();
 
+	constexpr operator Translation3d() const {
+		return Translation3d{units::meter_t{x}, units::meter_t{y}, units::meter_t{z}};
+	}
+
+	constexpr operator Rotation3d() const {
+		return Rotation3d{units::radian_t{x}, units::radian_t{y}, units::radian_t{z}};
+	}
+
 	double getX();
 	double getY();
 	double getZ();
@@ -107,4 +115,6 @@ class Vector3D
 using Translation = Vector3D;
 
 } // namespace titan
+
+
 #endif
