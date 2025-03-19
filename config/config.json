@@ -44,8 +44,8 @@
         {
             "name": "testLeft",
             "cameraPath": "/dev/video0",
-            "position": [0.13044678, -0.34055558, 0.16956278],
-            "rotation": [0, -23.64, 10.75],
+            "position": [0.13044678, 0.34055558, 0.16956278],
+            "rotation": [0, -23.64, -10.75],
             "width": 1280,
             "height": 800,
             "fps": 60,
