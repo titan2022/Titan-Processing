@@ -60,8 +60,10 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 	
 	double tagDist = cv::norm(tvec);
 
-	printf("[Localizer] %s view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
-		cam.name.c_str(), id,
+	printf("[Localizer] %s (path: %s), view of apriltag %d: position (%f, %f, %f) rotation (%f, %f, %f)\n",
+		cam.name.c_str(), 
+        cam.cameraPath.c_str(),
+        id,
 		robotInFieldFrame.Translation().X().value(), 
 		robotInFieldFrame.Translation().Y().value(), 
 		robotInFieldFrame.Translation().Z().value(),
