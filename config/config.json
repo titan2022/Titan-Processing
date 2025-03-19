@@ -14,8 +14,8 @@
         0.6092
     ],
     "debugCameras": [
-        "video0-front",
-        "video2-back"
+        "testRight",
+        "testLeft"
     ],
     "prodCameras": [
         "Arducam-UC852"
