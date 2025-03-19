@@ -18,7 +18,8 @@
         "testLeft"
     ],
     "prodCameras": [
-        "Arducam-UC852"
+        "testRight",
+        "testLeft"
     ],
     "cameras": [
         {
