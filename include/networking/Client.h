@@ -38,8 +38,11 @@ class NetworkingClient
   public:
 	NetworkingClient(std::string ip, uint16_t port);
 	Vector3D send_vector(std::string msg, Vector3D &v, bool withReply);
+	void send_pose(std::string msg, Vector3D &pos, Vector3D &rot, double distanceToTag);
 	void send_pose(std::string msg, Vector3D &pos, Vector3D &rot);
 	void send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot);
+
+	// TODO: Add distanceToTag to the C bindings
 
 	TRBVector3D send_vector_c(char *msg, TRBVector3D v, bool withReply);
 	void send_pose_c(char *msg, TRBVector3D pos, TRBVector3D rot);

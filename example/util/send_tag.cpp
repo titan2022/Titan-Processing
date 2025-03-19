@@ -18,37 +18,37 @@ int main(int argc, char const *argv[])
 	NetworkingClient client(config.udp_roborio_ip, config.udp_port);
 	NetworkingClient dashboardClient(config.udp_dashboard_ip, config.udp_port);
 
-	auto clientPoseSender = [&](Transform3d pose) {
+	auto clientPoseSender = [&](titan::Localizer::PoseHandlerArgs args) {
 		Vector3D pos_wpilib {
 			CoordinateSystem::Convert(
-				pose.Translation(),
+				args.pose.Translation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::WPILib()
 			)
 		};
 		Vector3D rot_wpilib {
 			CoordinateSystem::Convert(
-				pose.Rotation(),
+				args.pose.Rotation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::WPILib()
 			)
 		};
-		client.send_pose("pose", pos_wpilib, rot_wpilib);
+		std::cout << "pos: " << pos_wpilib.toString() << std::endl;
 		Vector3D pos_threejs {
 			CoordinateSystem::Convert(
-				pose.Translation(),
+				args.pose.Translation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::THREEjs()
 			)
 		};
 		Vector3D rot_threejs {
 			CoordinateSystem::Convert(
-				pose.Rotation(),
+				args.pose.Rotation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::THREEjs()
 			)
 		};
-		dashboardClient.send_pose("pose", pos_threejs, rot_threejs);
+		dashboardClient.send_pose("args.pose", pos_threejs, rot_threejs);
 	};
 
     int tagNumber;
@@ -64,5 +64,5 @@ int main(int argc, char const *argv[])
 	}
 
 	Apriltag tag = config.tags.at(tagNumber);
-    clientPoseSender(Transform3d{tag.position, tag.rotation});
+    clientPoseSender({Transform3d{tag.position, tag.rotation}});
 }

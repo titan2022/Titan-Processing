@@ -31,7 +31,13 @@ class Localizer
 		std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>> timestamp;
 	};
 
-	using PoseHandler = std::function<void(Transform3d)>;
+	struct PoseHandlerArgs
+	{
+		Transform3d pose;
+		double distanceToTag;
+	};
+
+	using PoseHandler = std::function<void(PoseHandlerArgs)>;
 
 	Localizer(Config &config, PoseFilter &filter, PoseHandler poseHandler);
 

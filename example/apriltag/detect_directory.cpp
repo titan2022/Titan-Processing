@@ -24,17 +24,17 @@ int main(int argc, char const *argv[])
 
     cv::VideoCapture stream(IMAGE_PATH);
 
-	auto clientPoseSender = [&](Transform3d pose) {
+	auto clientPoseSender = [&](titan::Localizer::PoseHandlerArgs args) {
 		Vector3D pos_wpilib {
 			CoordinateSystem::Convert(
-				pose.Translation(),
+				args.pose.Translation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::WPILib()
 			)
 		};
 		Vector3D rot_wpilib {
 			CoordinateSystem::Convert(
-				pose.Rotation(),
+				args.pose.Rotation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::WPILib()
 			)
@@ -42,19 +42,19 @@ int main(int argc, char const *argv[])
 		std::cout << "pos: " << pos_wpilib.toString() << std::endl;
 		Vector3D pos_threejs {
 			CoordinateSystem::Convert(
-				pose.Translation(),
+				args.pose.Translation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::THREEjs()
 			)
 		};
 		Vector3D rot_threejs {
 			CoordinateSystem::Convert(
-				pose.Rotation(),
+				args.pose.Rotation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::THREEjs()
 			)
 		};
-		dashboardClient.send_pose("pose", pos_threejs, rot_threejs);
+		dashboardClient.send_pose("args.pose", pos_threejs, rot_threejs);
 	};
 
 	PoseFilter filter(config);

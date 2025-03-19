@@ -80,12 +80,13 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
     }
 
 	filter.updateTag(robotInFieldFrame_Apriltag, tagDist, dt);
+	this->poseHandler({robotInFieldFrame, tagDist});
 }
 
 void Localizer::step(double dt)
 {
 	filter.predict(dt);
-	this->poseHandler(Transform3d{filter.position, filter.rotation});
+	// this->poseHandler({Transform3d{filter.position, filter.rotation}, 0});
 }
 
 void Localizer::submitStepCommand(LocalizerStepCommand command)

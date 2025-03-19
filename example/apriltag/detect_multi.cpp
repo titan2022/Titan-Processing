@@ -40,39 +40,39 @@ int main(int argc, char const *argv[])
 	nt::StructTopic<Pose3d> poseTopic = networkTable->GetStructTopic<Pose3d>("pose");
 	nt::StructPublisher<Pose3d> posePublisher = poseTopic.Publish();
 
-	auto clientPoseSender = [&](Transform3d pose) {
+	auto clientPoseSender = [&](titan::Localizer::PoseHandlerArgs args) {
 		Vector3D pos_wpilib {
 			CoordinateSystem::Convert(
-				pose.Translation(),
+				args.pose.Translation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::WPILib()
 			)
 		};
 		Vector3D rot_wpilib {
 			CoordinateSystem::Convert(
-				pose.Rotation(),
+				args.pose.Rotation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::WPILib()
 			)
 		};
-		client.send_pose("pose", pos_wpilib, rot_wpilib);
+		client.send_pose("args.pose", pos_wpilib, rot_wpilib, args.distanceToTag);
 		Vector3D pos_threejs {
 			CoordinateSystem::Convert(
-				pose.Translation(),
+				args.pose.Translation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::THREEjs()
 			)
 		};
 		Vector3D rot_threejs {
 			CoordinateSystem::Convert(
-				pose.Rotation(),
+				args.pose.Rotation(),
 				CoordinateSystems::standard(),
 				CoordinateSystems::THREEjs()
 			)
 		};
-		dashboardClient.send_pose("pose", pos_threejs, rot_threejs);
+		dashboardClient.send_pose("args.pose", pos_threejs, rot_threejs, args.distanceToTag);
 
-		posePublisher.Set(Pose3d{pose.Translation(), pose.Rotation()});
+		posePublisher.Set(Pose3d{args.pose.Translation(), args.pose.Rotation()});
 	};
 
 	PoseFilter filter(config);
