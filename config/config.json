@@ -24,7 +24,7 @@
     "cameras": [
         {
             "name": "testRight",
-            "cameraPath": "/dev/video3",
+            "cameraPath": "/dev/video2",
             "position": [0.13044678, -0.34055558, 0.16956278],
             "rotation": [0, -23.64, 10.75],
             "width": 1280,
