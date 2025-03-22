@@ -85,7 +85,7 @@ void Localizer::addApriltag(int id, Camera &cam, cv::Vec3d tvec, cv::Vec3d rvec,
 
 void Localizer::step(double dt)
 {
-	filter.predict(dt);
+	// filter.predict(dt);
 	// this->poseHandler({Transform3d{filter.position, filter.rotation}, 0});
 }
 
