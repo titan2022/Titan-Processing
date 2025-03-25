@@ -20,8 +20,7 @@
         "hp_debug"
     ],
     "prodCameras": [
-        "testRight",
-        "testLeft"
+        "testRight_opi2"
     ],
     "cameras": [
         {
@@ -67,6 +66,25 @@
             "cameraPath": "/dev/v4l/by-path/platform-fc880000.usb-usbv2-0:1:1.0-video-index0",
             "position": [0.13044678, 0.34055558, 0.16956278],
             "rotation": [0, -23.64, -10.75],
+            "width": 640,
+            "height": 480,
+            "fps": 60,
+            "exposure": 10,
+            "focalX": 549.1094796591963,
+            "focalY": 552.7816735994703,
+            "centerX": 355.4374997313,
+            "centerY": 216.78681615861532,
+            "k1": 0,
+            "k2": 0,
+            "p1": 0,
+            "p2": 0,
+            "k3": 0
+        },
+        {
+            "name": "testRight_opi2",
+            "cameraPath": "/dev/v4l/by-path/platform-fc800000.usb-usbv2-0:1:1.0-video-index0",
+            "position": [0.13044678, -0.34055558, 0.16956278],
+            "rotation": [0, -23.64, 10.75],
             "width": 640,
             "height": 480,
             "fps": 60,
