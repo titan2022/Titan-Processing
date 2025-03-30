@@ -13,11 +13,17 @@
 
 using namespace titan;
 
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+
 const int NAME_LEN = 15;
 
 // Aligned on linux x86 GCC
 // TODO: test on ARM
-struct VectorData
+struct __attribute__((__packed__))
+VectorData
 {
 	char type;
 	char name[NAME_LEN] = {0};
@@ -26,15 +32,18 @@ struct VectorData
 	double z;
 };
 
-struct PoseData
+struct __attribute__((__packed__))
+PoseData
 {
 	char type;
 	char name[NAME_LEN] = {0};
 	std::array<double, 3> pos;
 	std::array<double, 3> rot;
+	double distanceToTag;
 };
 
-struct TagData
+struct __attribute__((__packed__))
+TagData
 {
 	char type;
 	char name[NAME_LEN] = {0};
@@ -81,7 +90,7 @@ Vector3D NetworkingClient::send_vector(std::string msg, Vector3D &v, bool withRe
 	return Vector3D();
 }
 
-void NetworkingClient::send_pose(std::string msg, Vector3D &pos, Vector3D &rot)
+void NetworkingClient::send_pose(std::string msg, Vector3D &pos, Vector3D &rot, double distanceToTag)
 {
 	PoseData data;
 
@@ -90,10 +99,17 @@ void NetworkingClient::send_pose(std::string msg, Vector3D &pos, Vector3D &rot)
 	data.pos = pos.toArray();
 	data.rot = rot.toArray();
 
+	data.distanceToTag = distanceToTag;
+
 	size_t dataLength = sizeof(data);
 
 	const void *buffer = static_cast<void *>(&data);
 	::sendto(sock, buffer, dataLength, 0, reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
+}
+
+void NetworkingClient::send_pose(std::string msg, Vector3D &pos, Vector3D &rot)
+{
+	send_pose(msg, pos, rot, 0);
 }
 
 void NetworkingClient::send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot)

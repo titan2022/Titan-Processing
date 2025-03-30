@@ -95,7 +95,7 @@ void ApriltagDetector::detect()
 				apriltags.push_back({ids[i], cam, tVec, rVec, markerLength});
 
 				// printf is thread-safe, cout is not
-				printf("[ApriltagDetector] %s can see apriltag %d\n", cam.name.c_str(), ids[i]);
+				// printf("[ApriltagDetector] %s can see apriltag %d\n", cam.name.c_str(), ids[i]);
 
 				if (this->showWindow)
 				{

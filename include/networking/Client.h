@@ -3,6 +3,7 @@
 
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
 // All C APIs are prefixed with TRB, which stands for Titan RoBotics
 
@@ -26,8 +27,9 @@ typedef struct TRBVector3D
 TRB_END_EXTERN_C
 
 #if __cplusplus
-#include "../util/Vector3D.hpp"
 #include <string>
+
+#include "util/Vector3D.hpp"
 
 namespace titan
 {
@@ -36,8 +38,11 @@ class NetworkingClient
   public:
 	NetworkingClient(std::string ip, uint16_t port);
 	Vector3D send_vector(std::string msg, Vector3D &v, bool withReply);
+	void send_pose(std::string msg, Vector3D &pos, Vector3D &rot, double distanceToTag);
 	void send_pose(std::string msg, Vector3D &pos, Vector3D &rot);
 	void send_tag(std::string msg, int id, Vector3D &pos, Vector3D &rot);
+
+	// TODO: Add distanceToTag to the C bindings
 
 	TRBVector3D send_vector_c(char *msg, TRBVector3D v, bool withReply);
 	void send_pose_c(char *msg, TRBVector3D pos, TRBVector3D rot);
@@ -50,7 +55,6 @@ class NetworkingClient
 } // namespace titan
 
 typedef titan::NetworkingClient *TRBNetworkingClientRef;
-typedef bool _Bool; // C uses _Bool but C++ uses bool
 #else
 typedef struct TRBNetworkingClient *TRBNetworkingClientRef;
 #endif // __cplusplus
@@ -59,7 +63,7 @@ TRB_BEGIN_EXTERN_C
 
 TRBVector3D TRBVector3DMake(double x, double y, double z);
 TRBNetworkingClientRef TRBNetworkingClientCreate(char *ip, uint16_t port);
-TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, _Bool withReply);
+TRBVector3D TRBNetworkingClientSendVector(TRBNetworkingClientRef self, char *msg, TRBVector3D v, bool withReply);
 void TRBNetworkingClientSendPose(TRBNetworkingClientRef self, char *msg, TRBVector3D pos, TRBVector3D rot);
 void TRBNetworkingClientSendTag(TRBNetworkingClientRef self, char *msg, int id, TRBVector3D pos, TRBVector3D rot);
 

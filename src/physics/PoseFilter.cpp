@@ -104,9 +104,9 @@ void PoseFilter::predict(double dt)
 	position.setX(x.at<double>(0, 0));
 	position.setY(x.at<double>(1, 0));
 	position.setZ(x.at<double>(2, 0));
-	rotation.x = (x.at<double>(3, 0));
-	rotation.y = (x.at<double>(4, 0));
-	rotation.z = (x.at<double>(5, 0));
+	rotation.setX(x.at<double>(3, 0));
+	rotation.setY(x.at<double>(4, 0));
+	rotation.setZ(x.at<double>(5, 0));
 
 	for (auto &tag : config.tags)
 	{
@@ -117,12 +117,15 @@ void PoseFilter::predict(double dt)
 
 void PoseFilter::updateTag(Apriltag &tag, double tagDist, double dt)
 {
-	double xPos = tag.position.getX();
-	double yPos = tag.position.getY();
-	double zPos = tag.position.getZ();
-	double xRot = tag.rotation.x;
-	double yRot = tag.rotation.y;
-	double zRot = tag.rotation.z;
+	double xPos = tag.position.X().value();
+	double yPos = tag.position.Y().value();
+	double zPos = tag.position.Z().value();
+	double xRot = tag.rotation.X().value();
+	double yRot = tag.rotation.Y().value();
+	double zRot = tag.rotation.Z().value();
+
+	Vector3D pos {tag.position};
+	Vector3D rot {tag.rotation};
 
 	if (!init)
 	{
@@ -131,8 +134,8 @@ void PoseFilter::updateTag(Apriltag &tag, double tagDist, double dt)
 		x = x_init;
 		for (int i = 0; i < 3; i++)
 		{
-			x.at<double>(i, 0) = tag.position[i];
-			x.at<double>(i + 3, 0) = tag.rotation.coerceToVector3D()[i];
+			x.at<double>(i, 0) = pos[i];
+			x.at<double>(i + 3, 0) = rot[i];
 			x.at<double>(i + 6, 0) = 0;
 			x.at<double>(i + 9, 0) = 0;
 		}
@@ -170,9 +173,9 @@ void PoseFilter::updateTag(Apriltag &tag, double tagDist, double dt)
 	position.setX(x.at<double>(0, 0));
 	position.setY(x.at<double>(1, 0));
 	position.setZ(x.at<double>(2, 0));
-	rotation.x = (x.at<double>(3, 0));
-	rotation.y = (x.at<double>(4, 0));
-	rotation.z = (x.at<double>(5, 0));
+	rotation.setX(x.at<double>(3, 0));
+	rotation.setY(x.at<double>(4, 0));
+	rotation.setZ(x.at<double>(5, 0));
 
 	test1 = zPos;
 

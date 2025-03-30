@@ -1,10 +1,10 @@
-file(GLOB SRC 
+file(GLOB SRC
     src/apriltag/*.cpp
     src/util/*.cpp
     src/networking/*.cpp
     src/physics/*.cpp
 )
-file(GLOB HEADERS 
+file(GLOB HEADERS
     include/apriltag/*.hpp
     include/util/*.hpp
     include/networking/*.hpp
@@ -13,17 +13,16 @@ file(GLOB HEADERS
 if (NOT NO_REALSENSE)
     file(GLOB RS_SRC src/realsense/*.cpp)
     add_library(TitanProcessing SHARED ${SRC} ${RS_SRC})
-    target_include_directories(TitanProcessing PRIVATE ${Realsense_DIR}/include)
 else()
     add_library(TitanProcessing SHARED ${SRC})
 endif()
-target_include_directories(TitanProcessing PUBLIC ${OpenCV_INCLUDE_DIRS} PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(TitanProcessing ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
+target_include_directories(TitanProcessing PUBLIC ${OpenCV_INCLUDE_DIRS} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(TitanProcessing PUBLIC nlohmann_json::nlohmann_json ${OpenCV_LIBS} wpimath ntcore)
 set_target_properties(TitanProcessing PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(TitanProcessing PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 set_target_properties(TitanProcessing PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
-# INCLUDES DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/TitanProcessing FILES_MATCHING PATTERN "*.hpp"
+# INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/TitanProcessing FILES_MATCHING PATTERN "*.hpp"
 #         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/TitanProcessing
 
 install(TARGETS TitanProcessing EXPORT

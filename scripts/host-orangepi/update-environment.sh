@@ -6,9 +6,6 @@ sshpass -p "$password" ssh "$username@$remote_hostname" bash <<EOF
 source ~/miniforge3/etc/profile.d/conda.sh
 cd /home/$username/Projects/Titan-Processing
 
-echo "Removing old environment..."
-conda remove -n Titan-Processing --all --yes
-
-echo "Rebuilding environment..."
-conda env create -f environment.yml
+echo "Updating environment..."
+conda env update -f environment.yml
 EOF

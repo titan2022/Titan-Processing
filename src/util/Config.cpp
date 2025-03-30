@@ -35,13 +35,16 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 	json configData = json::parse(inConfig);
 	json tagData = json::parse(inTag);
 
-	this->ip = configData["ip"];
-	this->dashboardIp = configData["dashboardIp"];
-	this->port = configData["port"];
+	this->udp_roborio_ip = configData["udp_roborio_ip"];
+	this->udp_dashboard_ip = configData["udp_dashboard_ip"];
+	this->udp_port = configData["udp_port"];
+	this->nt_server_ip = configData["nt_server_ip"];
+	this->nt_port = configData["nt_port"];
 	this->threads = configData["threads"];
 	this->quadDecimate = configData["quadDecimate"];
 	this->quadSigma = configData["quadSigma"];
 	this->decodeSharpening = configData["decodeSharpening"];
+    this->rejectDistance = configData["rejectDistance"];
 	this->robotSize = configData["robotSize"];
 
 	this->debugCameras = configData["debugCameras"];
@@ -65,13 +68,16 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 		double size = 0.1651;
 		int id = tagObj["ID"];
 
-		Translation pos = Translation::fromWPILibPosition(trans["x"], trans["y"], trans["z"], this->fieldLength, this->fieldWidth);
+		Translation3d pos = Translation3d{
+			units::meter_t{trans["x"]},
+			units::meter_t{trans["y"]},
+			units::meter_t{trans["z"]}
+		};
 
 		auto quat = pose["rotation"]["quaternion"];
-		EulerAngles rot = 
-			RotationQuaternion(quat["W"], quat["X"], quat["Y"], quat["Z"], CoordinateSystem::WPILIB)
-			.convertToCoordinateSystem(CoordinateSystem::THREEJS)
-			.toEulerAngles();
+		Rotation3d rot = Rotation3d{
+			Quaternion{quat["W"], quat["X"], quat["Y"], quat["Z"]}
+		};
 
 		Apriltag tag(id, pos, rot, size);
 		this->tags.insert({id, tag});
@@ -80,12 +86,17 @@ Config::Config(std::string_view configPath, std::string_view tagsPath)
 
 int Config::write(std::string_view configPath, std::string_view tagsPath)
 {
+	int retval_config = writeConfig(configPath);
+	int retval_tags = writeTagsConverted(tagsPath, CoordinateSystems::WPILib());
 
+	return std::max(retval_tags, retval_config);
+}
+
+int Config::writeConfig(std::string_view configPath)
+{
 	fs::path fileConfigPathObj((fs::path(configPath)));
-	fs::path fileTagPathObj((fs::path(tagsPath)));
 	std::ofstream outConfig(fileConfigPathObj);
-	std::ofstream outTag(fileTagPathObj);
-	if (!outConfig || !outTag)
+	if (!outConfig)
 	{
 		return 5;
 	}
@@ -98,41 +109,60 @@ int Config::write(std::string_view configPath, std::string_view tagsPath)
 	}
 
 	json configData = {
-		{"ip", ip},
-		{"dashboardIp", dashboardIp},
-		{"port", port},
+		{"udp_roborio_ip", udp_roborio_ip},
+		{"udp_dashboard_ip", udp_dashboard_ip},
+		{"udp_port", udp_port},
+		{"nt_server_ip", nt_server_ip},
+		{"nt_port", nt_port},
 		{"threads", threads},
 		{"quadDecimate", quadDecimate},
 		{"quadSigma", quadSigma},
 		{"decodeSharpening", decodeSharpening},
+        {"rejectDistance", rejectDistance},
 		{"cameras", json_cams},
 		{"robotSize", robotSize},
 	};
 	outConfig << configData;
 
+	return 0;
+}
+
+int Config::writeTagsConverted(std::string_view tagsPath, CoordinateSystem coordinateSystem)
+{
+	fs::path fileTagPathObj((fs::path(tagsPath)));
+	std::ofstream outTag(fileTagPathObj);
+	if (!outTag)
+	{
+		return 5;
+	}
+
 	std::vector<json> json_tags = {};
 	for (auto tag_pair : tags)
 	{
-		auto tag = tag_pair.second;
-		RotationQuaternion q = tag.rotation.toRotationQuaternion();
+		auto tag_raw = tag_pair.second;
+		Transform3d pose = CoordinateSystem::Convert(
+			Transform3d{tag_raw.position, tag_raw.rotation},
+			CoordinateSystems::standard(),
+			coordinateSystem);
+		Quaternion q = pose.Rotation().GetQuaternion();
 		json json_tag = {
-			{"ID", tag.id},
+			{"ID", tag_raw.id},
 			{"pose",
 			 {
 				 {"translation",
 				  {
-					  {"x", tag.position.getX()},
-					  {"y", tag.position.getY()},
-					  {"z", tag.position.getZ()},
+					  {"x", pose.Translation().X().value()},
+					  {"y", pose.Translation().Y().value()},
+					  {"z", pose.Translation().Z().value()},
 				  }},
 				 {"rotation",
 				  {
 					  {"quaternion",
 					   {
-						   {"W", q.w},
-						   {"X", q.x},
-						   {"Y", q.y},
-						   {"Z", q.z},
+						   {"W", q.W()},
+						   {"X", q.X()},
+						   {"Y", q.Y()},
+						   {"Z", q.Z()},
 					   }},
 				  }},
 			 }},

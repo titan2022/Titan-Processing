@@ -1,6 +1,7 @@
-#include "../../include/networking/Client.h"
 #include <stdbool.h>
 #include <stdio.h>
+
+#include "networking/Client.h"
 
 int main(int argc, char const *argv[])
 {

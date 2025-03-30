@@ -1,13 +1,20 @@
 #include <string>
 #include <thread>
 
-#include "../../include/apriltag/ApriltagDetector.hpp"
-#include "../../include/apriltag/Localizer.hpp"
-#include "../../include/networking/Client.h"
-#include "../../include/physics/PoseFilter.hpp"
-#include "../../include/util/Config.hpp"
+#include "apriltag/ApriltagDetector.hpp"
+#include "apriltag/Localizer.hpp"
+#include "networking/Client.h"
+#include "physics/PoseFilter.hpp"
+#include "util/Config.hpp"
+
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/StructTopic.h>
 
 using namespace titan;
+using namespace nt;
+
+using frc::Pose3d;
 
 /**
  * Stars streams with every camera available
@@ -15,12 +22,57 @@ using namespace titan;
 int main(int argc, char const *argv[])
 {
 	Config config(CONFIG_PATH, TAGS_PATH);
-	NetworkingClient client(config.ip, config.port);
-	NetworkingClient dashboardClient(config.dashboardIp, config.port);
+	NetworkingClient client(config.udp_roborio_ip, config.udp_port);
+	NetworkingClient dashboardClient(config.udp_dashboard_ip, config.udp_port);
 
-	auto clientPoseSender = [&](Vector3D pos, Vector3D rot) {
-		client.send_pose("pose", pos, rot);
-		dashboardClient.send_pose("pose", pos, rot);
+	nt::NetworkTableInstance ntInstance = nt::NetworkTableInstance::GetDefault();
+	// start a NT4 client
+	ntInstance.StartClient4("Titan-Processing");
+	// connect to a specific host/port
+	ntInstance.SetServer(config.nt_server_ip, config.nt_port);
+    ntInstance.SetServerTeam(2022);
+
+	// Get the table
+	std::shared_ptr<nt::NetworkTable> networkTable = ntInstance.GetTable("TitanProcessing");
+	// get a topic from a NetworkTable
+	// the topic name in this case is the name within the table;
+	// this line and the one above reference the same topic
+	nt::StructTopic<Pose3d> poseTopic = networkTable->GetStructTopic<Pose3d>("pose");
+	nt::StructPublisher<Pose3d> posePublisher = poseTopic.Publish();
+
+	auto clientPoseSender = [&](titan::Localizer::PoseHandlerArgs args) {
+		Vector3D pos_wpilib {
+			CoordinateSystem::Convert(
+				args.pose.Translation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::WPILib()
+			)
+		};
+		Vector3D rot_wpilib {
+			CoordinateSystem::Convert(
+				args.pose.Rotation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::WPILib()
+			)
+		};
+		client.send_pose("pose", pos_wpilib, rot_wpilib, args.distanceToTag);
+		Vector3D pos_threejs {
+			CoordinateSystem::Convert(
+				args.pose.Translation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::THREEjs()
+			)
+		};
+		Vector3D rot_threejs {
+			CoordinateSystem::Convert(
+				args.pose.Rotation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::THREEjs()
+			)
+		};
+		dashboardClient.send_pose("pose", pos_threejs, rot_threejs, args.distanceToTag);
+
+		posePublisher.Set(Pose3d{args.pose.Translation(), args.pose.Rotation()});
 	};
 
 	PoseFilter filter(config);

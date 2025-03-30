@@ -1,11 +1,12 @@
 #ifndef CAMERA
 #define CAMERA
 
-#include "./Vector3D.hpp"
 #include <nlohmann/json.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <string>
+
+#include "Vector3D.hpp"
 
 namespace titan
 {
@@ -14,8 +15,8 @@ class Camera
   public:
 	std::string name;
 	std::string cameraPath;
-	Translation position;
-	EulerAngles rotation;
+	Translation3d position;
+	Rotation3d rotation;
 	int width;
 	int height;
 	int fps;

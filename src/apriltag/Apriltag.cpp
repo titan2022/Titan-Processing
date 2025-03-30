@@ -9,7 +9,7 @@ using namespace titan;
 // 	size = -1;
 // }
 
-Apriltag::Apriltag(int id, Translation position, EulerAngles rotation, double size)
+Apriltag::Apriltag(int id, Translation3d position, Rotation3d rotation, double size)
 	: id(id), position(position), rotation(rotation), size(size)
 {
 	size = -1;

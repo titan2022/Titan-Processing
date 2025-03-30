@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "../../include/networking/Client.h"
-#include "../../include/util/Vector3D.hpp"
+#include "networking/Client.h"
+#include "util/Vector3D.hpp"
 
 using namespace titan;
 

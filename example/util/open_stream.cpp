@@ -3,8 +3,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "../../include/util/Config.hpp"
 #include "util/Camera.hpp"
+#include "util/Config.hpp"
 
 using namespace titan;
 

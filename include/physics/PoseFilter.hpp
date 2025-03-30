@@ -3,9 +3,9 @@
 
 #include <map>
 
-#include "../apriltag/Apriltag.hpp"
-#include "../util/Config.hpp"
-#include "../util/Vector3D.hpp"
+#include "apriltag/Apriltag.hpp"
+#include "util/Config.hpp"
+#include "util/Vector3D.hpp"
 
 namespace titan
 {
@@ -21,8 +21,10 @@ class PoseFilter
 	void updateTag(Apriltag &tag, double tagDist, double dt);
 	void addControlInput(double x_vel, double y_vel, double rot_vel);
 
-	Translation position;
-	EulerAngles rotation;
+	Transform3d getPose();
+
+	Vector3D position;
+	Vector3D rotation;
 
 	double test1 = 0;
 	double test2 = 0;

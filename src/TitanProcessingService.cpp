@@ -2,13 +2,13 @@
 #include <string>
 #include <thread>
 
-#include "../include/apriltag/ApriltagDetector.hpp"
-#include "../include/apriltag/Localizer.hpp"
-#include "../include/networking/Client.h"
-#include "../include/physics/PoseFilter.hpp"
-#include "../include/util/Config.hpp"
+#include "apriltag/Apriltag.hpp"
+#include "apriltag/ApriltagDetector.hpp"
+#include "apriltag/Localizer.hpp"
+#include "networking/Client.h"
+#include "physics/PoseFilter.hpp"
+#include "util/Config.hpp"
 #include "util/Vector3D.hpp"
-#include <../include/apriltag/Apriltag.hpp>
 
 using namespace titan;
 
@@ -20,13 +20,42 @@ int main(int argc, char const *argv[])
 	std::cout << "Starting service..." << std::endl;
 
 	Config config(CONFIG_PATH, TAGS_PATH);
-	NetworkingClient client(config.ip, config.port);
-	NetworkingClient dashboardClient(config.dashboardIp, config.port);
+	NetworkingClient client(config.udp_roborio_ip, config.udp_port);
+	NetworkingClient dashboardClient(config.udp_dashboard_ip, config.udp_port);
 
-	auto clientPoseSender = [&](Vector3D pos, Vector3D rot) {
-		client.send_pose("pose", pos, rot);
-		dashboardClient.send_pose("pose", pos, rot);
+	auto clientPoseSender = [&](titan::Localizer::PoseHandlerArgs args) {
+		Vector3D pos_wpilib {
+			CoordinateSystem::Convert(
+				args.pose.Translation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::WPILib()
+			)
+		};
+		Vector3D rot_wpilib {
+			CoordinateSystem::Convert(
+				args.pose.Rotation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::WPILib()
+			)
+		};
+		std::cout << "pos: " << pos_wpilib.toString() << std::endl;
+		Vector3D pos_threejs {
+			CoordinateSystem::Convert(
+				args.pose.Translation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::THREEjs()
+			)
+		};
+		Vector3D rot_threejs {
+			CoordinateSystem::Convert(
+				args.pose.Rotation(),
+				CoordinateSystems::standard(),
+				CoordinateSystems::THREEjs()
+			)
+		};
+		dashboardClient.send_pose("pose", pos_threejs, rot_threejs);
 	};
+
 
 	PoseFilter filter(config);
 	Localizer localizer(config, filter, clientPoseSender);
